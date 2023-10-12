@@ -59,11 +59,9 @@ const reducer = (state, action) => {
 const AddRecipe = () => {
   const [formState, dispatch] = useReducer(reducer, initialState);
 
-  const [ingredients, setIngredients] = useState([""]);
-  const [instructions, setInstructions] = useState([""]);
-  const [tagInputValue, setTagInputValue] = useState("");
   const [files, setFiles] = useState([]);
   const [imageToPreview, setImageToPreview] = useState(0);
+  const [tagInputValue, setTagInputValue] = useState("");
   const [tags, setTags] = useState([]);
   const [scrollPosition, setScrollPosition] = useState({ left: 0, right: 7 });
   const [showScrollBtn, setShowScrollBtn] = useState(false);
@@ -100,9 +98,9 @@ const AddRecipe = () => {
   // function for showing alert before user reload or goes back while changes made in form.
   useEffect(() => {
     if (
-      instructions.length === 1 &&
-      ingredients.length === 1 &&
-      !ingredients[0]
+      formState.instructions.length === 1 &&
+      formState.ingredients.length === 1 &&
+      !formState.ingredients[0]
     ) {
       return;
     }
@@ -120,41 +118,7 @@ const AddRecipe = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [ingredients, instructions]);
-
-  //functions for adding, removing and handling ingredient changes
-  const addIngredient = () => {
-    setIngredients([...ingredients, ""]);
-  };
-
-  const removeIngredient = (index) => {
-    const updatedIngredients = [...ingredients];
-    updatedIngredients.splice(index, 1);
-    setIngredients(updatedIngredients);
-  };
-
-  const handleIngredientChange = (index, value) => {
-    const updatedIngredient = [...ingredients];
-    updatedIngredient[index] = value;
-    setIngredients(updatedIngredient);
-  };
-
-  //functions for adding, removing and handling instruction/cooking steps changes
-  const addInstruction = () => {
-    setInstructions([...instructions, ""]);
-  };
-
-  const removeInstruction = (index) => {
-    const updatedIngredients = [...instructions];
-    updatedIngredients.splice(index, 1);
-    setInstructions(updatedIngredients);
-  };
-
-  const handleInstructionChange = (index, value) => {
-    const updatedIngredient = [...instructions];
-    updatedIngredient[index] = value;
-    setInstructions(updatedIngredient);
-  };
+  }, [formState.ingredients, formState.instructions]);
 
   // functions for tags
   const addTags = () => {
@@ -377,7 +341,7 @@ const AddRecipe = () => {
               />
             </div>
 
-            {/* ingredients field */}
+            {/* ingredients field --------*/}
             <div>
               <h4 className={labelStyle}>Ingredients</h4>
               <div>
@@ -428,7 +392,7 @@ const AddRecipe = () => {
               </button>
             </div>
 
-            {/* Instructions field */}
+            {/* Instructions field ----------------*/}
             <div>
               <h4 className={labelStyle}>Instructions</h4>
               <div>
@@ -438,7 +402,7 @@ const AddRecipe = () => {
                       onChange={(e) =>
                         dispatch({
                           type: "UPDATE_FIELD",
-                          name: "instruction",
+                          name: "instructions",
                           value: e.target.value,
                           index,
                         })
@@ -556,7 +520,7 @@ const AddRecipe = () => {
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag, index) => (
                   <div
-                    className="flex gap-1 border-[1.3px] border-colorOne pl-2 py-1 rounded-2xl"
+                    className="flex gap-1 border-[1.3px] border-colorTwo pl-2 py-1 rounded-xl"
                     key={index}
                   >
                     <p className="">{tag}</p>
