@@ -24,8 +24,11 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "":
-      return;
+    case "TEXT-INPUT":
+      return {
+        ...state,
+        [action.name]: action.value,
+      };
     default:
       return state;
   }
@@ -204,15 +207,23 @@ const AddRecipe = () => {
           >
             {/* title */}
             <div>
-              <label className={labelStyle} htmlFor="title">
+              <label className={labelStyle} htmlFor="recipeName">
                 Title
               </label>
               <input
                 className=""
                 type="text"
-                name="title"
+                name="recipeName"
                 placeholder="Give your recipe a name"
-                id="title"
+                id="recipeName"
+                value={formState.recipeName}
+                onChange={(e) => {
+                  dispatch({
+                    type: "TEXT-INPUT",
+                    name: e.target.name,
+                    value: e.target.value,
+                  });
+                }}
               />
             </div>
 
@@ -333,6 +344,14 @@ const AddRecipe = () => {
                 name="description"
                 placeholder="Intruduce your recipe,add note,cooking tips,serving suggestions,etc..."
                 id="title"
+                value={formState.description}
+                onChange={(e) => {
+                  dispatch({
+                    type: "TEXT-INPUT",
+                    name: e.target.name,
+                    value: e.target.value,
+                  });
+                }}
               />
             </div>
 
