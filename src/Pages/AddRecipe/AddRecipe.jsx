@@ -43,6 +43,13 @@ const reducer = (state, action) => {
           (_, index) => index !== action.index
         ),
       };
+    case "UPDATE_FIELD":
+      return {
+        ...state,
+        [action.name]: state[action.name].map((value, index) =>
+          index === action.index ? action.value : value
+        ),
+      };
 
     default:
       return state;
@@ -377,9 +384,14 @@ const AddRecipe = () => {
                 {formState.ingredients.map((ingredient, index) => (
                   <div key={index} className="relative mb-1">
                     <input
-                      onChange={(e) => {
-                        handleIngredientChange(index, e.target.value);
-                      }}
+                      onChange={(e) =>
+                        dispatch({
+                          type: "UPDATE_FIELD",
+                          name: "ingredients",
+                          value: e.target.value,
+                          index,
+                        })
+                      }
                       type="text"
                       value={ingredient}
                       placeholder={
@@ -424,7 +436,12 @@ const AddRecipe = () => {
                   <div key={index} className="relative mb-1">
                     <textarea
                       onChange={(e) =>
-                        handleInstructionChange(index, e.target.value)
+                        dispatch({
+                          type: "UPDATE_FIELD",
+                          name: "instruction",
+                          value: e.target.value,
+                          index,
+                        })
                       }
                       type="text"
                       placeholder={
