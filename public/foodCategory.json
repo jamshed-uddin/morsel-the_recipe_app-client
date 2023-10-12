@@ -1,0 +1,51 @@
+[
+  {
+    "id": 2,
+    "name": "Soup",
+    "description": "Soups are liquid dishes typically made by boiling meat, fish, or vegetables in stock or water.",
+    "image": "https://images.unsplash.com/photo-1555949965-aa7f4c7d720e?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8YmFrZXJ5JTIwcHJvZHVjdHN8ZW58MHx8MHx8&ixlib=rb-1.2.1&w=1000&q=80"
+  },
+  {
+    "id": 3,
+    "name": "Salad",
+    "description": "Salads are dishes consisting of a mixture of small pieces of food, usually vegetables.",
+    "image": "https://images.unsplash.com/photo-1601750629244-fa9d4aaf7a4b?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8ZGFpcnklMjBwcm9kdWN0c3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80"
+  },
+  {
+    "id": 4,
+    "name": "Salmon",
+    "description": "Salmon are the fish in a meal.",
+    "image": "https://images.unsplash.com/photo-1565299628277-4c6c5c6e9b9e?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8c2VhJTIwZm9vZHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80"
+  },
+  {
+    "id": 5,
+    "name": "Dessert",
+    "description": "Desserts are sweet dishes typically served at the end of a meal.",
+    "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8ZnJ1aXRzfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80"
+  },
+
+  {
+    "id": 7,
+    "name": "Bread",
+    "description": "Breads are baked goods made from dough.",
+    "image": "https://images.unsplash.com/photo-1541696439-5e6a5c0b1b3e?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmVnZXRhYmxlc3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80"
+  },
+  {
+    "id": 8,
+    "name": "Pasta",
+    "description": "Pasta is a type of food made from flour, water, and sometimes eggs.",
+    "image": "https://images.unsplash.com/photo-1519681393784-d120267933ba?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8ZnJ1aXRzfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80"
+  },
+  {
+    "id": 9,
+    "name": "Rice",
+    "description": "Rice is a cereal grain that is the most important staple food for a large part of the world's human population.",
+    "image": "https://images.unsplash.com/photo-1601750629244-fa9d4aaf7a4b?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8ZGFpcnklMjBwcm9kdWN0c3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80"
+  },
+  {
+    "id": 10,
+    "name": "Snack",
+    "description": "Snacks are small portions of food eaten between meals.",
+    "image": ""
+  }
+]

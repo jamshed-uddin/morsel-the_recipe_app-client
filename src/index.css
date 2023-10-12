@@ -1,0 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Text:wght@600&family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Oswald&family=Poppins:wght@500&family=Raleway:wght@100;200;300;400;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.my-container {
+  @apply lg:w-[90%] md:w-[95%] w-[97%] mx-auto;
+}
+
+/* global input styles */
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.5rem 0.25rem;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  border: 1px solid #4b5365;
+  border-radius: 0.5rem;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  background-color: transparent;
+}
+
+textarea {
+  resize: vertical;
+  overflow-y: auto;
+}
+textarea::-webkit-scrollbar {
+  display: none;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */

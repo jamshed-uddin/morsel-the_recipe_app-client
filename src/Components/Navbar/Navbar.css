@@ -1,0 +1,12 @@
+.link {
+  transition: all 500ms ease;
+}
+
+.link-container:hover > .link {
+  opacity: 0.3;
+}
+
+.link-container:hover > .link:hover {
+  opacity: 1;
+  letter-spacing: normal;
+}

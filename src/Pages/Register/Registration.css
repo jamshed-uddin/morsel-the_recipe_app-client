@@ -1,0 +1,15 @@
+.or {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.or::after,
+.or::before {
+  content: "";
+  display: inline-block;
+  width: 60px;
+  height: 1px;
+  background-color: black;
+  margin: 0 8px;
+}
