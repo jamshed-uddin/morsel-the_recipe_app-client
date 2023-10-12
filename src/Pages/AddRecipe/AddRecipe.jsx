@@ -12,8 +12,8 @@ const initialState = {
   creatorId: "",
   recipeImages: [],
   description: "",
-  ingredients: [],
-  instructions: [],
+  ingredients: [""],
+  instructions: [""],
   serving: 0,
   prepTime: 0,
   cookTime: 0,
@@ -23,12 +23,27 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
+  console.log(action);
   switch (action.type) {
-    case "TEXT-INPUT":
+    case "TEXT_INPUT":
       return {
         ...state,
         [action.name]: action.value,
       };
+    // cases for ingredients, instructions--add/ update/ remove
+    case "ADD_FIELD":
+      return {
+        ...state,
+        [action.name]: [...state[action.name], ""],
+      };
+    case "REMOVE_FIELD":
+      return {
+        ...state,
+        [action.name]: state[action.name].filter(
+          (_, index) => index !== action.index
+        ),
+      };
+
     default:
       return state;
   }
@@ -47,7 +62,7 @@ const AddRecipe = () => {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const imgContainerRef = useRef(null);
 
-  console.log(formState);
+  // console.log(formState);
 
   useEffect(() => {
     // const imgContainer = document.querySelector(".img-container");
@@ -205,7 +220,7 @@ const AddRecipe = () => {
               e.preventDefault();
             }}
           >
-            {/* title */}
+            {/* title ---------------------*/}
             <div>
               <label className={labelStyle} htmlFor="recipeName">
                 Title
@@ -219,7 +234,7 @@ const AddRecipe = () => {
                 value={formState.recipeName}
                 onChange={(e) => {
                   dispatch({
-                    type: "TEXT-INPUT",
+                    type: "TEXT_INPUT",
                     name: e.target.name,
                     value: e.target.value,
                   });
@@ -333,7 +348,7 @@ const AddRecipe = () => {
               </div>
             </div>
 
-            {/* description */}
+            {/* description ----------------------*/}
             <div>
               <label className={labelStyle} htmlFor="description">
                 Description
@@ -347,7 +362,7 @@ const AddRecipe = () => {
                 value={formState.description}
                 onChange={(e) => {
                   dispatch({
-                    type: "TEXT-INPUT",
+                    type: "TEXT_INPUT",
                     name: e.target.name,
                     value: e.target.value,
                   });
@@ -359,7 +374,7 @@ const AddRecipe = () => {
             <div>
               <h4 className={labelStyle}>Ingredients</h4>
               <div>
-                {ingredients.map((ingredient, index) => (
+                {formState.ingredients.map((ingredient, index) => (
                   <div key={index} className="relative mb-1">
                     <input
                       onChange={(e) => {
@@ -374,12 +389,17 @@ const AddRecipe = () => {
                       }
                       key={`ingredient-${index}`}
                     />
+                    {/* btn for removing ingredient field */}
                     <button
-                      onClick={() => {
-                        removeIngredient(index);
-                      }}
+                      onClick={() =>
+                        dispatch({
+                          type: "REMOVE_FIELD",
+                          name: "ingredients",
+                          index,
+                        })
+                      }
                       className="absolute top-3 right-1 opacity-50 hover:opacity-100 "
-                      disabled={ingredients.length === 1}
+                      disabled={formState.ingredients.length === 1}
                     >
                       <CloseOutlinedIcon sx={{ fontSize: 30 }} />
                     </button>
@@ -387,7 +407,9 @@ const AddRecipe = () => {
                 ))}
               </div>
               <button
-                onClick={addIngredient}
+                onClick={() =>
+                  dispatch({ type: "ADD_FIELD", name: "ingredients" })
+                }
                 className="text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3"
               >
                 + Add ingredients
@@ -398,7 +420,7 @@ const AddRecipe = () => {
             <div>
               <h4 className={labelStyle}>Instructions</h4>
               <div>
-                {instructions.map((instruction, index) => (
+                {formState.instructions.map((instruction, index) => (
                   <div key={index} className="relative mb-1">
                     <textarea
                       onChange={(e) =>
@@ -414,11 +436,15 @@ const AddRecipe = () => {
                       key={`instruction-${index}`}
                     />
                     <button
-                      onClick={() => {
-                        removeInstruction(index);
-                      }}
+                      onClick={() =>
+                        dispatch({
+                          type: "REMOVE_FIELD",
+                          name: "instructions",
+                          index,
+                        })
+                      }
                       className="absolute top-3 right-1 opacity-50 hover:opacity-100 "
-                      disabled={instructions.length === 1}
+                      disabled={formState.instructions.length === 1}
                     >
                       <CloseOutlinedIcon sx={{ fontSize: 30 }} />
                     </button>
@@ -426,7 +452,9 @@ const AddRecipe = () => {
                 ))}
               </div>
               <button
-                onClick={addInstruction}
+                onClick={() =>
+                  dispatch({ type: "ADD_FIELD", name: "instructions" })
+                }
                 className="text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80   rounded-xl mt-3"
               >
                 + Add instruction
