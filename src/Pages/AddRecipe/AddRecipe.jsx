@@ -23,6 +23,7 @@ const initialState = {
     hours: "",
     minutes: "",
   },
+  tags: [],
   likedBy: [],
   savedBy: [],
   createdAt: new Date().toString(),
@@ -42,6 +43,7 @@ const reducer = (state, action) => {
         ...state,
         [action.name]: [...state[action.name], ""],
       };
+    // REMOVE_FIELD also used for removing tag
     case "REMOVE_FIELD":
       return {
         ...state,
@@ -58,7 +60,7 @@ const reducer = (state, action) => {
       };
     // serving case
     case "SERVING":
-      if (/^\d{0,2}$/.test(action.value)) {
+      if (/^[0-9]{0,2}$/.test(action.value)) {
         return {
           ...state,
           [action.name]: action.value,
@@ -74,6 +76,12 @@ const reducer = (state, action) => {
         },
       };
 
+    case "TAGS":
+      return {
+        ...state,
+        [action.name]: action.value,
+      };
+
     default:
       return state;
   }
@@ -84,8 +92,7 @@ const AddRecipe = () => {
 
   const [files, setFiles] = useState([]);
   const [imageToPreview, setImageToPreview] = useState(0);
-  const [tagInputValue, setTagInputValue] = useState("");
-  const [tags, setTags] = useState([]);
+  const [tagInputValue, setTagInputValue] = useState(""); //this state used for storing initial user input for tags.
   const [scrollPosition, setScrollPosition] = useState({ left: 0, right: 7 });
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const imgContainerRef = useRef(null);
@@ -146,22 +153,12 @@ const AddRecipe = () => {
   // functions for tags
   const addTags = () => {
     const newTags = tagInputValue.split(",").map((tag) => tag.trim());
-
     const filteredTags = newTags.filter((tag) => tag !== "");
 
     if (filteredTags.length > 0) {
-      setTags([...tags, ...filteredTags]);
+      dispatch({ type: "TAGS", name: "tags", value: filteredTags });
       setTagInputValue("");
     }
-  };
-
-  const handleTagChange = (e) => {
-    setTagInputValue(e.target.value);
-  };
-  const removeTag = (index) => {
-    const updatedTags = [...tags];
-    updatedTags.splice(index, 1);
-    setTags(updatedTags);
   };
 
   //functions for files/images------------
@@ -172,7 +169,6 @@ const AddRecipe = () => {
     );
     setFiles([...files, ...imgArr]);
   };
-
   const scrollToRight = () => {
     if (imgContainerRef.current) {
       imgContainerRef.current.scrollLeft += 80;
@@ -183,7 +179,6 @@ const AddRecipe = () => {
       imgContainerRef.current.scrollLeft -= 80;
     }
   };
-
   const removePreviwedImage = (imageIndex) => {
     const filesToModify = [...files];
     if (imageToPreview !== 0) {
@@ -214,7 +209,7 @@ const AddRecipe = () => {
               e.preventDefault();
             }}
           >
-            {/* title ---------------------*/}
+            {/* title ------------------*/}
             <div>
               <label className={labelStyle} htmlFor="recipeName">
                 Title
@@ -236,7 +231,7 @@ const AddRecipe = () => {
               />
             </div>
 
-            {/* image  input-----------------------*/}
+            {/* image  input----------------*/}
             <div className="space-y-3">
               {/* main preview section */}
 
@@ -342,7 +337,7 @@ const AddRecipe = () => {
               </div>
             </div>
 
-            {/* description ----------------------*/}
+            {/* description ------------------*/}
             <div>
               <label className={labelStyle} htmlFor="description">
                 Description
@@ -364,7 +359,7 @@ const AddRecipe = () => {
               />
             </div>
 
-            {/* ingredients field --------*/}
+            {/* ingredients field ---------------*/}
             <div>
               <h4 className={labelStyle}>Ingredients</h4>
               <div>
@@ -465,19 +460,17 @@ const AddRecipe = () => {
               </button>
             </div>
 
-            {/* serving */}
+            {/* serving ------------------ */}
             <div>
               <label className={labelStyle} htmlFor="serving">
                 Serving
               </label>
               <input
                 className=" "
-                type="number"
+                type="text"
                 name="serving"
                 placeholder="#"
                 id="serving"
-                min="0"
-                max="99"
                 value={formState.serving}
                 onChange={(e) =>
                   dispatch({
@@ -489,7 +482,7 @@ const AddRecipe = () => {
               />
             </div>
 
-            {/* prep time */}
+            {/* prep time ---------------*/}
             <div>
               <h2 className={labelStyle}>Prep time</h2>
               <div className="flex gap-3">
@@ -531,7 +524,7 @@ const AddRecipe = () => {
               </div>
             </div>
 
-            {/* cook time */}
+            {/* cook time ---------------*/}
             <div>
               <h2 className={labelStyle}>
                 Cook time <span className="text-base">(optional)</span>
@@ -575,19 +568,25 @@ const AddRecipe = () => {
               </div>
             </div>
 
-            {/* tags */}
+            {/* tags --------------*/}
             <div>
               <h4 className={labelStyle}>
                 Add tags <span className="text-base">(optional)</span>
               </h4>
               <div className="flex flex-wrap gap-2">
-                {tags.map((tag, index) => (
+                {formState.tags.map((tag, index) => (
                   <div
                     className="flex gap-1 border-[1.3px] border-colorTwo pl-2 py-1 rounded-xl"
                     key={index}
                   >
                     <p className="">{tag}</p>
-                    <button onClick={() => removeTag(index)}>
+
+                    {/* remove tag btn */}
+                    <button
+                      onClick={() =>
+                        dispatch({ type: "REMOVE_FIELD", name: "tags", index })
+                      }
+                    >
                       <CloseOutlinedIcon />
                     </button>
                   </div>
@@ -595,13 +594,13 @@ const AddRecipe = () => {
               </div>
               <div>
                 <input
-                  onChange={handleTagChange}
                   className=""
                   type="text"
                   name="tags"
                   value={tagInputValue}
                   placeholder="e.g., italian,appetizer,quick,easy"
                   id="title"
+                  onChange={(e) => setTagInputValue(e.target.value)}
                 />
                 <button
                   onClick={addTags}
@@ -612,7 +611,7 @@ const AddRecipe = () => {
               </div>
             </div>
 
-            {/* submit button */}
+            {/* submit button ------------*/}
             <div className="text-end">
               <button
                 type="submit"
