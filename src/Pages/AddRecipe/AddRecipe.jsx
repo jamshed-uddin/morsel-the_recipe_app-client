@@ -541,9 +541,17 @@ const AddRecipe = () => {
                   <input
                     className=""
                     type="number"
-                    name="cookHours"
+                    name="hours"
                     placeholder="Hours"
-                    id="cookHours"
+                    value={formState.cookTime.hours}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "TIME",
+                        mainInput: "cookTime",
+                        name: e.target.name,
+                        value: e.target.value,
+                      })
+                    }
                   />
                 </div>
 
@@ -551,9 +559,17 @@ const AddRecipe = () => {
                   <input
                     className=" "
                     type="number"
-                    name="cookMinutes"
+                    name="minutes"
                     placeholder="minutes"
-                    id="cookMinutes"
+                    value={formState.cookTime.minutes}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "TIME",
+                        mainInput: "cookTime",
+                        name: e.target.name,
+                        value: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
