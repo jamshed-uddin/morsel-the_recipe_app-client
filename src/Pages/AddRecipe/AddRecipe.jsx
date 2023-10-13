@@ -15,8 +15,14 @@ const initialState = {
   ingredients: [""],
   instructions: [""],
   serving: "",
-  prepTime: 0,
-  cookTime: 0,
+  prepTime: {
+    hours: "",
+    minutes: "",
+  },
+  cookTime: {
+    hours: "",
+    minutes: "",
+  },
   likedBy: [],
   savedBy: [],
   createdAt: new Date().toString(),
@@ -59,6 +65,14 @@ const reducer = (state, action) => {
         };
       }
       return state;
+    case "TIME":
+      return {
+        ...state,
+        [action.mainInput]: {
+          ...state[action.mainInput],
+          [action.name]: action.value,
+        },
+      };
 
     default:
       return state;
@@ -483,9 +497,17 @@ const AddRecipe = () => {
                   <input
                     className=""
                     type="number"
-                    name="PrepHours"
+                    name="hours"
                     placeholder="Hours"
-                    id="PrepHours"
+                    value={formState.prepTime.hours}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "TIME",
+                        mainInput: "prepTime",
+                        name: e.target.name,
+                        value: e.target.value,
+                      })
+                    }
                   />
                 </div>
 
@@ -493,9 +515,17 @@ const AddRecipe = () => {
                   <input
                     className=" "
                     type="number"
-                    name="prepMinutes"
+                    name="minutes"
                     placeholder="minutes"
-                    id="prepMinutes"
+                    value={formState.prepTime.minutes}
+                    onChange={(e) =>
+                      dispatch({
+                        type: "TIME",
+                        mainInput: "prepTime",
+                        name: e.target.name,
+                        value: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
