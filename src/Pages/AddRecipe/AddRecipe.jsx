@@ -14,7 +14,7 @@ const initialState = {
   description: "",
   ingredients: [""],
   instructions: [""],
-  serving: 0,
+  serving: "",
   prepTime: 0,
   cookTime: 0,
   likedBy: [],
@@ -50,6 +50,15 @@ const reducer = (state, action) => {
           index === action.index ? action.value : value
         ),
       };
+    // serving case
+    case "SERVING":
+      if (/^\d{0,2}$/.test(action.value)) {
+        return {
+          ...state,
+          [action.name]: action.value,
+        };
+      }
+      return state;
 
     default:
       return state;
@@ -67,7 +76,7 @@ const AddRecipe = () => {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const imgContainerRef = useRef(null);
 
-  // console.log(formState);
+  console.log(formState);
 
   useEffect(() => {
     // const imgContainer = document.querySelector(".img-container");
@@ -455,6 +464,14 @@ const AddRecipe = () => {
                 id="serving"
                 min="0"
                 max="99"
+                value={formState.serving}
+                onChange={(e) =>
+                  dispatch({
+                    type: "SERVING",
+                    name: e.target.name,
+                    value: e.target.value,
+                  })
+                }
               />
             </div>
 
@@ -537,7 +554,7 @@ const AddRecipe = () => {
                   type="text"
                   name="tags"
                   value={tagInputValue}
-                  placeholder=""
+                  placeholder="e.g., italian,appetizer,quick,easy"
                   id="title"
                 />
                 <button
