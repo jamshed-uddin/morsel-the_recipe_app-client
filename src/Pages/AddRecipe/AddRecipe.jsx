@@ -37,6 +37,11 @@ const reducer = (state, action) => {
         ...state,
         [action.name]: action.value,
       };
+    case "IMAGES":
+      return {
+        ...state,
+        [action.name]: action.value,
+      };
     // cases for ingredients, instructions--add/ update/ remove
     case "ADD_FIELD":
       return {
@@ -98,9 +103,6 @@ const AddRecipe = () => {
   const [scrollPosition, setScrollPosition] = useState({ left: 0, right: 7 });
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const imgContainerRef = useRef(null);
-
-  console.log("selectedFiles", selectedFiles);
-  console.log("urls", files);
 
   useEffect(() => {
     // const imgContainer = document.querySelector(".img-container");
@@ -175,6 +177,11 @@ const AddRecipe = () => {
     );
 
     setFiles([...files, ...imgArr]);
+    dispatch({
+      type: "IMAGES",
+      name: "recipeImages",
+      value: [...files, ...imgArr],
+    });
   };
 
   const scrollToRight = () => {
@@ -269,7 +276,7 @@ const AddRecipe = () => {
                   className={`w-full h-full text-center flex flex-col justify-center items-center leading-3 text-lg font-semibold ${
                     files.length > 0 && "hidden"
                   }`}
-                  htmlFor="RecipeThumbnail"
+                  htmlFor="recipeImages"
                 >
                   <CameraAltOutlinedIcon />
                   Add photos
@@ -277,7 +284,8 @@ const AddRecipe = () => {
                 <input
                   onChange={filesHandler}
                   className="hidden"
-                  id="RecipeThumbnail"
+                  id="recipeImages"
+                  name="recipeImages"
                   type="file"
                   src=""
                   alt=""
@@ -308,7 +316,7 @@ const AddRecipe = () => {
                     <div className="border-[1px] border-colorTwo md:h-32  md:w-32 w-28 h-28  grid place-items-center rounded-xl">
                       <label
                         className="h-full w-full  flex flex-col justify-center items-center leading-3 text-lg font-semibold"
-                        htmlFor="RecipeThumbnail"
+                        htmlFor="recipeImages"
                       >
                         <CameraAltOutlinedIcon />
                         Add photos
