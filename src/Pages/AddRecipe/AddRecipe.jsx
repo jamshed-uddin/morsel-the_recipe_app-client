@@ -90,14 +90,17 @@ const reducer = (state, action) => {
 const AddRecipe = () => {
   const [formState, dispatch] = useReducer(reducer, initialState);
 
-  const [files, setFiles] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [files, setFiles] = useState([]); //this state blobURLs(converted from fileList) for preview
   const [imageToPreview, setImageToPreview] = useState(0);
+
   const [tagInputValue, setTagInputValue] = useState(""); //this state used for storing initial user input for tags.
   const [scrollPosition, setScrollPosition] = useState({ left: 0, right: 7 });
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const imgContainerRef = useRef(null);
 
-  console.log(formState);
+  console.log("selectedFiles", selectedFiles);
+  console.log("urls", files);
 
   useEffect(() => {
     // const imgContainer = document.querySelector(".img-container");
@@ -162,13 +165,18 @@ const AddRecipe = () => {
   };
 
   //functions for files/images------------
+
   const filesHandler = (e) => {
     const imageObj = e.target.files;
+    setSelectedFiles(Array.from(imageObj));
+    //stored these for uploading to the cloudinary when user submits the form
     const imgArr = Array.from(imageObj).map((image) =>
       URL.createObjectURL(image)
     );
+
     setFiles([...files, ...imgArr]);
   };
+
   const scrollToRight = () => {
     if (imgContainerRef.current) {
       imgContainerRef.current.scrollLeft += 80;
@@ -181,12 +189,17 @@ const AddRecipe = () => {
   };
   const removePreviwedImage = (imageIndex) => {
     const filesToModify = [...files];
+    const selectedFilesToModify = [...selectedFiles];
     if (imageToPreview !== 0) {
       setImageToPreview((prevState) => prevState - 1);
     }
     filesToModify.splice(imageIndex, 1);
+    selectedFilesToModify.splice(imageIndex, 1);
     setFiles(filesToModify);
+    setSelectedFiles(selectedFilesToModify);
   };
+
+  //uploading images to cloudinary when user submit the whole form.Because in that time user gets confirm about the images user wants to keep.Before that user may add or remove files.Uploading to cloudinary whenever user adds a image may affect the cloud storage(free plan).
 
   // styles for input label
   const labelStyle = `block text-colorTwo text-2xl font-semibold `;
