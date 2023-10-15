@@ -48,7 +48,7 @@ const reducer = (state, action) => {
         ...state,
         [action.name]: [...state[action.name], ""],
       };
-    // REMOVE_FIELD also used for removing tag
+    // REMOVE_FIELD  used for removing both tag and ingredient/instrunction field
     case "REMOVE_FIELD":
       return {
         ...state,
@@ -56,6 +56,7 @@ const reducer = (state, action) => {
           (_, index) => index !== action.index
         ),
       };
+    // for updating ingredient/instruction field
     case "UPDATE_FIELD":
       return {
         ...state,
@@ -72,6 +73,7 @@ const reducer = (state, action) => {
         };
       }
       return state;
+    // for cooking and preparing time
     case "TIME":
       return {
         ...state,
@@ -97,8 +99,7 @@ const AddRecipe = () => {
 
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [files, setFiles] = useState([]); //this state blobURLs(converted from fileList) for preview
-  const [imageToPreview, setImageToPreview] = useState(0);
-
+  const [imageToPreview, setImageToPreview] = useState(0); //for setting which to preview from multiple images under the big preview
   const [tagInputValue, setTagInputValue] = useState(""); //this state used for storing initial user input for tags.
   const [scrollPosition, setScrollPosition] = useState({ left: 0, right: 7 });
   const [showScrollBtn, setShowScrollBtn] = useState(false);
@@ -155,6 +156,21 @@ const AddRecipe = () => {
     };
   }, [formState.ingredients, formState.instructions]);
 
+  const handleInputValue = (name, value, index) => {
+    dispatch({
+      type: "UPDATE_FIELD",
+      name: name,
+      value: value,
+      index,
+    });
+    //for better user experience creating another input field when user types in initial input field.
+    //now user can manually add field or just type in current field and new input field will appear.
+    const field = formState[name];
+    if (field[index + 1] === undefined) {
+      dispatch({ type: "ADD_FIELD", name: name });
+    }
+  };
+
   // functions for tags
   const addTags = () => {
     const newTags = tagInputValue.split(",").map((tag) => tag.trim());
@@ -167,10 +183,14 @@ const AddRecipe = () => {
   };
 
   //functions for files/images------------
-
   const filesHandler = (e) => {
     const imageObj = e.target.files;
-    setSelectedFiles(Array.from(imageObj));
+    if (selectedFiles.length === 0) {
+      setSelectedFiles(Array.from(imageObj));
+    } else {
+      setSelectedFiles((prev) => [...prev, ...Array.from(imageObj)]);
+    }
+
     //stored these for uploading to the cloudinary when user submits the form
     const imgArr = Array.from(imageObj).map((image) =>
       URL.createObjectURL(image)
@@ -183,7 +203,6 @@ const AddRecipe = () => {
       value: [...files, ...imgArr],
     });
   };
-
   const scrollToRight = () => {
     if (imgContainerRef.current) {
       imgContainerRef.current.scrollLeft += 80;
@@ -388,15 +407,11 @@ const AddRecipe = () => {
                   <div key={index} className="relative mb-1">
                     <input
                       onChange={(e) =>
-                        dispatch({
-                          type: "UPDATE_FIELD",
-                          name: "ingredients",
-                          value: e.target.value,
-                          index,
-                        })
+                        handleInputValue(e.target.name, e.target.value, index)
                       }
                       type="text"
                       value={ingredient}
+                      name="ingredients"
                       placeholder={
                         index === 0
                           ? "e.g. 2 cups flour, sifted"
@@ -421,6 +436,8 @@ const AddRecipe = () => {
                   </div>
                 ))}
               </div>
+
+              {/* button for adding  new ingredient field */}
               <button
                 onClick={() =>
                   dispatch({ type: "ADD_FIELD", name: "ingredients" })
@@ -439,12 +456,7 @@ const AddRecipe = () => {
                   <div key={index} className="relative mb-1">
                     <textarea
                       onChange={(e) =>
-                        dispatch({
-                          type: "UPDATE_FIELD",
-                          name: "instructions",
-                          value: e.target.value,
-                          index,
-                        })
+                        handleInputValue(e.target.name, e.target.value, index)
                       }
                       type="text"
                       placeholder={
@@ -453,8 +465,10 @@ const AddRecipe = () => {
                           : "Add another instruction"
                       }
                       value={instruction}
+                      name="instructions"
                       key={`instruction-${index}`}
                     />
+                    {/* button for removing Instructions field */}
                     <button
                       onClick={() =>
                         dispatch({
@@ -471,6 +485,7 @@ const AddRecipe = () => {
                   </div>
                 ))}
               </div>
+              {/* button for adding  new Instructions field */}
               <button
                 onClick={() =>
                   dispatch({ type: "ADD_FIELD", name: "instructions" })
