@@ -30,7 +30,6 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
-  console.log(action);
   switch (action.type) {
     case "TEXT_INPUT":
       return {
@@ -163,11 +162,21 @@ const AddRecipe = () => {
       value: value,
       index,
     });
+
     //for better user experience creating another input field when user types in initial input field.
     //now user can manually add field or just type in current field and new input field will appear.
-    const field = formState[name];
+    const field = formState[name]; //got the ingredients/instructions array..
     if (field[index + 1] === undefined) {
       dispatch({ type: "ADD_FIELD", name: name });
+    }
+
+    //following condition to remove newly created field when user emptys the current field
+    if (value === "") {
+      dispatch({
+        type: "REMOVE_FIELD",
+        name: name,
+        index: index + 1,
+      });
     }
   };
 
