@@ -6,6 +6,8 @@ import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import "./AddRecipe.css";
 
+import axios from "axios";
+
 const initialState = {
   recipeName: "",
   creatorName: "",
@@ -24,6 +26,7 @@ const initialState = {
     minutes: "",
   },
   tags: [],
+  status: "pending",
   likedBy: [],
   savedBy: [],
   createdAt: new Date().toString(),
@@ -95,11 +98,11 @@ const reducer = (state, action) => {
 
 const AddRecipe = () => {
   const [formState, dispatch] = useReducer(reducer, initialState);
-
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]); //original array of files
   const [files, setFiles] = useState([]); //this state blobURLs(converted from fileList) for preview
   const [imageToPreview, setImageToPreview] = useState(0); //for setting which to preview from multiple images under the big preview
   const [tagInputValue, setTagInputValue] = useState(""); //this state used for storing initial user input for tags.
+  const [loading, setLoading] = useState(false);
   const [scrollPosition, setScrollPosition] = useState({ left: 0, right: 7 });
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const imgContainerRef = useRef(null);
@@ -206,11 +209,11 @@ const AddRecipe = () => {
     );
 
     setFiles([...files, ...imgArr]);
-    dispatch({
-      type: "IMAGES",
-      name: "recipeImages",
-      value: [...files, ...imgArr],
-    });
+    // dispatch({
+    //   type: "IMAGES",
+    //   name: "recipeImages",
+    //   value: [...files, ...imgArr],
+    // });
   };
   const scrollToRight = () => {
     if (imgContainerRef.current) {
@@ -236,6 +239,55 @@ const AddRecipe = () => {
 
   //uploading images to cloudinary when user submit the whole form.Because in that time user gets confirm about the images user wants to keep.Before that user may add or remove files.Uploading to cloudinary whenever user adds a image may affect the cloud storage(free plan).
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (selectedFiles) {
+      const uploader = selectedFiles.map(async (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
+        try {
+          const response = await axios.post(
+            `https://api.cloudinary.com/v1_1/${
+              import.meta.env.VITE_CLOUD_NAME
+            }/image/upload`,
+            formData,
+            {
+              headers: { "X-Requested-With": "XMLHttpRequest" },
+            }
+          );
+
+          const imgurl = response.data.secure_url;
+          console.log(imgurl);
+          return imgurl;
+        } catch (error) {
+          console.log(error);
+          return null;
+        }
+      });
+
+      try {
+        Promise.all(uploader).then((imageURLs) => {
+          console.log(imageURLs);
+          if (imageURLs) {
+            dispatch({
+              type: "IMAGES",
+              name: "recipeImages",
+              value: [...formState["recipeImages"], ...imageURLs],
+            });
+          }
+
+          console.log(formState);
+          setLoading(false);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
   // styles for input label
   const labelStyle = `block text-colorTwo text-2xl font-semibold `;
   return (
@@ -251,12 +303,7 @@ const AddRecipe = () => {
         </div>
         {/* the recipe form  */}
         <div className="md:w-3/4 pt-4  mx-auto h-full">
-          <form
-            className="space-y-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
-          >
+          <form className="space-y-4" onSubmit={handleSubmit}>
             {/* title ------------------*/}
             <div>
               <label className={labelStyle} htmlFor="recipeName">
@@ -282,7 +329,6 @@ const AddRecipe = () => {
             {/* image  input----------------*/}
             <div className="space-y-3">
               {/* main preview section */}
-
               <div
                 className={`border-[1px] border-colorTwo rounded-xl w-full mx-auto h-60 md:h-80 flex items-center justify-center overflow-hidden select-none relative`}
               >
@@ -315,8 +361,6 @@ const AddRecipe = () => {
                   id="recipeImages"
                   name="recipeImages"
                   type="file"
-                  src=""
-                  alt=""
                   multiple
                 />
               </div>
