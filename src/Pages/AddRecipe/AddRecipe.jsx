@@ -77,13 +77,16 @@ const reducer = (state, action) => {
       return state;
     // for cooking and preparing time
     case "TIME":
-      return {
-        ...state,
-        [action.mainInput]: {
-          ...state[action.mainInput],
-          [action.name]: action.value,
-        },
-      };
+      if (/^[1-9]\d*$|^$/.test(action.value)) {
+        return {
+          ...state,
+          [action.mainInput]: {
+            ...state[action.mainInput],
+            [action.name]: action.value,
+          },
+        };
+      }
+      return state;
 
     case "TAGS":
       return {
@@ -105,7 +108,14 @@ const AddRecipe = () => {
   const [loading, setLoading] = useState(false);
   const [scrollPosition, setScrollPosition] = useState({ left: 0, right: 7 });
   const [showScrollBtn, setShowScrollBtn] = useState(false);
-  const imgContainerRef = useRef(null);
+  const imgContainerRef = useRef(null); //used this to make a image slider
+  const [errorsObj, setErrorsObj] = useState({
+    recipeName: "",
+    ingredients: "",
+    instructions: "",
+    serving: "",
+    prepTime: "",
+  });
 
   useEffect(() => {
     // const imgContainer = document.querySelector(".img-container");
@@ -239,8 +249,46 @@ const AddRecipe = () => {
 
   //uploading images to cloudinary when user submit the whole form.Because in that time user gets confirm about the images user wants to keep.Before that user may add or remove files.Uploading to cloudinary whenever user adds a image may affect the cloud storage(free plan).
 
+  const inputValidationHandler = (form) => {
+    const errors = {};
+    if (!form.recipeName.trim()) {
+      errors.recipeName = true;
+      console.log("false");
+    }
+    if (form.ingredients.some((ingredient) => !ingredient.trim())) {
+      errors.ingredients = true;
+    }
+    if (form.instructions.some((instruction) => !instruction.trim())) {
+      errors.instructions = true;
+    }
+    if (Object.values(form.prepTime).every((value) => !value)) {
+      errors.prepTime = true;
+    }
+    if (!form.serving.trim()) {
+      errors.serving = true;
+    }
+    console.log(errors);
+    setErrorsObj(errors);
+  };
+
+  //error component
+  // eslint-disable-next-line react/prop-types
+  function ErrorMessage({ fieldName, message }) {
+    return message ? (
+      <p className="text-red-600  mr-1">{`${fieldName} is required`}</p>
+    ) : null;
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    inputValidationHandler(formState);
+    console.log(errorsObj);
+    if (Object.keys(errorsObj).length > 0) {
+      return;
+    } else {
+      setErrorsObj({});
+    }
+
     setLoading(true);
 
     if (selectedFiles) {
@@ -278,14 +326,14 @@ const AddRecipe = () => {
               value: [...formState["recipeImages"], ...imageURLs],
             });
           }
-
-          console.log(formState);
-          setLoading(false);
         });
       } catch (error) {
         console.log(error);
       }
     }
+
+    console.log(formState);
+    setLoading(false);
   };
 
   // styles for input label
@@ -306,9 +354,19 @@ const AddRecipe = () => {
           <form className="space-y-4" onSubmit={handleSubmit}>
             {/* title ------------------*/}
             <div>
-              <label className={labelStyle} htmlFor="recipeName">
-                Title
-              </label>
+              <div className="flex justify-between items-end">
+                <label className={labelStyle} htmlFor="recipeName">
+                  Title
+                </label>
+                {formState.recipeName ? (
+                  ""
+                ) : (
+                  <ErrorMessage
+                    message={errorsObj.recipeName}
+                    fieldName={"Title"}
+                  />
+                )}
+              </div>
               <input
                 className=""
                 type="text"
@@ -454,7 +512,17 @@ const AddRecipe = () => {
 
             {/* ingredients field ---------------*/}
             <div>
-              <h4 className={labelStyle}>Ingredients</h4>
+              <div className="flex justify-between items-end">
+                <h4 className={labelStyle}>Ingredients</h4>
+                {formState.ingredients[0] ? (
+                  ""
+                ) : (
+                  <ErrorMessage
+                    message={errorsObj.ingredients}
+                    fieldName={"Ingredients"}
+                  />
+                )}
+              </div>
               <div>
                 {formState.ingredients.map((ingredient, index) => (
                   <div key={index} className="relative mb-1">
@@ -503,7 +571,17 @@ const AddRecipe = () => {
 
             {/* Instructions field ----------------*/}
             <div>
-              <h4 className={labelStyle}>Instructions</h4>
+              <div className="flex justify-between items-end">
+                <h4 className={labelStyle}>Instructions</h4>
+                {formState.instructions[0] ? (
+                  ""
+                ) : (
+                  <ErrorMessage
+                    message={errorsObj.instructions}
+                    fieldName={"Instructions"}
+                  />
+                )}
+              </div>
               <div>
                 {formState.instructions.map((instruction, index) => (
                   <div key={index} className="relative mb-1">
@@ -551,9 +629,19 @@ const AddRecipe = () => {
 
             {/* serving ------------------ */}
             <div>
-              <label className={labelStyle} htmlFor="serving">
-                Serving
-              </label>
+              <div className="flex justify-between items-end">
+                <label className={labelStyle} htmlFor="serving">
+                  Serving
+                </label>
+                {formState.serving[0] ? (
+                  ""
+                ) : (
+                  <ErrorMessage
+                    message={errorsObj.serving}
+                    fieldName={"Serving"}
+                  />
+                )}
+              </div>
               <input
                 className=" "
                 type="text"
@@ -573,12 +661,22 @@ const AddRecipe = () => {
 
             {/* prep time ---------------*/}
             <div>
-              <h2 className={labelStyle}>Prep time</h2>
+              <div className="flex justify-between items-end">
+                <h2 className={labelStyle}>Prep time</h2>
+                {Object.values(formState.prepTime).some((value) => value) ? (
+                  ""
+                ) : (
+                  <ErrorMessage
+                    message={errorsObj.prepTime}
+                    fieldName={"Prep time"}
+                  />
+                )}
+              </div>
               <div className="flex gap-3">
                 <div className="flex-grow ">
                   <input
                     className=""
-                    type="number"
+                    type="text"
                     name="hours"
                     placeholder="Hours"
                     value={formState.prepTime.hours}
@@ -596,7 +694,7 @@ const AddRecipe = () => {
                 <div className="flex-grow ">
                   <input
                     className=" "
-                    type="number"
+                    type="text"
                     name="minutes"
                     placeholder="minutes"
                     value={formState.prepTime.minutes}
@@ -622,7 +720,7 @@ const AddRecipe = () => {
                 <div className="flex-grow ">
                   <input
                     className=""
-                    type="number"
+                    type="text"
                     name="hours"
                     placeholder="Hours"
                     value={formState.cookTime.hours}
@@ -640,7 +738,7 @@ const AddRecipe = () => {
                 <div className="flex-grow ">
                   <input
                     className=" "
-                    type="number"
+                    type="text"
                     name="minutes"
                     placeholder="minutes"
                     value={formState.cookTime.minutes}
@@ -704,7 +802,10 @@ const AddRecipe = () => {
             <div className="text-end">
               <button
                 type="submit"
-                className="text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3"
+                className={`text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3 ${
+                  loading && "bg-opacity-60"
+                }`}
+                disabled={loading}
               >
                 Submit recipe
               </button>
