@@ -109,6 +109,7 @@ const AddRecipe = () => {
   const [scrollPosition, setScrollPosition] = useState({ left: 0, right: 7 });
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const imgContainerRef = useRef(null); //used this to make a image slider
+  //state for showing specific error message
   const [errorsObj, setErrorsObj] = useState({
     recipeName: "",
     ingredients: "",
@@ -116,7 +117,7 @@ const AddRecipe = () => {
     serving: "",
     prepTime: "",
   });
-
+  console.log("error state", errorsObj);
   useEffect(() => {
     // const imgContainer = document.querySelector(".img-container");
     const imgContainer = imgContainerRef.current;
@@ -250,43 +251,54 @@ const AddRecipe = () => {
   //uploading images to cloudinary when user submit the whole form.Because in that time user gets confirm about the images user wants to keep.Before that user may add or remove files.Uploading to cloudinary whenever user adds a image may affect the cloud storage(free plan).
 
   const inputValidationHandler = (form) => {
-    const errors = {};
+    const newErrorObj = { ...errorsObj };
+
     if (!form.recipeName.trim()) {
-      errors.recipeName = true;
-      console.log("false");
+      newErrorObj.recipeName = "Title is required";
+    } else {
+      newErrorObj.recipeName = "";
     }
-    if (form.ingredients.some((ingredient) => !ingredient.trim())) {
-      errors.ingredients = true;
+    if (form.ingredients.every((ingredient) => !ingredient.trim())) {
+      newErrorObj.ingredients = "Ingredients is required";
+    } else {
+      newErrorObj.ingredients = "";
     }
-    if (form.instructions.some((instruction) => !instruction.trim())) {
-      errors.instructions = true;
+    if (form.instructions.every((instruction) => !instruction.trim())) {
+      newErrorObj.instructions = "Instructions is required";
+    } else {
+      newErrorObj.instructions = "";
     }
     if (Object.values(form.prepTime).every((value) => !value)) {
-      errors.prepTime = true;
+      newErrorObj.prepTime = "Prep time is required";
+    } else {
+      newErrorObj.prepTime = "";
     }
-    if (!form.serving.trim()) {
-      errors.serving = true;
+    if (!form.serving) {
+      newErrorObj.serving = "Serving is required";
+    } else {
+      newErrorObj.serving = "";
     }
-    console.log(errors);
-    setErrorsObj(errors);
+
+    setErrorsObj(newErrorObj);
+    return newErrorObj;
+    // console.log(newErrorObj);
   };
 
   //error component
   // eslint-disable-next-line react/prop-types
-  function ErrorMessage({ fieldName, message }) {
+  function ErrorMessage({ message }) {
     return message ? (
-      <p className="text-red-600  mr-1">{`${fieldName} is required`}</p>
+      <p className="text-red-600  mr-1">{`${message}`}</p>
     ) : null;
   }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    inputValidationHandler(formState);
-    console.log(errorsObj);
-    if (Object.keys(errorsObj).length > 0) {
+    const errorMessages = inputValidationHandler(formState);
+
+    if (Object.values(errorMessages).some((value) => value)) {
+      console.log("error detected");
       return;
-    } else {
-      setErrorsObj({});
     }
 
     setLoading(true);
@@ -308,7 +320,7 @@ const AddRecipe = () => {
           );
 
           const imgurl = response.data.secure_url;
-          console.log(imgurl);
+
           return imgurl;
         } catch (error) {
           console.log(error);
@@ -318,7 +330,6 @@ const AddRecipe = () => {
 
       try {
         Promise.all(uploader).then((imageURLs) => {
-          console.log(imageURLs);
           if (imageURLs) {
             dispatch({
               type: "IMAGES",
@@ -361,10 +372,7 @@ const AddRecipe = () => {
                 {formState.recipeName ? (
                   ""
                 ) : (
-                  <ErrorMessage
-                    message={errorsObj.recipeName}
-                    fieldName={"Title"}
-                  />
+                  <ErrorMessage message={errorsObj.recipeName} />
                 )}
               </div>
               <input
@@ -517,10 +525,7 @@ const AddRecipe = () => {
                 {formState.ingredients[0] ? (
                   ""
                 ) : (
-                  <ErrorMessage
-                    message={errorsObj.ingredients}
-                    fieldName={"Ingredients"}
-                  />
+                  <ErrorMessage message={errorsObj.ingredients} />
                 )}
               </div>
               <div>
@@ -576,10 +581,7 @@ const AddRecipe = () => {
                 {formState.instructions[0] ? (
                   ""
                 ) : (
-                  <ErrorMessage
-                    message={errorsObj.instructions}
-                    fieldName={"Instructions"}
-                  />
+                  <ErrorMessage message={errorsObj.instructions} />
                 )}
               </div>
               <div>
@@ -636,10 +638,7 @@ const AddRecipe = () => {
                 {formState.serving[0] ? (
                   ""
                 ) : (
-                  <ErrorMessage
-                    message={errorsObj.serving}
-                    fieldName={"Serving"}
-                  />
+                  <ErrorMessage message={errorsObj.serving} />
                 )}
               </div>
               <input
@@ -666,10 +665,7 @@ const AddRecipe = () => {
                 {Object.values(formState.prepTime).some((value) => value) ? (
                   ""
                 ) : (
-                  <ErrorMessage
-                    message={errorsObj.prepTime}
-                    fieldName={"Prep time"}
-                  />
+                  <ErrorMessage message={errorsObj.prepTime} />
                 )}
               </div>
               <div className="flex gap-3">
