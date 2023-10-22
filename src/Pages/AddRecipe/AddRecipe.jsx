@@ -169,6 +169,7 @@ const AddRecipe = () => {
     };
   }, [formState.ingredients, formState.instructions]);
 
+  // handled input value of ingredients and instructions
   const handleInputValue = (name, value, index) => {
     dispatch({
       type: "UPDATE_FIELD",

@@ -11,6 +11,8 @@ import BlogsPage from "./Pages/BlogsPage/BlogsPage.jsx";
 import AccountPage from "./Pages/AccountPage/AccountPage.jsx";
 import Registration from "./Pages/Register/Registration.jsx";
 import AddRecipe from "./Pages/AddRecipe/AddRecipe.jsx";
+import AddBlog from "./Pages/AddBlog/AddBlog.jsx";
+import BlogBody from "./Pages/AddBlog/BlogBody.jsx";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +40,10 @@ const router = createBrowserRouter([
         path: "addrecipe",
         element: <AddRecipe></AddRecipe>,
       },
+      {
+        path: "addblog",
+        element: <AddBlog></AddBlog>,
+      },
     ],
   },
   {
@@ -47,6 +53,10 @@ const router = createBrowserRouter([
   {
     path: "register",
     element: <Registration></Registration>,
+  },
+  {
+    path: "blogBody",
+    element: <BlogBody></BlogBody>,
   },
 ]);
 

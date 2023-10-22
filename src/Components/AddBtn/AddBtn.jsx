@@ -43,7 +43,7 @@ const AddBtn = () => {
           <Link to={"/addrecipe"} className="cursor-pointer px-3 rounded-lg">
             <LoupeOutlinedIcon sx={{ fontSize: 30 }} /> Create new recipe
           </Link>
-          <Link className="cursor-pointer px-3 rounded-lg">
+          <Link to={"/addblog"} className="cursor-pointer px-3 rounded-lg">
             <EditNoteOutlinedIcon sx={{ fontSize: 35 }} />
             Create a blog
           </Link>

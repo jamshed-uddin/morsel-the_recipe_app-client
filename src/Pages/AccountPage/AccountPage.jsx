@@ -53,7 +53,7 @@ const AccountPage = () => {
           >
             <button
               onClick={() => setShowSettings((prev) => !prev)}
-              className={`  rounded-full transition-all duration-700 ${
+              className={`  rounded-full transition-all duration-500 ${
                 showSettings && "rotate-45"
               }`}
             >
