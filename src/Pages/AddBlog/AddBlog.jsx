@@ -9,15 +9,13 @@ const AddBlog = () => {
   const [value, setValue] = useState(null);
   const editorRef = useRef(null);
   const [cursorIndex, setCursorIndex] = useState(0);
-  console.log(value);
+  // console.log(value);
   const toolbarOptions = [
-    ["bold", "italic", "underline", "strike"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    [{ script: "sub" }, { script: "super" }],
     [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    ["link"],
+    ["bold", "italic", "underline"],
+    [{ list: "ordered" }, { list: "bullet" }],
 
-    [{ align: [] }],
+    ["link"],
   ];
 
   // function to get editor cursor index/position and it used in inserEmbed to insert image.
@@ -97,25 +95,56 @@ const AddBlog = () => {
     };
   }, [cursorIndex]);
 
-  //   // This is called when the "Insert Image" dialog is used
-  //   const editor = editorRef.current.getEditor();
-  //   const range = editorRef.current.getEditor().getSelection();
-  //   const input = document.createElement("input");
-  //   input.setAttribute("type", "file");
-  //   input.setAttribute("accept", "image/*");
-  //   input.click();
-  //   input.onchange = () => {
-  //     const file = input.files[0];
-  //     if (file) {
-  //       console.log(file);
-  //       const url = URL.createObjectURL(file);
+  const sanitizeLink = (url) => {
+    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+      const newUrl = "https://" + url;
+      return newUrl;
+    } else {
+      return url;
+    }
+  };
+  useEffect(() => {
+    const editor = editorRef.current.getEditor();
 
-  //       if (range) {
-  //         editor.insertEmbed(range.index, "image", url, Quill.sources.USER);
-  //       }
-  //     }
-  //   };
-  // };
+    // console.log(cursorIndex);
+
+    editor.on("text-change", (delta, oldDelta, source) => {
+      console.log(delta);
+      console.log(oldDelta.ops);
+      if (source === "user") {
+        const currentContents = editor.getContents();
+        const operations = currentContents.ops;
+        console.log(operations);
+        // console.log(delta);
+
+        const updatedDelta = operations.map((op, index) => {
+          console.log(op, "index", index);
+          if (op.attributes && op.attributes.link) {
+            const editorCursorIndex = currentContents.ops.indexOf(op);
+            console.log("editor", editorCursorIndex);
+            if (editorCursorIndex === index) {
+              const linkURL = op.attributes.link;
+
+              const validLinkURL = sanitizeLink(linkURL);
+              console.log(linkURL);
+              return {
+                ...op,
+                attributes: {
+                  ...op.attributes,
+                  link: validLinkURL,
+                },
+              };
+            }
+
+            // editor.insertEmbed(cursorIndex, "link", validLinkURL);
+          } else return op;
+        });
+
+        console.log([...updatedDelta, { insert: "\n" }]);
+        editor.setContents([...updatedDelta, { insert: "\n" }], "api");
+      }
+    });
+  }, []);
 
   const handleSave = () => {
     const editor = editorRef.current.getEditor();
