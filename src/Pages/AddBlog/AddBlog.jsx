@@ -1,3 +1,4 @@
+import axios from "axios";
 import "quill/dist/quill.snow.css";
 import { useEffect, useRef, useState } from "react";
 import ReactQuill from "react-quill";
@@ -41,9 +42,7 @@ const AddBlog = () => {
 
   useEffect(() => {
     const insertImage = (url) => {
-      console.log("insimg", cursorIndex);
       const editor = editorRef.current.getEditor();
-      console.log(url);
       editor.insertEmbed(cursorIndex, "image", url);
     };
 
@@ -64,11 +63,26 @@ const AddBlog = () => {
     imageInput.addEventListener("change", (e) => {
       const files = e.target.files;
       if (files) {
-        // const url = URL.createObjectURL(file);
-        const imageURL = Array.from(files).map((file) =>
-          URL.createObjectURL(file)
-        );
-        insertImage(imageURL[0]);
+        console.log(files);
+        // const url = URL.createObjectURL(files[0]);
+        const imageData = new FormData();
+        imageData.append("file", files[0]);
+        imageData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
+        axios
+          .post(
+            `https://api.cloudinary.com/v1_1/${
+              import.meta.env.VITE_CLOUD_NAME
+            }/image/upload`,
+            imageData
+          )
+          .then((response) => {
+            if (response) {
+              const imageUrl = response.data.secure_url;
+              insertImage(imageUrl);
+            }
+            console.log(response);
+          })
+          .catch((error) => console.log(error));
       }
     });
 
