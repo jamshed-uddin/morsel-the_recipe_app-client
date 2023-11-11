@@ -4,11 +4,16 @@ import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import GoogleIcon from "@mui/icons-material/Google";
 import "./Login.css";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import useAuthContext from "../../hooks/useAuthContext";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const { loading, setLoading, userLogin } = useAuthContext();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -37,6 +42,23 @@ const Login = () => {
     }
 
     console.log(formData.email, formData.password);
+
+    userLogin(formData.email, formData.password)
+      .then((data) => {
+        if (data.user) {
+          navigate(from, { replace: true });
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+
+        if (
+          error.message === "Firebase: Error (auth/invalid-login-credentials)."
+        ) {
+          setError("Invalid password!");
+          setLoading((prev) => !prev);
+        }
+      });
 
     setError("");
   };
@@ -105,7 +127,9 @@ const Login = () => {
               <div>
                 <button
                   type="submit"
-                  className="text-white font-semibold bg-colorOne  rounded-lg px-3 py-1 mt-3"
+                  className={`text-white font-semibold bg-colorOne  rounded-lg px-3 py-1 mt-3 ${
+                    loading && "disabled"
+                  }`}
                 >
                   SIGN IN
                 </button>
