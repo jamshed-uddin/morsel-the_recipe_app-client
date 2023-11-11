@@ -13,6 +13,7 @@ import Registration from "./Pages/Register/Registration.jsx";
 import AddRecipe from "./Pages/AddRecipe/AddRecipe.jsx";
 import AddBlog from "./Pages/AddBlog/AddBlog.jsx";
 import BlogBody from "./Pages/AddBlog/BlogBody.jsx";
+import AuthProvider from "./providers/AuthProvider.jsx";
 
 const router = createBrowserRouter([
   {
@@ -62,6 +63,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router}></RouterProvider>
+    <AuthProvider>
+      <RouterProvider router={router}></RouterProvider>
+    </AuthProvider>
   </React.StrictMode>
 );

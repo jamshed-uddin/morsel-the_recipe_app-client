@@ -17,6 +17,7 @@
     "@mui/material": "^5.14.11",
     "axios": "^1.5.1",
     "dompurify": "^3.0.6",
+    "firebase": "^10.6.0",
     "html-react-parser": "^4.2.7",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.1",

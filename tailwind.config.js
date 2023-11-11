@@ -6,9 +6,11 @@ export default {
       colors: {
         colorOne: "#F31559",
         colorTwo: "#4B5365",
-        bgColor: "#efe8e3",
+        bgColor: "#fdfbf8",
       },
     },
   },
   plugins: [],
 };
+
+// bgColor: "#efe8e3",
