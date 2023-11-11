@@ -2,14 +2,15 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import GoogleIcon from "@mui/icons-material/Google";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import "./Registration.css";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../providers/AuthProvider";
+
+import useAuthContext from "../../hooks/useAuthContext";
 
 const Registration = () => {
-  const { user } = useContext(AuthContext);
-  console.log(user);
+  const { loading, setLoading, registerUser } = useAuthContext();
+  console.log(loading);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
@@ -54,6 +55,20 @@ const Registration = () => {
     }
 
     console.log(formData.name, formData.email, formData.password);
+    registerUser(formData.email, formData.password)
+      .then((data) => {
+        if (data.user) console.log(data.user);
+        console.log("user created successfully");
+        //TODO: redirect to the required page
+      })
+      .catch((error) => {
+        console.log(error.message);
+
+        if (error.message === "Firebase: Error (auth/email-already-in-use).") {
+          setError("User with this email already exist!");
+          setLoading((prev) => !prev);
+        }
+      });
 
     setError("");
   };
@@ -163,7 +178,9 @@ const Registration = () => {
               <div>
                 <button
                   type="submit"
-                  className="text-white font-semibold bg-colorOne  rounded-lg px-3 py-1 mt-3 uppercase"
+                  className={`text-white font-semibold bg-colorOne  rounded-lg px-3 py-1 mt-3 uppercase ${
+                    loading ? "disabled" : ""
+                  }`}
                 >
                   SIGN UP
                 </button>

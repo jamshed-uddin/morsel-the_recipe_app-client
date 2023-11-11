@@ -13,3 +13,8 @@
   background-color: black;
   margin: 0 8px;
 }
+
+.disabled {
+  opacity: 70%;
+  cursor: not-allowed;
+}
