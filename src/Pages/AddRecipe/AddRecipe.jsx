@@ -10,8 +10,12 @@ import axios from "axios";
 
 const initialState = {
   recipeName: "",
-  creatorName: "",
-  creatorId: "",
+  creatorInfo: {
+    creatorName: "",
+    creatorId: "",
+    creatorEmail: "",
+    creatorPhoto: "",
+  },
   recipeImages: [],
   description: "",
   ingredients: [""],
@@ -71,7 +75,7 @@ const reducer = (state, action) => {
       if (/^[0-9]{0,2}$/.test(action.value)) {
         return {
           ...state,
-          [action.name]: action.value,
+          [action.name]: parseInt(action.value),
         };
       }
       return state;
@@ -82,11 +86,19 @@ const reducer = (state, action) => {
           ...state,
           [action.mainInput]: {
             ...state[action.mainInput],
-            [action.name]: action.value,
+            [action.name]: parseInt(action.value),
           },
         };
       }
       return state;
+    case "CREATOR-INFO":
+      return {
+        ...state,
+        [action.mainInput]: {
+          ...state[action.mainInput],
+          [action.name]: action.value,
+        },
+      };
 
     case "TAGS":
       return {
@@ -507,7 +519,7 @@ const AddRecipe = () => {
                 type="text"
                 name="description"
                 placeholder="Intruduce your recipe,add note,cooking tips,serving suggestions,etc..."
-                id="title"
+                id="description"
                 value={formState.description}
                 onChange={(e) => {
                   dispatch({
@@ -783,7 +795,7 @@ const AddRecipe = () => {
                   name="tags"
                   value={tagInputValue}
                   placeholder="e.g., italian,appetizer,quick,easy"
-                  id="title"
+                  id="tags"
                   onChange={(e) => setTagInputValue(e.target.value)}
                 />
                 <button
