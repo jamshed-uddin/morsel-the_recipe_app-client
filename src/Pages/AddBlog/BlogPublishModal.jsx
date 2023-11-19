@@ -11,7 +11,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
   const [tagInputValue, setTagInputValue] = React.useState("");
-  console.log(state);
 
   // functions for tags
   const addTags = () => {
@@ -145,3 +144,54 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
 };
 
 export default BlogPublishModal;
+
+/*
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+const MyEditor = () => {
+  const modules = {
+    // configure modules as needed
+    // ...
+  };
+
+  const formats = [
+    // configure formats as needed
+    // ...
+  ];
+
+  // State to store the editor content
+  const [editorContent, setEditorContent] = React.useState('');
+
+  // Function to handle changes in the editor content
+  const handleEditorChange = (content) => {
+    setEditorContent(content);
+  };
+
+  // Function to extract img tags from HTML content
+  const extractImages = () => {
+    const doc = new DOMParser().parseFromString(editorContent, 'text/html');
+    const images = doc.querySelectorAll('img');
+
+    // Do something with the img elements
+    images.forEach((img) => {
+      console.log(img.src);
+    });
+  };
+
+  return (
+    <div>
+      <ReactQuill
+        value={editorContent}
+        onChange={handleEditorChange}
+        modules={modules}
+        formats={formats}
+      />
+      <button onClick={extractImages}>Extract Images</button>
+    </div>
+  );
+};
+
+export default MyEditor;
+
+*/

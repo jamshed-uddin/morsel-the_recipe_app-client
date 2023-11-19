@@ -44,3 +44,8 @@
   font-size: 16px;
   left: 8px;
 }
+
+.ql-snow .ql-editor img {
+  max-width: 80%;
+  margin: 0 auto;
+}

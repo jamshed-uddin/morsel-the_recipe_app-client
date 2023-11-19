@@ -7,7 +7,8 @@ import "./AddBlog.css";
 import BlogPublishModal from "./BlogPublishModal";
 
 const initialState = {
-  title: "omlete",
+  title: "",
+  previewImage: "",
   creatorInfo: {
     creatorName: "Uweuewueueeu Osas",
     creatorId: "",
@@ -60,7 +61,12 @@ const AddBlog = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [modalOpen, setModalOpen] = useState(false);
   console.log(value);
-  console.log(state);
+
+  // console.log(state);
+  // const editor = editorRef.current?.getEditor();
+  // const delta = editor.getContents();
+  // console.log(delta);
+
   const toolbarOptions = [
     [{ header: [1, 2, 3, 4, false] }],
     ["bold", "italic", "underline"],
@@ -77,19 +83,77 @@ const AddBlog = () => {
     }
   };
 
+  //editor value onchange function
   const handleChange = (html) => {
     setValue(html);
     dispatch({ type: "BLOG_BODY", name: "blogBody", value: html });
   };
 
+  //function for opening publishing modal
   const handlePublishModalOpen = () => {
     setModalOpen((prevState) => !prevState);
   };
 
+  // function for showing alert before user reload or goes back while changes made in form.
   useEffect(() => {
-    const insertImage = (url) => {
+    if (state.title.length === 0 && state.blogBody.length === 0) {
+      return;
+    }
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      const confirmationMessage = "Are you sure you want to reload this page?";
+      e.returnValue = confirmationMessage;
+      return confirmationMessage;
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [state.title, state.blogBody]);
+
+  useEffect(() => {
+    const insertImage = (file) => {
       const editor = editorRef.current.getEditor();
-      editor.insertEmbed(cursorIndex, "image", url);
+      const reader = new FileReader();
+
+      reader.readAsDataURL(file);
+
+      reader.onload = async (e) => {
+        const imageUrl = e.target.result;
+        console.log(imageUrl);
+        editor.insertEmbed(cursorIndex, "image", imageUrl);
+        editor.insertText(cursorIndex + 1, "\n", "user");
+
+        if (file) {
+          const imageData = new FormData();
+          imageData.append("file", file);
+          imageData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
+          setLoading(true);
+          axios
+            .post(
+              `https://api.cloudinary.com/v1_1/${
+                import.meta.env.VITE_CLOUD_NAME
+              }/image/upload`,
+              imageData
+            )
+            .then((response) => {
+              if (response) {
+                const cloudImageUrl = response.data.secure_url;
+                const imgElement =
+                  editor.container.querySelectorAll(`img[src]`);
+                imgElement.forEach((element) => {
+                  if (element.src === imageUrl) {
+                    element.src = cloudImageUrl;
+                  }
+                });
+              }
+
+              setLoading(false);
+            })
+            .catch((error) => console.log(error));
+        }
+      };
     };
 
     const toolbar = document.querySelector(".ql-toolbar");
@@ -110,31 +174,7 @@ const AddBlog = () => {
     imageInput.style.display = "none";
     imageInput.addEventListener("change", (e) => {
       const files = e.target.files;
-      if (files) {
-        console.log(files);
-        // const url = URL.createObjectURL(files[0]);
-        const imageData = new FormData();
-        imageData.append("file", files[0]);
-        imageData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
-        setLoading(true);
-        axios
-          .post(
-            `https://api.cloudinary.com/v1_1/${
-              import.meta.env.VITE_CLOUD_NAME
-            }/image/upload`,
-            imageData
-          )
-          .then((response) => {
-            if (response) {
-              const imageUrl = response.data.secure_url;
-              insertImage(imageUrl);
-            }
-
-            console.log(response);
-            setLoading(false);
-          })
-          .catch((error) => console.log(error));
-      }
+      insertImage(files[0]);
     });
 
     formatSpan.append(imageLabel);
