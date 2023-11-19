@@ -10,7 +10,21 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
+  const [blogBodyimages, setBlogBodyImages] = React.useState([]);
   const [tagInputValue, setTagInputValue] = React.useState("");
+  console.log(state);
+  console.log(blogBodyimages);
+  React.useEffect(() => {
+    const domParser = new DOMParser();
+    const htmlDoc = domParser.parseFromString(state.blogBody, "text/html");
+
+    console.log(htmlDoc);
+
+    const imgElements = htmlDoc.querySelectorAll("img");
+    const bodyImages = Array.from(imgElements).map((element) => element.src);
+
+    setBlogBodyImages(bodyImages);
+  }, [state.blogBody]);
 
   // functions for tags
   const addTags = () => {
@@ -51,11 +65,40 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
             <div className="lg:w-1/2 px-10 space-y-3">
               <div className="">
                 <h3 className="text-lg font-semibold mb-1">Preview image</h3>
-                <div className="w-full h-48 rounded-lg bg-[#f4f3f3] flex items-center justify-center">
-                  <p className="text-sm px-16 text-center">
-                    Add a high quality image for the preview and to make it more
-                    inviting to readers.
-                  </p>
+                <div
+                  className={`w-full h-52 p-2 rounded-lg bg-[#f4f3f3] ${
+                    !blogBodyimages && "flex items-center justify-center"
+                  }`}
+                >
+                  {blogBodyimages ? (
+                    <div className="flex gap-2 flex-wrap">
+                      {blogBodyimages.map((image, index) => (
+                        <img
+                          className={`w-24 h-24 object-cover rounded-lg ${
+                            image === state.previewImage
+                              ? "border-2 border-colorOne"
+                              : "border-2 border-transparent"
+                          }`}
+                          key={index}
+                          src={image}
+                          alt=""
+                          name="previewImage"
+                          onClick={(e) =>
+                            dispatch({
+                              type: "BLOG_TITLE",
+                              name: e.target.name,
+                              value: e.target.src,
+                            })
+                          }
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm px-16 text-center">
+                      Add a high quality image for the preview and to make it
+                      more inviting to readers.
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="">
