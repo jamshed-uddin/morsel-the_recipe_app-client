@@ -3,16 +3,21 @@ import "quill/dist/quill.snow.css";
 import { useEffect, useReducer, useRef, useState } from "react";
 import ReactQuill from "react-quill";
 import "./AddBlog.css";
-import { Link } from "react-router-dom";
+
+import BlogPublishModal from "./BlogPublishModal";
 
 const initialState = {
-  title: "",
-  creatorName: "",
-  creatorId: "",
+  title: "omlete",
+  creatorInfo: {
+    creatorName: "Uweuewueueeu Osas",
+    creatorId: "",
+    creatorEmail: "",
+    creatorPhoto: "",
+  },
   blogBody: "",
   status: "pending",
   likedBy: [],
-  savedBy: [],
+  tags: [],
   createdAt: new Date().toString(),
 };
 
@@ -28,6 +33,19 @@ const reducer = (state, action) => {
         ...state,
         [action.name]: action.value,
       };
+    case "REMOVE_FIELD":
+      return {
+        ...state,
+        [action.name]: state[action.name].filter(
+          (_, index) => index !== action.index
+        ),
+      };
+
+    case "TAGS":
+      return {
+        ...state,
+        [action.name]: action.value,
+      };
 
     default:
       return state;
@@ -38,8 +56,9 @@ const AddBlog = () => {
   const [value, setValue] = useState(null);
   const editorRef = useRef(null);
   const [cursorIndex, setCursorIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [modalOpen, setModalOpen] = useState(false);
   console.log(value);
   console.log(state);
   const toolbarOptions = [
@@ -57,18 +76,14 @@ const AddBlog = () => {
       setCursorIndex(range.index);
     }
   };
-  //   const wrapperRef = useCallback((wrapper) => {
-  //     if (wrapper == null) return;
 
-  //     wrapper.innerHTML = "";
-  //     const editor = document.createElement("div");
-  //     wrapper.append(editor);
-  //     const newQuill = new Quill(editor, { theme: "snow" });
-  //     setQuill(newQuill);
-  //   }, []);
   const handleChange = (html) => {
     setValue(html);
     dispatch({ type: "BLOG_BODY", name: "blogBody", value: html });
+  };
+
+  const handlePublishModalOpen = () => {
+    setModalOpen((prevState) => !prevState);
   };
 
   useEffect(() => {
@@ -101,6 +116,7 @@ const AddBlog = () => {
         const imageData = new FormData();
         imageData.append("file", files[0]);
         imageData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
+        setLoading(true);
         axios
           .post(
             `https://api.cloudinary.com/v1_1/${
@@ -113,7 +129,9 @@ const AddBlog = () => {
               const imageUrl = response.data.secure_url;
               insertImage(imageUrl);
             }
+
             console.log(response);
+            setLoading(false);
           })
           .catch((error) => console.log(error));
       }
@@ -176,16 +194,10 @@ const AddBlog = () => {
   //   });
   // }, []);
 
-  const handleSave = () => {
-    const editor = editorRef.current.getEditor();
-
-    localStorage.setItem("body", value);
-  };
-
   return (
     <div className="my-container my-11">
       <div className=" text-colorTwo  lg:w-4/5 md:w-11/12 mx-auto md:shadow-xl md:rounded-xl h-full py-2 px-5 relative">
-        <div className="flex justify-between items-center sticky top-0 bg-bgColor z-20 mb-2 px-2">
+        <div className="flex justify-between items-center sticky top-0 bg-bgColor z-20 mb-2 px-1">
           <h4 className="md:text-3xl text-2xl font-bold text-colorOne">
             Add Blog
           </h4>
@@ -197,6 +209,7 @@ const AddBlog = () => {
           <button
             type="submit"
             className={`text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3 `}
+            onClick={handlePublishModalOpen}
           >
             Create
           </button>
@@ -207,7 +220,7 @@ const AddBlog = () => {
             name="title"
             type="text"
             placeholder="Title"
-            value={state.recipeName}
+            value={state.title}
             onChange={(e) =>
               dispatch({
                 type: "BLOG_TITLE",
@@ -226,10 +239,13 @@ const AddBlog = () => {
           onChangeSelection={handleSelection}
           placeholder="Tell your story..."
         ></ReactQuill>
-
-        <button onClick={handleSave}>Save</button>
-        <Link to={"/blogBody"}> see blog</Link>
       </div>
+      <BlogPublishModal
+        modalOpen={modalOpen}
+        setModalOpen={setModalOpen}
+        state={state}
+        dispatch={dispatch}
+      ></BlogPublishModal>
     </div>
   );
 };
