@@ -188,52 +188,6 @@ const AddBlog = () => {
     };
   }, [cursorIndex]);
 
-  // for sanitizing the links(can't set the delta to the editor)
-  // useEffect(() => {
-  //   const editor = editorRef.current.getEditor();
-
-  //   // console.log(cursorIndex);
-
-  //   editor.on("text-change", (delta, oldDelta, source) => {
-  //     // console.log(delta);
-  //     console.log(oldDelta.ops);
-  //     if (source === "user") {
-  //       const currentContents = editor.getContents();
-  //       const operations = currentContents.ops;
-  //       console.log(operations);
-  //       // console.log(delta);
-
-  //       const updatedDelta = operations.map((op, index) => {
-  //         console.log(op, "index", index);
-  //         if (op.attributes && op.attributes.link) {
-  //           const editorCursorIndex = currentContents.ops.indexOf(op);
-  //           console.log("editor", editorCursorIndex);
-  //           if (editorCursorIndex === index) {
-  //             const linkURL = op.attributes.link;
-
-  //             const validLinkURL = sanitizeLink(linkURL);
-  //             console.log(linkURL);
-  //             return {
-  //               ...op,
-  //               attributes: {
-  //                 ...op.attributes,
-  //                 link: validLinkURL,
-  //               },
-  //             };
-  //           }
-
-  //           // editor.insertEmbed(cursorIndex, "link", validLinkURL);
-  //         } else return op;
-  //       });
-
-  //       console.log(updatedDelta);
-  //       console.log(editor.getContents());
-  //       const updatedOps = editor.getContents().ops;
-  //       // editor.setContents(updatedDelta, "api");
-  //     }
-  //   });
-  // }, []);
-
   return (
     <div className="my-container my-11">
       <div className=" text-colorTwo  lg:w-4/5 md:w-11/12 mx-auto md:shadow-xl md:rounded-xl h-full py-2 px-5 relative">
@@ -247,8 +201,11 @@ const AddBlog = () => {
             </p>
           )}
           <button
+            disabled={state.blogBody.length < 20}
             type="submit"
-            className={`text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3 `}
+            className={`text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3 ${
+              state.blogBody.length < 20 && "opacity-50 "
+            }`}
             onClick={handlePublishModalOpen}
           >
             Create

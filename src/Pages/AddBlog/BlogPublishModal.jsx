@@ -67,10 +67,10 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
                 <h3 className="text-lg font-semibold mb-1">Preview image</h3>
                 <div
                   className={`w-full h-52 p-2 rounded-lg bg-[#f4f3f3] ${
-                    !blogBodyimages && "flex items-center justify-center"
+                    !blogBodyimages.length && "flex items-center justify-center"
                   }`}
                 >
-                  {blogBodyimages ? (
+                  {blogBodyimages.length ? (
                     <div className="flex gap-2 flex-wrap">
                       {blogBodyimages.map((image, index) => (
                         <img
@@ -168,7 +168,9 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
                 {state?.creatorInfo?.creatorName}
               </h3>
               <button
-                className={`text-white text-lg font-semibold px-4 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3 `}
+                className={`text-white text-lg font-semibold px-4 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3 ${
+                  !state.blogBody || (!state.title && "opacity-50 ")
+                }`}
               >
                 Create
               </button>
