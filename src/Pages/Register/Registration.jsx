@@ -87,11 +87,11 @@ const Registration = () => {
         </div>
         <div className="w-1/2 h-full  overflow-y-auto ">
           {/* Title text not button */}
-          <h1 className="text-colorOne text-5xl font-bold leading-8 tracking-tighter uppercase ">
+          <h1 className="text-colorOne text-5xl font-bold  tracking-tighter uppercase ">
             sign up
           </h1>
 
-          <div className="space-y-2 w-3/4    mt-12 mx-auto">
+          <div className="space-y-2 w-3/4    mt-8 mx-auto">
             <form autoComplete="off" onSubmit={handleLoginData}>
               <div>
                 <label className={labelStyle} htmlFor="name">

@@ -28,7 +28,7 @@ const BlogsPage = () => {
         </div>
         <div className="lg:grid grid-cols-3 gap-x-4 gap-y-8 mt-8">
           {[1, 2, 3, 4, 5, 6].map((index, el) => (
-            <Card key={index}></Card>
+            <Card itemType="Blog" key={index}></Card>
           ))}
         </div>
       </div>

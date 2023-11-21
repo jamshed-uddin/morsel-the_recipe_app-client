@@ -83,6 +83,7 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
                           src={image}
                           alt=""
                           name="previewImage"
+                          //used blog title case here to dispatch preview image
                           onClick={(e) =>
                             dispatch({
                               type: "BLOG_TITLE",

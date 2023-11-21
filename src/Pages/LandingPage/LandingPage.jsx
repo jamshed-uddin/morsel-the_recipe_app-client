@@ -9,7 +9,6 @@ const LandingPage = () => {
       <Banner />
       <Recipes />
       <Blogs />
-      <Footer />
     </div>
   );
 };

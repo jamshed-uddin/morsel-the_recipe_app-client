@@ -14,7 +14,11 @@ import AddRecipe from "./Pages/AddRecipe/AddRecipe.jsx";
 import AddBlog from "./Pages/AddBlog/AddBlog.jsx";
 import BlogBody from "./Pages/AddBlog/BlogBody.jsx";
 import AuthProvider from "./providers/AuthProvider.jsx";
+import RecipeDetail from "./Components/RecipeDetail/RecipeDetail.jsx";
+import BlogDetail from "./Components/BlogDetail/BlogDetail.jsx";
+import { QueryClient, QueryClientProvider } from "react-query";
 
+const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
     path: "/",
@@ -30,8 +34,16 @@ const router = createBrowserRouter([
         element: <RecipesPage></RecipesPage>,
       },
       {
+        path: "recipeDetail/:id",
+        element: <RecipeDetail></RecipeDetail>,
+      },
+      {
         path: "blogs",
         element: <BlogsPage></BlogsPage>,
+      },
+      {
+        path: "blogDetail/:id",
+        element: <BlogDetail></BlogDetail>,
       },
       {
         path: "account",
@@ -64,7 +76,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
-      <RouterProvider router={router}></RouterProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router}></RouterProvider>
+      </QueryClientProvider>
     </AuthProvider>
   </React.StrictMode>
 );

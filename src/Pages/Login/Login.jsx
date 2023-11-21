@@ -76,7 +76,7 @@ const Login = () => {
           />
         </div>
         <div className="w-1/2 h-full  ">
-          <h1 className="text-colorOne text-5xl font-bold leading-8 tracking-tighter uppercase">
+          <h1 className="text-colorOne text-5xl font-bold  tracking-tighter uppercase">
             sign in
           </h1>
 
