@@ -4,13 +4,15 @@ import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import GoogleIcon from "@mui/icons-material/Google";
 import { useState } from "react";
 import "./Registration.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import useAuthContext from "../../hooks/useAuthContext";
+import axios from "axios";
 
 const Registration = () => {
-  const { loading, setLoading, registerUser } = useAuthContext();
-  console.log(loading);
+  const { loading, setLoading, registerUser, updateUserNamePhoto } =
+    useAuthContext();
+
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [formData, setFormData] = useState({
@@ -19,6 +21,9 @@ const Registration = () => {
     password: "",
     ConfirmPassword: "",
   });
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   const handleInputChange = (e) => {
     setError("");
@@ -32,33 +37,48 @@ const Registration = () => {
 
   const handleLoginData = (e) => {
     e.preventDefault();
-
     if (!formData.name) {
-      setError("Please fill the name field");
-      return;
+      return setError("Please fill the name field");
     }
     if (!formData.email) {
-      setError("Please fill the email field");
-      return;
+      return setError("Please fill the email field");
     }
     if (!formData.password) {
-      setError("Please fill the password field");
-      return;
+      return setError("Please fill the password field");
     }
     if (!formData.ConfirmPassword) {
-      setError("Please retype the password");
-      return;
+      return setError("Please retype the password");
+    }
+    if (formData.password.length < 8) {
+      return setError("Password length must be 8 ");
     }
     if (formData.password !== formData.ConfirmPassword) {
-      setError("Password does not match");
-      return;
+      return setError("Password does not match");
     }
 
-    console.log(formData.name, formData.email, formData.password);
     registerUser(formData.email, formData.password)
       .then((data) => {
-        if (data.user) console.log(data.user);
-        console.log("user created successfully");
+        if (data.user) {
+          updateUserNamePhoto(formData.name, "");
+
+          const body = {
+            name: formData.name,
+            email: formData.email,
+            photoURL: "",
+            role: "creator",
+          };
+
+          axios
+            .post(`${import.meta.env.VITE_BASEURL}newUser`, body)
+            .then((res) => {
+              if (res.data.message) {
+                console.log(res.data);
+                setLoading((prev) => !prev);
+                navigate(from, { replace: true });
+              }
+            });
+        }
+
         //TODO: redirect to the required page
       })
       .catch((error) => {
@@ -68,6 +88,7 @@ const Registration = () => {
           setError("User with this email already exist!");
           setLoading((prev) => !prev);
         }
+        setLoading((prev) => !prev);
       });
 
     setError("");
@@ -77,21 +98,21 @@ const Registration = () => {
 
   return (
     <div className="h-screen flex items-center justify-center my-container">
-      <div className=" w-4/5 h-4/5  mx-auto flex   rounded-2xl overflow-hidden shadow-lg">
-        <div className="w-1/2 h-full">
+      <div className="w-full lg:w-4/5 h-4/5  lg:mx-auto lg:flex   rounded-2xl overflow-hidden lg:shadow-lg">
+        <div className="w-1/2 h-full hidden lg:block">
           <img
             className="object-cover w-full h-full"
             src="https://i.ibb.co/dJb4HYw/top-view-delicious-food-table-still-life-2.jpg"
             alt=""
           />
         </div>
-        <div className="w-1/2 h-full  overflow-y-auto ">
+        <div className="px-4 lg:px-0 lg:w-1/2 h-full  overflow-y-auto ">
           {/* Title text not button */}
           <h1 className="text-colorOne text-5xl font-bold  tracking-tighter uppercase ">
             sign up
           </h1>
 
-          <div className="space-y-2 w-3/4    mt-8 mx-auto">
+          <div className="space-y-2 lg:w-3/4 px-2 lg:px-0   mt-8 mx-auto">
             <form autoComplete="off" onSubmit={handleLoginData}>
               <div>
                 <label className={labelStyle} htmlFor="name">
@@ -188,7 +209,7 @@ const Registration = () => {
             </form>
           </div>
           <div className="w-3/4 mx-auto text-colorTwo mt-4">
-            <h4 className="text-center text-lg">
+            <h4 className="text-center  md:text-lg">
               Already have an account?{" "}
               <Link to={"/signin"} className="text-colorOne uppercase">
                 sign in

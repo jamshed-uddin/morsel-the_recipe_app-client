@@ -17,6 +17,7 @@ import AuthProvider from "./providers/AuthProvider.jsx";
 import RecipeDetail from "./Components/RecipeDetail/RecipeDetail.jsx";
 import BlogDetail from "./Components/BlogDetail/BlogDetail.jsx";
 import { QueryClient, QueryClientProvider } from "react-query";
+import PasswordReset from "./Pages/Login/PasswordReset.jsx";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -62,6 +63,10 @@ const router = createBrowserRouter([
   {
     path: "signin",
     element: <Login></Login>,
+  },
+  {
+    path: "account/reset/password/:email",
+    element: <PasswordReset></PasswordReset>,
   },
   {
     path: "register",

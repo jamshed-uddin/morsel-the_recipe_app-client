@@ -10,7 +10,8 @@ import useAuthContext from "../../hooks/useAuthContext";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { loading, setLoading, userLogin } = useAuthContext();
+  const { loading, setLoading, userLogin, passwordResetHandler } =
+    useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -33,11 +34,11 @@ const Login = () => {
     e.preventDefault();
 
     if (!formData.email) {
-      setError("please fill the name field");
+      setError(" Fill the email field");
       return;
     }
     if (!formData.password) {
-      setError("please fill the password field");
+      setError(" Fill the password field");
       return;
     }
 
@@ -46,6 +47,7 @@ const Login = () => {
     userLogin(formData.email, formData.password)
       .then((data) => {
         if (data.user) {
+          setLoading((prev) => !prev);
           navigate(from, { replace: true });
         }
       })
@@ -67,20 +69,20 @@ const Login = () => {
 
   return (
     <div className="h-screen flex items-center justify-center my-container">
-      <div className=" w-4/5 h-4/5  mx-auto flex   rounded-2xl overflow-hidden shadow-lg">
-        <div className="w-1/2 h-full">
+      <div className=" w-full lg:w-4/5 h-4/5  lg:mx-auto lg:flex   rounded-2xl overflow-hidden lg:shadow-lg">
+        <div className="w-1/2 h-full hidden lg:block">
           <img
             className="object-cover w-full h-full"
             src="https://i.ibb.co/688mrnZ/top-view-delicious-food-table-still-life-3.jpg"
             alt=""
           />
         </div>
-        <div className="w-1/2 h-full  ">
+        <div className="px-4 lg:px-0 lg:w-1/2 h-full ">
           <h1 className="text-colorOne text-5xl font-bold  tracking-tighter uppercase">
             sign in
           </h1>
 
-          <div className="space-y-2 w-3/4    mt-20 mx-auto">
+          <div className="space-y-2 lg:w-3/4 px-2 lg:px-0   mt-8 mx-auto">
             <form autoComplete="off" onSubmit={handleLoginData}>
               <div>
                 <label className={labelStyle} htmlFor="email">
@@ -123,11 +125,22 @@ const Login = () => {
                   )}
                 </div>
               </div>
-              <p className=" text-red-600"> {error}</p>
+              <div className="flex justify-between mt-1">
+                <p className=" text-red-600"> {error}</p>
+                <p className="cursor-pointer">
+                  <Link
+                    to={`/account/reset/password/${encodeURIComponent(
+                      formData.email
+                    )}`}
+                  >
+                    Forgot password?
+                  </Link>
+                </p>
+              </div>
               <div>
                 <button
                   type="submit"
-                  className={`text-white font-semibold bg-colorOne  rounded-lg px-3 py-1 mt-3 ${
+                  className={`text-white font-semibold bg-colorOne  rounded-lg px-3 py-1 mt-1 ${
                     loading && "disabled"
                   }`}
                 >

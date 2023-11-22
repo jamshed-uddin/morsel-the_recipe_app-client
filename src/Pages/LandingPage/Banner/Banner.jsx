@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import "./Banner.css";
 import SouthOutlinedIcon from "@mui/icons-material/SouthOutlined";
-import bannerImage from "../../../../public/banner.jpg";
 
 const Banner = () => {
   return (
