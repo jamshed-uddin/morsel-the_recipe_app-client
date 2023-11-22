@@ -3,12 +3,14 @@ import CallMadeIcon from "@mui/icons-material/CallMade";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
 import { Avatar } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
+import useAuthContext from "../../hooks/useAuthContext";
 
 const Navbar = () => {
   const [showNav, setShowNav] = useState(false);
   const [scrollingDown, setScrollingDown] = useState(false);
-  const [user, setUser] = useState(false);
+  const { user } = useAuthContext();
+  console.log(user);
 
   useEffect(() => {
     if (showNav) {
@@ -60,22 +62,24 @@ const Navbar = () => {
             <div className={`link`}>
               <Link to={"/blogs"}>Blogs</Link>
             </div>
-            <div className={`${user || "link"}`}>
+            <div className={`${!user && "link"}`}>
               {user ? (
-                <div className="flex items-center gap-5">
-                  <Avatar
-                    src={
-                      user.image ||
-                      "https://i.ibb.co/Twp960D/default-profile-400x400.png"
+                <Link to={"/account"}>
+                  <div className="flex items-center rounded-3xl cursor-pointer">
+                    <Avatar
+                      src={
+                        user.image ||
+                        "https://i.ibb.co/Twp960D/default-profile-400x400.png"
+                      }
+                      sx={{ width: "35px", height: "35px" }}
+                    ></Avatar>
+                    {
+                      <p>
+                        <NavigateNextOutlinedIcon sx={{ fontSize: 28 }} />
+                      </p>
                     }
-                    sx={{ width: "35px", height: "35px" }}
-                  ></Avatar>
-                  {
-                    <p>
-                      jane doe <ExpandMoreIcon />
-                    </p>
-                  }
-                </div>
+                  </div>
+                </Link>
               ) : (
                 <Link to={"/signin"}>Sign in</Link>
               )}
