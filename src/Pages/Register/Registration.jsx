@@ -10,8 +10,13 @@ import useAuthContext from "../../hooks/useAuthContext";
 import axios from "axios";
 
 const Registration = () => {
-  const { loading, setLoading, registerUser, updateUserNamePhoto } =
-    useAuthContext();
+  const {
+    loading,
+    setLoading,
+    registerUser,
+    updateUserNamePhoto,
+    signInWithGoogle,
+  } = useAuthContext();
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -33,6 +38,28 @@ const Registration = () => {
       ...formData,
       [name]: value,
     });
+  };
+
+  const googleLoginHandler = () => {
+    signInWithGoogle()
+      .then((result) => {
+        console.log("google", result);
+
+        if (result.user) {
+          navigate(from, { replace: true });
+          const body = {
+            name: result.user.displayName,
+            email: result.user.email,
+            photoURL: result.user.photoURL || "",
+            role: "creator",
+          };
+
+          axios
+            .post(`${import.meta.env.VITE_BASEURL}newUser`, body)
+            .then(() => {});
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleLoginData = (e) => {
@@ -82,13 +109,13 @@ const Registration = () => {
         //TODO: redirect to the required page
       })
       .catch((error) => {
+        setLoading((prev) => !prev);
         console.log(error.message);
 
         if (error.message === "Firebase: Error (auth/email-already-in-use).") {
           setError("User with this email already exist!");
           setLoading((prev) => !prev);
         }
-        setLoading((prev) => !prev);
       });
 
     setError("");
@@ -112,7 +139,7 @@ const Registration = () => {
             sign up
           </h1>
 
-          <div className="space-y-2 lg:w-3/4 px-2 lg:px-0   mt-8 mx-auto">
+          <div className="space-y-2 lg:w-3/4 px-2 lg:px-0   mt-7 mx-auto">
             <form autoComplete="off" onSubmit={handleLoginData}>
               <div>
                 <label className={labelStyle} htmlFor="name">
@@ -218,10 +245,7 @@ const Registration = () => {
             <h1 className="text-center text-2xl or">Or</h1>
             <h4 className="text-center text-lg">Continue with</h4>
             <div className="space-x-6 flex items-center justify-center py-2">
-              <div>
-                <FacebookOutlinedIcon />
-              </div>
-              <div>
+              <div onClick={googleLoginHandler} className="cursor-pointer">
                 <GoogleIcon />
               </div>
             </div>

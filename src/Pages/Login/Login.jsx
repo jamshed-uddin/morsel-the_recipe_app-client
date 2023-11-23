@@ -6,12 +6,12 @@ import "./Login.css";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuthContext from "../../hooks/useAuthContext";
+import axios from "axios";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const { loading, setLoading, userLogin, passwordResetHandler } =
-    useAuthContext();
+  const { loading, setLoading, userLogin, signInWithGoogle } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
@@ -28,6 +28,28 @@ const Login = () => {
       ...formData,
       [name]: value,
     });
+  };
+
+  const googleLoginHandler = () => {
+    signInWithGoogle()
+      .then((result) => {
+        console.log("google", result);
+
+        if (result.user) {
+          navigate(from, { replace: true });
+          const body = {
+            name: result.user.displayName,
+            email: result.user.email,
+            photoURL: result.user.photoURL || "",
+            role: "creator",
+          };
+
+          axios
+            .post(`${import.meta.env.VITE_BASEURL}newUser`, body)
+            .then(() => {});
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleLoginData = (e) => {
@@ -159,10 +181,7 @@ const Login = () => {
             <h1 className="text-center text-2xl or">Or</h1>
             <h4 className="text-center text-lg">Continue with</h4>
             <div className="space-x-6 flex items-center justify-center py-2">
-              <div>
-                <FacebookOutlinedIcon />
-              </div>
-              <div>
+              <div onClick={googleLoginHandler} className="cursor-pointer">
                 <GoogleIcon />
               </div>
             </div>

@@ -8,6 +8,7 @@ import {
   signOut,
   updateProfile,
   sendPasswordResetEmail,
+  signInWithPopup,
 } from "firebase/auth";
 import app from "./../firebase/firebase.config";
 
@@ -44,8 +45,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const signInWithGoogle = () => {
-    setLoading(true);
-    return signInWithGoogle(auth, googleProvider);
+    return signInWithPopup(auth, googleProvider);
   };
 
   //password reset

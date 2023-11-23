@@ -25,18 +25,24 @@ const AddBtn = () => {
   }, [showOptions]);
 
   return (
-    <div id="addBtn" className="fixed right-16 bottom-12 text-colorTwo">
-      <div className="relative w-fit transition-all duration-500">
-        <div
+    <div
+      id="addBtn"
+      className="fixed right-16 bottom-12 text-colorTwo z-50  rounded-full"
+    >
+      <div className="relative w-fit transition-all duration-500  rounded-full">
+        {/* add button */}
+        <button
           onClick={() => setShowOptions((prev) => !prev)}
           className={` w-fit rounded-full px-[0.25rem] py-1 bg-colorOne  text-white hover:scale-105 transition-all duration-300 cursor-pointer ${
             showOptions && "rotate-45"
           }`}
         >
           <AddOutlinedIcon sx={{ fontSize: 40 }} />
-        </div>
+        </button>
+
+        {/* tooltip */}
         <div
-          className={`absolute bottom-10 right-10  bg-bgColor w-max p-7 space-y-5  rounded-xl shadow-lg text-xl font-semibold flex flex-col  ${
+          className={`absolute bottom-10 right-10  bg-bgColor w-max lg:p-7 p-3 space-y-5  rounded-xl shadow-lg text-xl font-semibold flex flex-col  ${
             showOptions ? "block " : "hidden"
           } `}
         >

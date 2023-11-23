@@ -22,11 +22,11 @@ const AccountPage = () => {
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState("");
   const { user, userLogout } = useAuthContext();
-
-  console.log(user);
-  const navigate = useNavigate();
   const { currentUser } = useSingleUser();
   console.log(currentUser);
+  console.log(user);
+
+  const navigate = useNavigate();
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -106,13 +106,13 @@ const AccountPage = () => {
     <div className=" my-container">
       <div className="lg:w-4/5 h-full  mx-auto lg:px-6 md:pt-20 pt-5 text-colorTwo">
         <div className="flex flex-col md:flex-row items-start justify-between space-y-6 ">
+          {/* user info */}
           <div className="lg:flex items-center gap-5 md:w-4/5 space-y-3">
             <div>
               <Avatar
                 sx={{ width: 135, height: 135 }}
                 className="w-32 rounded-full object-cover"
                 src={
-                  user?.photoURL ||
                   profilePhotoURL ||
                   `https://i.ibb.co/Twp960D/default-profile-400x400.png`
                 }
@@ -121,19 +121,22 @@ const AccountPage = () => {
             </div>
 
             <div>
-              <h1 className="text-4xl font-semibold mb-1">John Doe</h1>
+              <h1 className="text-4xl font-semibold mb-1">
+                {user?.displayName}
+              </h1>
               <p className="text-lg font-light leading-5">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore
-                numquam quia mollitia sed accusantium debitis voluptatem alias
-                explicabo aspernatur rem natus, dignissimos at beatae{" "}
+                {" "}
+                {currentUser?.bio}
               </p>
             </div>
           </div>
 
+          {/* settings */}
           <div
             id="settings"
             className="order-first md:order-none relative  ml-auto mr-2"
           >
+            {/* setting button */}
             <button
               onClick={() => setShowSettings((prev) => !prev)}
               className={`  rounded-full transition-all duration-500 ${
@@ -143,10 +146,8 @@ const AccountPage = () => {
               <SettingsOutlinedIcon sx={{ fontSize: 35 }} />
             </button>
 
+            {/* setting options dialog */}
             <div
-              onClick={() => {
-                console.log("hello");
-              }}
               className={`absolute top-11 right-4 bg-bgColor w-max p-4 space-y-4  rounded-xl shadow-lg text-lg font-semibold  ${
                 showSettings ? "block " : "hidden"
               } `}
@@ -177,40 +178,44 @@ const AccountPage = () => {
           </div>
         </div>
 
+        {/* recipe/blog/saved section */}
         <div className=" mt-14">
+          {/* tab buttons  */}
           <div className="flex items-end gap-10 text-2xl font-semibold border-b-[1px] border-slate-300 pl-2">
-            <h1
+            <button
               onClick={() => setActiveTab("recipes")}
-              className={` pb-4 cursor-pointer  ${
+              className={` pb-4 cursor-pointer ${
                 activeTab === "recipes"
                   ? "border-b-2  border-colorOne text-colorOne"
-                  : "text-colorTwo"
+                  : "text-colorTwo border-b-2 border-b-transparent "
               }`}
             >
               Recipes
-            </h1>
-            <h1
+            </button>
+            <button
               onClick={() => setActiveTab("blogs")}
-              className={` pb-4 cursor-pointer  ${
+              className={` pb-4 cursor-pointer ${
                 activeTab === "blogs"
                   ? "border-b-2  border-colorOne text-colorOne"
-                  : "text-colorTwo"
+                  : "text-colorTwo border-b-2 border-b-transparent "
               }`}
             >
               Blogs
-            </h1>
-            <h1
+            </button>
+            <button
               onClick={() => setActiveTab("saved")}
               className={` pb-4 cursor-pointer  ${
                 activeTab === "saved"
                   ? "border-b-2  border-colorOne text-colorOne"
-                  : "text-colorTwo"
+                  : "text-colorTwo border-b-2 border-b-transparent"
               }`}
             >
               Saved
-            </h1>
+            </button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-6 py-8">
+
+          {/*tab body */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 py-8">
             {[1, 2, 3, 4, 5, 6].map((index, el) => (
               <Card key={index}></Card>
             ))}
@@ -219,8 +224,10 @@ const AccountPage = () => {
       </div>
       <AddBtn />
 
+      {/* dialogue from setting button for updating/account/ sign out */}
       <Dialog fullWidth open={open} onClose={handleClose}>
         <div className="h-[80vh] md:h-[90vh] grid items-center">
+          {/* update profile info  */}
           <div className=" w-[90%] mx-auto">
             {/* image div */}
             <div className="flex justify-center  select-none">
@@ -229,7 +236,6 @@ const AccountPage = () => {
                   sx={{ width: 135, height: 135 }}
                   className="w-32 rounded-full object-cover"
                   src={
-                    user?.photoURL ||
                     profilePhotoURL ||
                     `https://i.ibb.co/Twp960D/default-profile-400x400.png`
                   }
@@ -237,12 +243,12 @@ const AccountPage = () => {
                 />
 
                 {/* tooltip opener button */}
-                <div
+                <button
                   onClick={() => setShowImgTooltip((prev) => !prev)}
                   className="w-fit rounded bg-white absolute right-2 bottom-2 cursor-pointer active:scale-95 shadow"
                 >
                   <DriveFileRenameOutlineOutlinedIcon />
-                </div>
+                </button>
                 {/* image tooltip */}
                 <div
                   className={`bg-white  rounded-lg p-2 shadow-lg space-y-2 absolute bottom-10 md:bottom-3 -right-20 md:-right-44 ${
@@ -261,12 +267,12 @@ const AccountPage = () => {
                       className="hidden"
                     />
                   </div>
-                  <div
+                  <button
                     onClick={() => setProfilePhotoURL("")}
                     className="bg-slate-50 p-1  rounded-lg text-lg cursor-pointer"
                   >
                     <DeleteOutlinedIcon /> Remove photo
-                  </div>
+                  </button>
                 </div>
 
                 <CircularProgress
