@@ -4,6 +4,8 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Slide from "@mui/material/Slide";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+import useSingleUser from "../../hooks/useSingleUser";
+import axios from "axios";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -12,22 +14,34 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
   const [blogBodyimages, setBlogBodyImages] = React.useState([]);
   const [tagInputValue, setTagInputValue] = React.useState("");
-  console.log(state);
-  console.log(blogBodyimages);
+  const [loading, setLoading] = React.useState(false);
+  const { currentUser } = useSingleUser();
+
+  console.log(currentUser);
+  // console.log(state);
+  // console.log(blogBodyimages);
   React.useEffect(() => {
     const domParser = new DOMParser();
     const htmlDoc = domParser.parseFromString(state.blogBody, "text/html");
 
-    console.log(htmlDoc);
+    // console.log(htmlDoc);
 
     const imgElements = htmlDoc.querySelectorAll("img");
     const bodyImages = Array.from(imgElements).map((element) => element.src);
-
+    console.log(bodyImages);
+    if (bodyImages.length >= 1) {
+      dispatch({
+        type: "BLOG_TITLE",
+        name: "previewImage",
+        value: bodyImages[0],
+      });
+    }
     setBlogBodyImages(bodyImages);
-  }, [state.blogBody]);
+  }, [state.blogBody, dispatch]);
 
   // functions for tags
-  const addTags = () => {
+  const addTagsHandler = () => {
+    console.log("cliked");
     const newTags = tagInputValue.split(",").map((tag) => tag.trim());
     const filteredTags = newTags.filter((tag) => tag !== "");
 
@@ -39,6 +53,30 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
 
   const handleClose = () => {
     setModalOpen((prevState) => !prevState);
+  };
+
+  //submit/create blog handler
+  const createBlogHandler = () => {
+    // passing only creator id .by this id we will get a recipe data populated creatorInfo with userInfo and using BLOG-TITLE case for that.
+    dispatch({
+      type: "BLOG_TITLE",
+      name: "creatorInfo",
+      value: currentUser._id,
+    });
+
+    console.log("submit");
+    console.log("state", state);
+    setLoading(true);
+    axios
+      .post(`${import.meta.env.VITE_BASEURL}createBlog`, state)
+      .then((result) => {
+        console.log(result);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   };
 
   return (
@@ -62,11 +100,13 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
         </div>
         <div className=" h-screen">
           <div className="lg:flex w-4/5 mx-auto  h-full items-center ">
+            {/* blog info part */}
             <div className="lg:w-1/2 px-10 space-y-3">
               <div className="">
                 <h3 className="text-lg font-semibold mb-1">Preview image</h3>
+                {/* images for selecting preview */}
                 <div
-                  className={`w-full h-52 p-2 rounded-lg bg-[#f4f3f3] ${
+                  className={`w-full h-52 p-1 rounded-lg bg-[#f4f3f3] ${
                     !blogBodyimages.length && "flex items-center justify-center"
                   }`}
                 >
@@ -102,6 +142,8 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
                   )}
                 </div>
               </div>
+
+              {/* title input */}
               <div className="">
                 <input
                   name="title"
@@ -117,14 +159,15 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
                   }
                 />
               </div>
+              {/* tag input */}
               <div>
                 <h4 className=" lg:pb-1">
                   Add or change tags so readers know what your story is about
                 </h4>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-x-1">
                   {state.tags.map((tag, index) => (
                     <div
-                      className="flex gap-1 border-[1.3px] border-colorTwo pl-2  rounded-lg"
+                      className="flex gap-1 border-[1.3px] border-colorTwo pl-2 mb-1  rounded-lg"
                       key={index}
                     >
                       <p className="">{tag}</p>
@@ -155,23 +198,26 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
                     onChange={(e) => setTagInputValue(e.target.value)}
                   />
                   <button
-                    onClick={addTags}
-                    className="text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-2"
+                    onClick={addTagsHandler}
+                    className="text-white text-lg font-semibold px-3 py-1 bg-colorOne  rounded-xl mt-2"
                   >
                     + Add tag
                   </button>
                 </div>
               </div>
             </div>
+            {/* creator info part and submit button */}
             <div className="lg:w-1/2 px-10 lg:mt-0 mt-5 ">
               <h3 className="text-xl font-semibold">
                 <span className="text-base">Story by: </span>
-                {state?.creatorInfo?.creatorName}
+                {currentUser?.name}
               </h3>
               <button
-                className={`text-white text-lg font-semibold px-4 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3 ${
-                  !state.blogBody || (!state.title && "opacity-50 ")
-                }`}
+                disabled={loading}
+                onClick={createBlogHandler}
+                className={`text-white text-lg font-semibold px-4 py-1 bg-colorOne   rounded-xl mt-3 ${
+                  loading && "opacity-50 cursor-not-allowed"
+                } ${!state.blogBody || (!state.title && "opacity-50 ")}`}
               >
                 Create
               </button>

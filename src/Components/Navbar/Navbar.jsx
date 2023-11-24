@@ -42,7 +42,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`my-container fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 
+      className={`my-container fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
     ${scrollingDown ? "-translate-y-16" : "-translate-0"}`}
     >
       <div className="flex justify-between items-center  w-full ">
@@ -68,7 +68,7 @@ const Navbar = () => {
                   <div className="flex items-center rounded-3xl cursor-pointer">
                     <Avatar
                       src={
-                        user.image ||
+                        user.photoURL ||
                         "https://i.ibb.co/Twp960D/default-profile-400x400.png"
                       }
                       sx={{ width: "35px", height: "35px" }}

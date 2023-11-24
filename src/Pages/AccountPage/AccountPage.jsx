@@ -17,14 +17,17 @@ const AccountPage = () => {
   const [activeTab, setActiveTab] = useState("recipes");
   const [showSettings, setShowSettings] = useState(false);
   const [showImgTooltip, setShowImgTooltip] = useState(false);
+
   const [open, setOpen] = useState(false);
-  const [profilePhotoURL, setProfilePhotoURL] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [modalContent, setModalContent] = useState("");
   const { user, userLogout } = useAuthContext();
   const { currentUser } = useSingleUser();
+  const [profilePhotoURL, setProfilePhotoURL] = useState(user && user.photoURL);
   console.log(currentUser);
   console.log(user);
+  console.log(profilePhotoURL);
 
   const navigate = useNavigate();
   const handleClickOpen = () => {
@@ -97,6 +100,7 @@ const AccountPage = () => {
 
     const updatedProfile = {
       name: e.target.name.value,
+      photoURL: profilePhotoURL || "",
       bio: e.target.bio.value,
     };
     console.log(updatedProfile);
@@ -113,7 +117,7 @@ const AccountPage = () => {
                 sx={{ width: 135, height: 135 }}
                 className="w-32 rounded-full object-cover"
                 src={
-                  profilePhotoURL ||
+                  user?.photoURL ||
                   `https://i.ibb.co/Twp960D/default-profile-400x400.png`
                 }
                 alt={`${user?.displayName}'s photo`}
@@ -236,7 +240,7 @@ const AccountPage = () => {
                   sx={{ width: 135, height: 135 }}
                   className="w-32 rounded-full object-cover"
                   src={
-                    profilePhotoURL ||
+                    user?.photoURL ||
                     `https://i.ibb.co/Twp960D/default-profile-400x400.png`
                   }
                   alt={`${user?.displayName}'s photo`}

@@ -8,14 +8,11 @@ import "./AddRecipe.css";
 
 import axios from "axios";
 
+import useSingleUser from "../../hooks/useSingleUser";
+
 const initialState = {
   recipeName: "",
-  creatorInfo: {
-    creatorName: "",
-    creatorId: "",
-    creatorEmail: "",
-    creatorPhoto: "",
-  },
+  creatorInfo: "",
   recipeImages: [],
   description: "",
   ingredients: [""],
@@ -90,19 +87,11 @@ const reducer = (state, action) => {
         };
       }
       return state;
-    case "CREATOR-INFO":
-      return {
-        ...state,
-        [action.mainInput]: {
-          ...state[action.mainInput],
-          [action.name]: action.value,
-        },
-      };
 
     case "TAGS":
       return {
         ...state,
-        [action.name]: action.value,
+        [action.name]: [...state[action.name], ...action.value],
       };
 
     default:
@@ -128,7 +117,11 @@ const AddRecipe = () => {
     serving: "",
     prepTime: "",
   });
-  console.log("error state", errorsObj);
+  const { currentUser } = useSingleUser();
+
+  // console.log(currentUser);
+
+  // for the preview image slider with button
   useEffect(() => {
     // const imgContainer = document.querySelector(".img-container");
     const imgContainer = imgContainerRef.current;
@@ -157,6 +150,8 @@ const AddRecipe = () => {
 
   // function for showing alert before user reload or goes back while changes made in form.
   useEffect(() => {
+    console.log(window.history);
+
     if (
       formState.instructions.length === 1 &&
       formState.ingredients.length === 1 &&
@@ -171,12 +166,27 @@ const AddRecipe = () => {
       e.returnValue = confirmationMessage;
       return confirmationMessage;
     };
+    //TODO: prevent route change
+    // const handleRouteChange = (currentLocation) => {
+    //   const confirmationMessage = "Are you sure you want to leave this page?";
+
+    //   if (!window.confirm(confirmationMessage)) {
+    //     window.history.pushState(null, currentLocation);
+    //   }
+    // };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
+    // window.addEventListener(
+    //   "popstate",
+    //   handleRouteChange(window.location.href)
+    // );
 
-    // Clean up the event listener when the component unmounts
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
+      // window.removeEventListener(
+      //   "popstate",
+      //   handleRouteChange(window.location.href)
+      // );
     };
   }, [formState.ingredients, formState.instructions]);
 
@@ -260,7 +270,7 @@ const AddRecipe = () => {
     setSelectedFiles(selectedFilesToModify);
   };
 
-  //uploading images to cloudinary when user submit the whole form.Because in that time user gets confirm about the images user wants to keep.Before that user may add or remove files.Uploading to cloudinary whenever user adds a image may affect the cloud storage(free plan).
+  //uploading images to cloudinary when user submit the whole form.Because in that time user gets confirm about the images user wants to keep.Before that user may add or remove images.Uploading to cloudinary whenever user adds a image may affect the cloud storage(free plan).
 
   const inputValidationHandler = (form) => {
     const newErrorObj = { ...errorsObj };
@@ -332,7 +342,6 @@ const AddRecipe = () => {
           );
 
           const imgurl = response.data.secure_url;
-
           return imgurl;
         } catch (error) {
           console.log(error);
@@ -348,7 +357,24 @@ const AddRecipe = () => {
               name: "recipeImages",
               value: [...formState["recipeImages"], ...imageURLs],
             });
+            // passing only creator id .by this id we will get a recipe data populated creatorInfo with userInfo
+            dispatch({
+              type: "TEXT_INPUT",
+              name: "creatorInfo",
+              value: currentUser._id,
+            });
           }
+
+          axios
+            .post(`${import.meta.env.VITE_BASEURL}createRecipe`, formState)
+            .then((result) => {
+              console.log(result);
+              setLoading(false);
+            })
+            .catch((err) => {
+              console.log(err);
+              setLoading(false);
+            });
         });
       } catch (error) {
         console.log(error);
@@ -356,19 +382,16 @@ const AddRecipe = () => {
     }
 
     console.log(formState);
-    setLoading(false);
   };
 
   // styles for input label
   const labelStyle = `block text-colorTwo text-2xl font-semibold `;
   return (
-    <div className=" my-container text-colorTwo">
-      <div className="lg:w-4/5 md:w-11/12 mx-auto md:shadow-xl md:rounded-xl h-full py-10 px-5 relative">
+    <div className=" my-container text-colorTwo mt-4">
+      <div className="lg:w-4/5 md:w-11/12 mx-auto md:shadow-xl md:rounded-xl h-full  py-10 px-5 relative">
         <div className="bg-bgColor z-20 flex justify-between items-center uppercase sticky top-0 left-0 right-0 shadow-sm py-3">
           <h1 className="md:text-3xl text-2xl font-bold text-colorOne">
-            <span className="md:text-4xl text-3xl font-extrabold">
-              <sup>+</sup>
-            </span>
+            <span className="md:text-4xl text-3xl font-extrabold"></span>
             Add Recipe
           </h1>
         </div>
@@ -431,7 +454,7 @@ const AddRecipe = () => {
                   htmlFor="recipeImages"
                 >
                   <CameraAltOutlinedIcon />
-                  Add photos
+                  <span className="mt-1"> Add photos</span>
                 </label>
                 <input
                   onChange={filesHandler}
@@ -449,7 +472,8 @@ const AddRecipe = () => {
                   ref={imgContainerRef}
                   className="img-container overflow-x-auto scroll-smooth"
                 >
-                  <button
+                  {/* button for scroll */}
+                  <p
                     onClick={scrollToLeft}
                     className={`absolute top-12  -left-3 text-white bg-colorOne   rounded-lg py-1 ${
                       showScrollBtn
@@ -460,7 +484,7 @@ const AddRecipe = () => {
                     }   `}
                   >
                     <ArrowBackIosOutlinedIcon sx={{ fontSize: 20 }} />
-                  </button>
+                  </p>
                   <div className={`  flex gap-2 w-max`}>
                     {/* add another photo div */}
                     <div className="border-[1px] border-colorTwo md:h-32  md:w-32 w-28 h-28  grid place-items-center rounded-xl">
@@ -492,7 +516,8 @@ const AddRecipe = () => {
                       </div>
                     ))}
                   </div>
-                  <button
+                  {/* button for scroll */}
+                  <p
                     onClick={scrollToRight}
                     className={`absolute top-12  -right-3 text-white bg-colorOne   rounded-lg py-1 ${
                       showScrollBtn
@@ -503,7 +528,7 @@ const AddRecipe = () => {
                     }`}
                   >
                     <ArrowForwardIosOutlinedIcon sx={{ fontSize: 20 }} />
-                  </button>
+                  </p>
                 </div>
               </div>
             </div>
@@ -558,7 +583,7 @@ const AddRecipe = () => {
                       key={`ingredient-${index}`}
                     />
                     {/* btn for removing ingredient field */}
-                    <button
+                    <p
                       onClick={() =>
                         dispatch({
                           type: "REMOVE_FIELD",
@@ -570,13 +595,14 @@ const AddRecipe = () => {
                       disabled={formState.ingredients.length === 1}
                     >
                       <CloseOutlinedIcon sx={{ fontSize: 30 }} />
-                    </button>
+                    </p>
                   </div>
                 ))}
               </div>
 
               {/* button for adding  new ingredient field */}
               <button
+                type="button"
                 onClick={() =>
                   dispatch({ type: "ADD_FIELD", name: "ingredients" })
                 }
@@ -614,7 +640,7 @@ const AddRecipe = () => {
                       key={`instruction-${index}`}
                     />
                     {/* button for removing Instructions field */}
-                    <button
+                    <p
                       onClick={() =>
                         dispatch({
                           type: "REMOVE_FIELD",
@@ -626,12 +652,13 @@ const AddRecipe = () => {
                       disabled={formState.instructions.length === 1}
                     >
                       <CloseOutlinedIcon sx={{ fontSize: 30 }} />
-                    </button>
+                    </p>
                   </div>
                 ))}
               </div>
               {/* button for adding  new Instructions field */}
               <button
+                type="button"
                 onClick={() =>
                   dispatch({ type: "ADD_FIELD", name: "instructions" })
                 }
@@ -771,19 +798,19 @@ const AddRecipe = () => {
               <div className="flex flex-wrap gap-2">
                 {formState.tags.map((tag, index) => (
                   <div
-                    className="flex gap-1 border-[1.3px] border-colorTwo pl-2 py-1 rounded-xl"
+                    className="flex gap-1 border-[1.3px] border-colorTwo mb-1 pl-2 py-1 rounded-xl"
                     key={index}
                   >
                     <p className="">{tag}</p>
 
                     {/* remove tag btn */}
-                    <button
+                    <p
                       onClick={() =>
                         dispatch({ type: "REMOVE_FIELD", name: "tags", index })
                       }
                     >
                       <CloseOutlinedIcon />
-                    </button>
+                    </p>
                   </div>
                 ))}
               </div>
@@ -798,8 +825,9 @@ const AddRecipe = () => {
                   onChange={(e) => setTagInputValue(e.target.value)}
                 />
                 <button
+                  type="button"
                   onClick={addTags}
-                  className="text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3"
+                  className="text-white text-lg font-semibold px-3 py-1 bg-colorOne   rounded-xl mt-3"
                 >
                   + Add tag
                 </button>
@@ -810,8 +838,8 @@ const AddRecipe = () => {
             <div className="text-end">
               <button
                 type="submit"
-                className={`text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3 ${
-                  loading && "bg-opacity-60"
+                className={`text-white text-lg font-semibold px-3 py-1 bg-colorOne   rounded-xl mt-3 ${
+                  loading && "bg-opacity-50 cursor-not-allowed"
                 }`}
                 disabled={loading}
               >

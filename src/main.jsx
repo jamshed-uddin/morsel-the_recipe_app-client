@@ -12,7 +12,7 @@ import AccountPage from "./Pages/AccountPage/AccountPage.jsx";
 import Registration from "./Pages/Register/Registration.jsx";
 import AddRecipe from "./Pages/AddRecipe/AddRecipe.jsx";
 import AddBlog from "./Pages/AddBlog/AddBlog.jsx";
-import BlogBody from "./Pages/AddBlog/BlogBody.jsx";
+
 import AuthProvider from "./providers/AuthProvider.jsx";
 import RecipeDetail from "./Components/RecipeDetail/RecipeDetail.jsx";
 import BlogDetail from "./Components/BlogDetail/BlogDetail.jsx";
@@ -71,10 +71,6 @@ const router = createBrowserRouter([
   {
     path: "register",
     element: <Registration></Registration>,
-  },
-  {
-    path: "blogBody",
-    element: <BlogBody></BlogBody>,
   },
 ]);
 
