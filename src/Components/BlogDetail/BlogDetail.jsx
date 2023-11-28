@@ -11,30 +11,41 @@ import DOMPurify from "dompurify";
 import HTMLReactParser from "html-react-parser";
 import "./BlogDetail.css";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Avatar } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
 import DetailSkeleton from "../DetailSkeleton";
+import ErrorElement from "../ErrorElement";
+import { useParams } from "react-router-dom";
 
 const BlogDetail = () => {
+  const { id } = useParams();
   const { user } = useAuthContext();
   const [blogDetail, setBlogDetail] = useState({});
   console.log(blogDetail);
-  const { isLoading, data, error } = useQuery(
+  console.log(id);
+  const { isLoading, data, error, refetch } = useQuery(
     "blogDetail",
     async () => {
       const result = axios.get(
-        `${import.meta.env.VITE_BASEURL}singleBlog/656045e36d0fca6ff6c70fd3`
+        `${import.meta.env.VITE_BASEURL}singleBlog/${id}`
       );
       return result;
-    },
-    {
-      onSuccess: (data) => {
-        setBlogDetail(data.data);
-      },
     }
   );
+
+  useEffect(() => {
+    if (data) {
+      setBlogDetail(data.data);
+    }
+  }, [data]);
+
+  console.log(data);
+
+  if (error) {
+    return <ErrorElement refetch={refetch} />;
+  }
 
   return isLoading ? (
     <div className="my-container lg:px-24 mt-20  ">
@@ -64,7 +75,7 @@ const BlogDetail = () => {
                   sx={{ color: "#4B5365", fontSize: 28 }}
                 />{" "}
               </button>
-              123
+              {blogDetail?.likedBy?.length}
             </p>
             <button className="cursor-pointer p-1">
               <BookmarkBorderOutlinedIcon

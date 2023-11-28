@@ -4,8 +4,10 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Slide from "@mui/material/Slide";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import useSingleUser from "../../hooks/useSingleUser";
+
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import useAuthContext from "../../hooks/useAuthContext";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -15,10 +17,10 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
   const [blogBodyimages, setBlogBodyImages] = React.useState([]);
   const [tagInputValue, setTagInputValue] = React.useState("");
   const [loading, setLoading] = React.useState(false);
-  const { currentUser } = useSingleUser();
+  const { user } = useAuthContext();
+  const navigate = useNavigate();
 
-  console.log(currentUser);
-  // console.log(state);
+  console.log(state);
   // console.log(blogBodyimages);
   React.useEffect(() => {
     const domParser = new DOMParser();
@@ -28,7 +30,7 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
 
     const imgElements = htmlDoc.querySelectorAll("img");
     const bodyImages = Array.from(imgElements).map((element) => element.src);
-    console.log(bodyImages);
+    // console.log(bodyImages);
     if (bodyImages.length >= 1) {
       dispatch({
         type: "BLOG_TITLE",
@@ -56,22 +58,20 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
   };
 
   //submit/create blog handler
-  const createBlogHandler = () => {
+  const createBlogHandler = async () => {
     // passing only creator id .by this id we will get a recipe data populated creatorInfo with userInfo and using BLOG-TITLE case for that.
-    dispatch({
-      type: "BLOG_TITLE",
-      name: "creatorInfo",
-      value: currentUser._id,
-    });
 
     console.log("submit");
     console.log("state", state);
+
     setLoading(true);
-    axios
+    await axios
       .post(`${import.meta.env.VITE_BASEURL}createBlog`, state)
       .then((result) => {
         console.log(result);
         setLoading(false);
+        navigate(`/blog/detail/${result.data.id}`);
+        //id here is coming from created blog.and using it to navigate to detail page after creating
       })
       .catch((err) => {
         console.log(err);
@@ -210,7 +210,7 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
             <div className="lg:w-1/2 px-10 lg:mt-0 mt-5 ">
               <h3 className="text-xl font-semibold">
                 <span className="text-base">Story by: </span>
-                {currentUser?.name}
+                {user?.displayName}
               </h3>
               <button
                 disabled={loading}

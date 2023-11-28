@@ -5,6 +5,7 @@ import ReactQuill from "react-quill";
 import "./AddBlog.css";
 
 import BlogPublishModal from "./BlogPublishModal";
+import useSingleUser from "../../hooks/useSingleUser";
 
 const initialState = {
   title: "",
@@ -55,7 +56,9 @@ const AddBlog = () => {
   const [loading, setLoading] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [modalOpen, setModalOpen] = useState(false);
+  const { currentUser } = useSingleUser();
 
+  console.log(currentUser);
   // console.log(value);
   // console.log(state);
   // const editor = editorRef.current?.getEditor();
@@ -86,6 +89,11 @@ const AddBlog = () => {
 
   //function for opening publishing modal
   const handlePublishModalOpen = () => {
+    dispatch({
+      type: "BLOG_TITLE",
+      name: "creatorInfo",
+      value: currentUser._id,
+    });
     setModalOpen((prevState) => !prevState);
   };
 
@@ -203,7 +211,7 @@ const AddBlog = () => {
             }`}
             onClick={handlePublishModalOpen}
           >
-            Create
+            Next
           </button>
         </div>
         <div className=" relative mb-3">

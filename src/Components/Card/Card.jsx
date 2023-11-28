@@ -21,14 +21,17 @@ const Card = ({ itemType }) => {
             alt=""
           />
           <div className="flex justify-between py-3 px-4 z-20 absolute bottom-0 right-0 left-0 bg-gradient-to-t from-slate-600">
-            <p className="cursor-pointer p-2">
+            <button
+              onClick={() => console.log("hello")}
+              className="cursor-pointer p-2"
+            >
               <FavoriteBorderOutlinedIcon
                 sx={{ color: "white", fontWeight: "100" }}
               />
-            </p>
-            <p className="cursor-pointer p-2">
+            </button>
+            <button className="cursor-pointer p-2">
               <BookmarkBorderOutlinedIcon sx={{ color: "white" }} />
-            </p>
+            </button>
           </div>
         </div>
         <div className="">
