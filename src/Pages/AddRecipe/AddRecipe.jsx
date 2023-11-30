@@ -82,7 +82,7 @@ const reducer = (state, action) => {
           ...state,
           [action.mainInput]: {
             ...state[action.mainInput],
-            [action.name]: parseInt(action.value),
+            [action.name]: action.value,
           },
         };
       }

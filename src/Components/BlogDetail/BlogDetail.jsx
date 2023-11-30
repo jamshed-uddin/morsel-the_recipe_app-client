@@ -18,13 +18,18 @@ import useAuthContext from "../../hooks/useAuthContext";
 import DetailSkeleton from "../DetailSkeleton";
 import ErrorElement from "../ErrorElement";
 import { useParams } from "react-router-dom";
+import useSingleUser from "../../hooks/useSingleUser";
+import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 
 const BlogDetail = () => {
   const { id } = useParams();
   const { user } = useAuthContext();
   const [blogDetail, setBlogDetail] = useState({});
-  console.log(blogDetail);
-  console.log(id);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const { currentUser } = useSingleUser();
+  const [optionsLoading, setOptionsLoading] = useState(false);
+
   const { isLoading, data, error, refetch } = useQuery(
     "blogDetail",
     async () => {
@@ -41,7 +46,111 @@ const BlogDetail = () => {
     }
   }, [data]);
 
-  console.log(data);
+  // console.log(data);
+
+  const {
+    data: isLikedAndSaved,
+    error: errorMessage,
+    refetch: reloadPage,
+  } = useQuery(["isSavedAndLiked", currentUser], async () => {
+    const result = axios.get(
+      `${import.meta.env.VITE_BASEURL}isLikedAndSaved?userEmail=${
+        currentUser?.email
+      }&itemId=${blogDetail?._id}&itemType=blog`
+    );
+    return result;
+  });
+
+  // console.log(isLikedAndSaved);
+
+  const handleBlogSave = () => {
+    console.log("save cliked");
+    const body = {
+      userId: currentUser?._id,
+      userEmail: currentUser?.email,
+      itemType: "Blog", //need the first letter in capital because it's given as refPath in DB schema.
+    };
+
+    // if item already saved call delete action
+    if (isLikedAndSaved?.data?.isSaved) {
+      setOptionsLoading(true);
+      axios
+        .delete(
+          `${import.meta.env.VITE_BASEURL}deleteSavedItem?itemId=${
+            blogDetail?._id
+          }&userEmail=${currentUser?.email}`
+        )
+        .then(() => {
+          setOptionsLoading(false);
+          reloadPage();
+          //  setOpen and message for snackbar alert for save/unsave
+          setOpen((prev) => !prev);
+          setMessage("Blog unsaved");
+        })
+        .catch((err) => console.log(err));
+      return;
+    }
+
+    setOptionsLoading(true);
+    axios
+      .post(
+        `${import.meta.env.VITE_BASEURL}saveNewItem/${blogDetail?._id}`,
+        body
+      )
+      .then(() => {
+        setOptionsLoading(false);
+        reloadPage();
+        setOpen((prev) => !prev);
+        setMessage("Blog saved");
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleReaction = () => {
+    console.log("reaction clicked");
+    // if item already liked calls dislike action
+    if (isLikedAndSaved?.data?.isLiked) {
+      const body = {
+        userId: currentUser?._id,
+        action: "dislike",
+        actionFrom: "blog",
+      };
+      setOptionsLoading(true);
+      axios
+        .patch(
+          `${import.meta.env.VITE_BASEURL}changeReaction/${blogDetail?._id}`,
+          body
+        )
+        .then(() => {
+          setOptionsLoading(false);
+
+          refetch();
+          reloadPage();
+        })
+        .catch((err) => console.log(err));
+      return;
+    }
+
+    // if item not liked yet
+    const body = {
+      userId: currentUser?._id,
+      action: "like",
+      actionFrom: "blog",
+    };
+    setOptionsLoading(true);
+    axios
+      .patch(
+        `${import.meta.env.VITE_BASEURL}changeReaction/${blogDetail?._id}`,
+        body
+      )
+      .then(() => {
+        setOptionsLoading(false);
+
+        refetch();
+        reloadPage();
+      })
+      .catch((err) => console.log(err));
+  };
 
   if (error) {
     return <ErrorElement refetch={refetch} />;
@@ -69,18 +178,44 @@ const BlogDetail = () => {
         <div className="flex justify-between ">
           {/* like and save button */}
           <div className="flex gap-6 md:gap-14 items-center">
-            <p>
-              <button className="cursor-pointer p-1">
-                <FavoriteBorderOutlinedIcon
-                  sx={{ color: "#4B5365", fontSize: 28 }}
-                />{" "}
-              </button>
+            <p className="flex-grow">
+              <button
+                disabled={optionsLoading}
+                onClick={handleReaction}
+                className="cursor-pointer "
+              >
+                {isLikedAndSaved?.data?.isLiked ? (
+                  <FavoriteOutlinedIcon sx={{ color: "red", fontSize: 28 }} />
+                ) : (
+                  <FavoriteBorderOutlinedIcon
+                    sx={{ color: "#4B5365", fontSize: 28 }}
+                  />
+                )}
+              </button>{" "}
               {blogDetail?.likedBy?.length}
             </p>
-            <button className="cursor-pointer p-1">
-              <BookmarkBorderOutlinedIcon
-                sx={{ color: "#4B5365", fontSize: 28 }}
-              />{" "}
+            <button
+              disabled={optionsLoading}
+              onClick={handleBlogSave}
+              className="cursor-pointer flex items-center"
+            >
+              {isLikedAndSaved?.data?.isSaved ? (
+                <>
+                  {" "}
+                  <BookmarkOutlinedIcon
+                    sx={{ color: "#4B5365", fontSize: 28 }}
+                  />
+                  <span> Saved</span>{" "}
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <BookmarkBorderOutlinedIcon
+                    sx={{ color: "#4B5365", fontSize: 28 }}
+                  />
+                  <span> Save</span>{" "}
+                </>
+              )}
             </button>
           </div>
           {/* edit , share, options button */}
@@ -106,6 +241,7 @@ const BlogDetail = () => {
       <div id="blog-body" className="mt-10 ">
         {HTMLReactParser(DOMPurify.sanitize(blogDetail?.blogBody))}
       </div>
+      <SimpleSnackbar open={open} setOpen={setOpen} message={message} />
     </div>
   );
 };
