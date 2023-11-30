@@ -72,6 +72,7 @@ const RecipeDetail = () => {
 
     // if item already saved call delete action
     if (isLikedAndSaved?.data?.isSaved) {
+      setOptionsLoading(true);
       console.log("delte action");
       axios
         .delete(
@@ -80,26 +81,34 @@ const RecipeDetail = () => {
           }&userEmail=${currentUser?.email}`
         )
         .then(() => {
+          setOptionsLoading(false);
           reloadPage();
           //  setOpen and message for snackbar alert for save/unsave
           setOpen((prev) => !prev);
           setMessage("Recipe unsaved");
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          setOptionsLoading(false);
+          console.log(err);
+        });
       return;
     }
-
+    setOptionsLoading(true);
     axios
       .post(
         `${import.meta.env.VITE_BASEURL}saveNewItem/${recipeDetail?._id}`,
         body
       )
       .then(() => {
+        setOptionsLoading(false);
         reloadPage();
         setOpen((prev) => !prev);
         setMessage("Recipe saved");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setOptionsLoading(false);
+        console.log(err);
+      });
   };
 
   const handleReaction = () => {
@@ -168,7 +177,7 @@ const RecipeDetail = () => {
           {/* recipe & creator info */}
 
           <div className="md:mt-1 flex-grow bg-bgColor -mt-4 relative z-20 rounded-3xl ">
-            {/* edit , share, options button */}
+            {/* edit , share, delete button */}
             <div className="flex gap-5 items-center justify-end mr-3 md:mr-0">
               {user?.email === recipeDetail?.creatorInfo?.email && (
                 <Tooltip title="Edit">
@@ -230,7 +239,11 @@ const RecipeDetail = () => {
             {/* like save print button */}
             <div className="flex items-center gap-6 mt-2">
               <p className="flex-grow">
-                <button onClick={handleReaction} className="cursor-pointer ">
+                <button
+                  disabled={optionsLoading}
+                  onClick={handleReaction}
+                  className="cursor-pointer "
+                >
                   {isLikedAndSaved?.data?.isLiked ? (
                     <FavoriteOutlinedIcon sx={{ color: "red", fontSize: 28 }} />
                   ) : (
@@ -242,6 +255,7 @@ const RecipeDetail = () => {
                 {recipeDetail?.likedBy?.length}
               </p>
               <button
+                disabled={optionsLoading}
                 onClick={handleRecipeSave}
                 className="cursor-pointer flex items-center"
               >

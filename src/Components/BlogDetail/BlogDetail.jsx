@@ -94,7 +94,10 @@ const BlogDetail = () => {
           setOpen((prev) => !prev);
           setMessage("Blog unsaved");
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          setOptionsLoading(false);
+          console.log(err);
+        });
       return;
     }
 
@@ -110,7 +113,10 @@ const BlogDetail = () => {
         setOpen((prev) => !prev);
         setMessage("Blog saved");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setOptionsLoading(false);
+        console.log(err);
+      });
   };
 
   const handleReaction = () => {
