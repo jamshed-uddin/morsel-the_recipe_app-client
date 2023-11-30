@@ -230,7 +230,7 @@ const AccountPage = () => {
 
       {/* dialogue from setting button for updating/account/ sign out */}
       <Dialog fullWidth open={open} onClose={handleClose}>
-        <div className="h-[80vh] md:h-[90vh] grid items-center">
+        <div className="h-[80vh] md:h-[90vh] grid items-center bg-bgColor">
           {/* update profile info  */}
           <div className=" w-[90%] mx-auto">
             {/* image div */}
@@ -309,7 +309,7 @@ const AccountPage = () => {
                 <div className="space-x-3">
                   <button
                     type="submit"
-                    className="border-2 border-colorOne bg-colorOne px-4 py-1 rounded-xl text-lg text-white"
+                    className="border-2 border-colorOne bg-colorOne px-5 py-1 rounded-xl text-lg text-white"
                   >
                     Save
                   </button>

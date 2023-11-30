@@ -4,8 +4,8 @@ import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlin
 import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
-import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -13,10 +13,11 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import ErrorElement from "../ErrorElement";
 import DetailSkeleton from "../DetailSkeleton";
-import { Avatar } from "@mui/material";
+import { Avatar, Tooltip } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
 import useSingleUser from "../../hooks/useSingleUser";
 import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
+import AlertDialog from "../AlertDialog/AlertDialog";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -24,6 +25,9 @@ const RecipeDetail = () => {
   const { currentUser } = useSingleUser();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
+  const [dialogFor, setDialogFor] = useState("delete");
+  const [optionsLoading, setOptionsLoading] = useState(false);
   const [recipeDetail, setRecipeDetail] = useState({});
   // console.log(currentUser);
   console.log(recipeDetail?.prepTime);
@@ -167,20 +171,40 @@ const RecipeDetail = () => {
             {/* edit , share, options button */}
             <div className="flex gap-5 items-center justify-end mr-3 md:mr-0">
               {user?.email === recipeDetail?.creatorInfo?.email && (
-                <button className="cursor-pointer p-1">
-                  <DriveFileRenameOutlineOutlinedIcon
-                    sx={{ color: "#4B5365", fontSize: 25 }}
-                  />
-                </button>
+                <Tooltip title="Edit">
+                  <button className="cursor-pointer p-1">
+                    <DriveFileRenameOutlineOutlinedIcon
+                      sx={{ color: "#4B5365", fontSize: 30 }}
+                    />
+                  </button>
+                </Tooltip>
               )}
-              <button className="cursor-pointer p-1">
-                <ShareOutlinedIcon sx={{ color: "#4B5365", fontSize: 25 }} />
-              </button>
-              <button className="cursor-pointer p-1">
-                <MoreHorizOutlinedIcon
-                  sx={{ color: "#4B5365", fontSize: 25 }}
-                />
-              </button>
+              <Tooltip title="Share">
+                <button
+                  onClick={() => {
+                    setDialogFor("shareOptions");
+                    setDeleteAlertOpen((prev) => !prev);
+                  }}
+                  className="cursor-pointer p-1"
+                >
+                  <ShareOutlinedIcon sx={{ color: "#4B5365", fontSize: 28 }} />
+                </button>
+              </Tooltip>
+              {user?.email === recipeDetail?.creatorInfo?.email && (
+                <Tooltip title="Delete">
+                  <button
+                    onClick={() => {
+                      setDialogFor("delete");
+                      setDeleteAlertOpen((prev) => !prev);
+                    }}
+                    className="cursor-pointer p-1"
+                  >
+                    <DeleteOutlinedIcon
+                      sx={{ color: "#4B5365", fontSize: 30 }}
+                    />
+                  </button>
+                </Tooltip>
+              )}
             </div>
             <h1 className="text-3xl md:text-5xl font-bold">
               {recipeDetail?.recipeName}
@@ -321,6 +345,15 @@ const RecipeDetail = () => {
       </div>
 
       <SimpleSnackbar open={open} setOpen={setOpen} message={message} />
+      <AlertDialog
+        shareURL={"http://www.google.com"}
+        dialogFor={dialogFor}
+        open={deleteAlertOpen}
+        setOpen={setDeleteAlertOpen}
+        itemType={"recipe"}
+        itemId={recipeDetail._id}
+        userEmail={currentUser.email}
+      />
     </div>
   );
 };

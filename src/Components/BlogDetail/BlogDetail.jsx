@@ -5,7 +5,8 @@ import BookmarkOutlinedIcon from "@mui/icons-material/BookmarkOutlined";
 
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
-import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
+
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import axios from "axios";
 import DOMPurify from "dompurify";
 import HTMLReactParser from "html-react-parser";
@@ -13,7 +14,7 @@ import "./BlogDetail.css";
 
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { Avatar } from "@mui/material";
+import { Avatar, Tooltip } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
 import DetailSkeleton from "../DetailSkeleton";
 import ErrorElement from "../ErrorElement";
@@ -21,14 +22,20 @@ import { useParams } from "react-router-dom";
 import useSingleUser from "../../hooks/useSingleUser";
 import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 
+import AlertDialog from "../AlertDialog/AlertDialog";
+
 const BlogDetail = () => {
   const { id } = useParams();
   const { user } = useAuthContext();
   const [blogDetail, setBlogDetail] = useState({});
   const [open, setOpen] = useState(false);
+  const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [message, setMessage] = useState("");
+  const [dialogFor, setDialogFor] = useState("delete");
   const { currentUser } = useSingleUser();
   const [optionsLoading, setOptionsLoading] = useState(false);
+  // console.log(blogDetail);
+  // console.log(window.location.href);
 
   const { isLoading, data, error, refetch } = useQuery(
     "blogDetail",
@@ -221,18 +228,39 @@ const BlogDetail = () => {
           {/* edit , share, options button */}
           <div className="flex gap-6 items-center">
             {user?.email === blogDetail?.creatorInfo?.email && (
-              <button className="cursor-pointer p-1">
-                <DriveFileRenameOutlineOutlinedIcon
-                  sx={{ color: "#4B5365", fontSize: 30 }}
-                />
-              </button>
+              <Tooltip title="Edit">
+                <button className="cursor-pointer p-1">
+                  <DriveFileRenameOutlineOutlinedIcon
+                    sx={{ color: "#4B5365", fontSize: 30 }}
+                  />
+                </button>
+              </Tooltip>
             )}
-            <button className="cursor-pointer p-1">
-              <ShareOutlinedIcon sx={{ color: "#4B5365", fontSize: 28 }} />
-            </button>
-            <button className="cursor-pointer p-1">
-              <MoreHorizOutlinedIcon sx={{ color: "#4B5365", fontSize: 28 }} />
-            </button>
+            <Tooltip title="Share">
+              <button
+                onClick={() => {
+                  setDialogFor("shareOptions");
+                  setDeleteAlertOpen((prev) => !prev);
+                }}
+                className="cursor-pointer p-1"
+              >
+                <ShareOutlinedIcon sx={{ color: "#4B5365", fontSize: 28 }} />
+              </button>
+            </Tooltip>
+
+            {user?.email === blogDetail?.creatorInfo?.email && (
+              <Tooltip title="Delete">
+                <button
+                  onClick={() => {
+                    setDialogFor("delete");
+                    setDeleteAlertOpen((prev) => !prev);
+                  }}
+                  className="cursor-pointer p-1"
+                >
+                  <DeleteOutlinedIcon sx={{ color: "#4B5365", fontSize: 30 }} />
+                </button>
+              </Tooltip>
+            )}
           </div>
         </div>
       </div>
@@ -242,6 +270,15 @@ const BlogDetail = () => {
         {HTMLReactParser(DOMPurify.sanitize(blogDetail?.blogBody))}
       </div>
       <SimpleSnackbar open={open} setOpen={setOpen} message={message} />
+      <AlertDialog
+        shareURL={"http://www.google.com"}
+        dialogFor={dialogFor}
+        open={deleteAlertOpen}
+        setOpen={setDeleteAlertOpen}
+        itemType={"blog"}
+        itemId={blogDetail._id}
+        userEmail={currentUser.email}
+      />
     </div>
   );
 };
