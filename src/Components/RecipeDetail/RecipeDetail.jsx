@@ -35,7 +35,7 @@ const RecipeDetail = () => {
   const { isLoading, data, error, refetch } = useQuery(
     "recipeDetail",
     async () => {
-      const result = axios.get(
+      const result = await axios.get(
         `${import.meta.env.VITE_BASEURL}singleRecipe/${id}`
       );
       return result;
@@ -53,7 +53,7 @@ const RecipeDetail = () => {
     error: errorMessage,
     refetch: reloadPage,
   } = useQuery(["isSavedAndLiked", currentUser], async () => {
-    const result = axios.get(
+    const result = await axios.get(
       `${import.meta.env.VITE_BASEURL}isLikedAndSaved?userEmail=${
         currentUser?.email
       }&itemId=${recipeDetail?._id}&itemType=recipe`
@@ -63,7 +63,8 @@ const RecipeDetail = () => {
 
   // console.log(data);
 
-  const handleRecipeSave = () => {
+  // saving on savedItems collection
+  const handleRecipeSave = async () => {
     const body = {
       userId: currentUser?._id,
       userEmail: currentUser?.email,
@@ -74,7 +75,7 @@ const RecipeDetail = () => {
     if (isLikedAndSaved?.data?.isSaved) {
       setOptionsLoading(true);
       console.log("delte action");
-      axios
+      await axios
         .delete(
           `${import.meta.env.VITE_BASEURL}deleteSavedItem?itemId=${
             recipeDetail?._id
@@ -94,7 +95,7 @@ const RecipeDetail = () => {
       return;
     }
     setOptionsLoading(true);
-    axios
+    await axios
       .post(
         `${import.meta.env.VITE_BASEURL}saveNewItem/${recipeDetail?._id}`,
         body
@@ -111,7 +112,7 @@ const RecipeDetail = () => {
       });
   };
 
-  const handleReaction = () => {
+  const handleReaction = async () => {
     // if item already liked calls dislike action
     if (isLikedAndSaved?.data?.isLiked) {
       const body = {
@@ -119,7 +120,7 @@ const RecipeDetail = () => {
         action: "dislike",
         actionFrom: "recipe",
       };
-      axios
+      await axios
         .patch(
           `${import.meta.env.VITE_BASEURL}changeReaction/${recipeDetail?._id}`,
           body
@@ -139,7 +140,7 @@ const RecipeDetail = () => {
       action: "like",
       actionFrom: "recipe",
     };
-    axios
+    await axios
       .patch(
         `${import.meta.env.VITE_BASEURL}changeReaction/${recipeDetail?._id}`,
         body

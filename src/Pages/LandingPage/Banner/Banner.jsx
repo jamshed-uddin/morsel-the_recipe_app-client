@@ -5,7 +5,7 @@ import bannerImage from "../../../assets/banner.jpg";
 
 const Banner = () => {
   return (
-    <div className="my-container  mt-20 relative mb-3">
+    <div className="my-container  mt-28  relative mb-3">
       <div className="text-colorOne ">
         <div className=" font-semibold">
           <p className="block md:inline text-[7rem] leading-[7rem] md:text-9xl ">

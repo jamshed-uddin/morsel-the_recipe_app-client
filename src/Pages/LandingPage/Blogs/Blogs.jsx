@@ -34,7 +34,7 @@ const Blogs = () => {
           isLoading ? (
             <CardSkeleton key={index} />
           ) : (
-            <Card itemType="Blog" key={index}></Card>
+            <Card itemType="blog" key={index}></Card>
           )
         )}
       </div>

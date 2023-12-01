@@ -12,12 +12,14 @@ import useAuthContext from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import useSingleUser from "../../hooks/useSingleUser";
+import { useQuery } from "react-query";
+import MyItems from "./MyItems";
 
 const AccountPage = () => {
-  const [activeTab, setActiveTab] = useState("recipes");
+  const [activeTab, setActiveTab] = useState("myRecipes");
   const [showSettings, setShowSettings] = useState(false);
   const [showImgTooltip, setShowImgTooltip] = useState(false);
-
+  const [myItems, setMyItems] = useState([]);
   const [open, setOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -25,9 +27,9 @@ const AccountPage = () => {
   const { user, userLogout } = useAuthContext();
   const { currentUser } = useSingleUser();
   const [profilePhotoURL, setProfilePhotoURL] = useState(user && user.photoURL);
-  console.log(currentUser);
-  console.log(user);
-  console.log(profilePhotoURL);
+  // console.log(currentUser);
+  // console.log(user);
+  // console.log(profilePhotoURL);
 
   const navigate = useNavigate();
   const handleClickOpen = () => {
@@ -42,7 +44,7 @@ const AccountPage = () => {
     userLogout().then(navigate("/"));
   };
 
-  const handleProfilePhotoChange = (e) => {
+  const handleProfilePhotoChange = async (e) => {
     const file = e.target.files[0];
     console.log(file);
 
@@ -52,7 +54,7 @@ const AccountPage = () => {
       imageData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
       setLoading(true);
       setShowImgTooltip((prev) => !prev);
-      axios
+      await axios
         .post(
           `https://api.cloudinary.com/v1_1/${
             import.meta.env.VITE_CLOUD_NAME
@@ -94,6 +96,40 @@ const AccountPage = () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [showSettings, showImgTooltip]);
+
+  const { isLoading, data, error } = useQuery(
+    [activeTab, currentUser],
+    async () => {
+      if (activeTab === "savedItems") {
+        const result = await axios.get(
+          `${import.meta.env.VITE_BASEURL}${activeTab}?userId=${
+            currentUser?._id
+          }&itemType=All`
+        );
+
+        return result;
+      }
+
+      if (activeTab !== "savedItems") {
+        const result = await axios.get(
+          `${import.meta.env.VITE_BASEURL}${activeTab}?userId=${
+            currentUser?._id
+          }`
+        );
+
+        return result;
+      }
+    }
+  );
+
+  useEffect(() => {
+    if (data) {
+      setMyItems(data.data);
+    }
+  }, [data]);
+
+  console.log(isLoading);
+  console.log(myItems);
 
   const handleUpdateProfile = (e) => {
     e.preventDefault();
@@ -187,9 +223,9 @@ const AccountPage = () => {
           {/* tab buttons  */}
           <div className="flex items-end gap-10 text-2xl font-semibold border-b-[1px] border-slate-300 pl-2">
             <button
-              onClick={() => setActiveTab("recipes")}
-              className={` pb-4 cursor-pointer ${
-                activeTab === "recipes"
+              onClick={() => setActiveTab("myRecipes")}
+              className={` pb-2 cursor-pointer ${
+                activeTab === "myRecipes"
                   ? "border-b-2  border-colorOne text-colorOne"
                   : "text-colorTwo border-b-2 border-b-transparent "
               }`}
@@ -197,9 +233,9 @@ const AccountPage = () => {
               Recipes
             </button>
             <button
-              onClick={() => setActiveTab("blogs")}
-              className={` pb-4 cursor-pointer ${
-                activeTab === "blogs"
+              onClick={() => setActiveTab("myBlogs")}
+              className={` pb-2 cursor-pointer ${
+                activeTab === "myBlogs"
                   ? "border-b-2  border-colorOne text-colorOne"
                   : "text-colorTwo border-b-2 border-b-transparent "
               }`}
@@ -207,9 +243,9 @@ const AccountPage = () => {
               Blogs
             </button>
             <button
-              onClick={() => setActiveTab("saved")}
-              className={` pb-4 cursor-pointer  ${
-                activeTab === "saved"
+              onClick={() => setActiveTab("savedItems")}
+              className={` pb-2 cursor-pointer  ${
+                activeTab === "savedItems"
                   ? "border-b-2  border-colorOne text-colorOne"
                   : "text-colorTwo border-b-2 border-b-transparent"
               }`}
@@ -219,10 +255,8 @@ const AccountPage = () => {
           </div>
 
           {/*tab body */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 py-8">
-            {[1, 2, 3, 4, 5, 6].map((index, el) => (
-              <Card key={index}></Card>
-            ))}
+          <div>
+            <MyItems MyItems={myItems} activeTab={activeTab} />
           </div>
         </div>
       </div>

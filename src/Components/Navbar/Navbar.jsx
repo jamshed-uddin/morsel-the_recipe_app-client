@@ -10,7 +10,6 @@ const Navbar = () => {
   const [showNav, setShowNav] = useState(false);
   const [scrollingDown, setScrollingDown] = useState(false);
   const { user } = useAuthContext();
-  console.log(user);
 
   useEffect(() => {
     if (showNav) {
@@ -42,7 +41,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`my-container fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
+      className={`px-1 md:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
     ${scrollingDown ? "-translate-y-16" : "-translate-0"}`}
     >
       <div className="flex justify-between items-center  w-full ">
