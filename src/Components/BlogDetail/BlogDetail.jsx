@@ -281,8 +281,8 @@ const BlogDetail = () => {
         open={deleteAlertOpen}
         setOpen={setDeleteAlertOpen}
         itemType={"blog"}
-        itemId={blogDetail._id}
-        userEmail={currentUser.email}
+        itemId={blogDetail?._id}
+        userEmail={currentUser?.email}
       />
     </div>
   );

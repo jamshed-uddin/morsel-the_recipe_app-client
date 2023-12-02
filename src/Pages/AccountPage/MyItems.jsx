@@ -18,10 +18,11 @@ const MyItems = ({ isLoading, MyItems, activeTab }) => {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 py-8">
         {MyItems?.map((savedItem) => (
           <Card
-            item={savedItem.item}
+            item={savedItem?.item}
             itemType={savedItem?.itemType}
             key={savedItem._id}
-            itemId={savedItem.item}
+            itemId={savedItem?.item?._id}
+            // the unique of the item is inside item property of savedItem
           ></Card>
         ))}
       </div>
@@ -35,7 +36,7 @@ const MyItems = ({ isLoading, MyItems, activeTab }) => {
           item={singleItem}
           itemType={activeTab === "myRecipes" ? "recipe" : "blog"}
           key={singleItem._id}
-          itemId={singleItem._id}
+          itemId={singleItem?._id}
         ></Card>
       ))}
     </div>
