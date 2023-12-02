@@ -1,10 +1,22 @@
 import { Link } from "react-router-dom";
 import forkSpoon from "../../../public/images/forkSpoon.png";
 
-const Card = ({ itemType, item }) => {
+const Card = ({ itemType, item, itemId }) => {
+  /*
+   *itemType here is recipe/blog.did toLowerCase cause it may come in uppercase.
+   *item is an individual item. it can be blog or recipe.
+   *itemId is the unique id of each item(recipe/blog).But in savedItem the unique itemId stored in item property.so the item field can be populated with that particular item by the id.
+   */
+
   return (
     <div>
-      <Link>
+      <Link
+        to={
+          itemType?.toLowerCase() === "recipe"
+            ? `/recipe/detail/${itemId}`
+            : `/blog/detail/${itemId}`
+        }
+      >
         {/* images */}
         <div
           className={`w-full h-[22rem]  ${
@@ -19,7 +31,7 @@ const Card = ({ itemType, item }) => {
               (itemType?.toLowerCase() === "blog" &&
                 (item?.previewImage || forkSpoon)) ||
               (itemType?.toLowerCase() === "recipe" &&
-                (item?.recipeImages || forkSpoon))
+                (item?.recipeImages?.at(0) || forkSpoon))
             }
             alt=""
           />

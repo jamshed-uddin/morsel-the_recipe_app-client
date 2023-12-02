@@ -7,15 +7,17 @@ const useSingleUser = () => {
   const { user } = useAuthContext();
   const [currentUser, setCurrentUser] = useState();
 
-  const { isLoading, data, isError, error } = useQuery(
-    ["singleUser", user],
-    async () => {
-      const result = axios.get(
-        `${import.meta.env.VITE_BASEURL}singleUser/${user?.email}`
-      );
-      return result;
-    }
-  );
+  const {
+    isLoading: currentUserLoading,
+    data,
+    isError,
+    error,
+  } = useQuery(["singleUser", user], async () => {
+    const result = await axios.get(
+      `${import.meta.env.VITE_BASEURL}singleUser/${user?.email}`
+    );
+    return result;
+  });
 
   useEffect(() => {
     if (data) {
@@ -23,7 +25,7 @@ const useSingleUser = () => {
     }
   }, [data]);
 
-  return { currentUser };
+  return { currentUser, currentUserLoading };
 };
 
 export default useSingleUser;
