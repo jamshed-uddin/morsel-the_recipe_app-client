@@ -48,7 +48,7 @@ const Navbar = () => {
     >
       <div className="flex justify-between items-center  w-full ">
         <div>
-          <h2 className="text-4xl font-bold text-colorOne relative z-50">
+          <h2 className="text-[2.6rem] leading-4 font-bold text-colorOne relative z-50">
             <Link to={"/"}>Morsel</Link>
           </h2>
         </div>
@@ -130,33 +130,30 @@ const Navbar = () => {
         >
           <div className=" w-full h-[70vh] flex flex-col">
             <div className="pl-2 uppercase text-6xl  text-colorOne tracking-tighter space-y-4  font-bold flex flex-col ">
-              <NavLink
-                className={({ isActive }) => (isActive ? "italic pl-7" : "")}
+              <Link
                 to={"/"}
                 onClick={() => {
                   setShowNav(false);
                 }}
               >
                 Home
-              </NavLink>
-              <NavLink
-                className={({ isActive }) => (isActive ? "italic pl-7" : "")}
+              </Link>
+              <Link
                 to={"/recipes"}
                 onClick={() => {
                   setShowNav(false);
                 }}
               >
                 Recipes
-              </NavLink>
-              <NavLink
-                className={({ isActive }) => (isActive ? "italic pl-7" : "")}
+              </Link>
+              <Link
                 to={"/blogs"}
                 onClick={() => {
                   setShowNav(false);
                 }}
               >
                 Blogs
-              </NavLink>
+              </Link>
               <div className={`${!user && "link"}`}>
                 {user ? (
                   <Link
