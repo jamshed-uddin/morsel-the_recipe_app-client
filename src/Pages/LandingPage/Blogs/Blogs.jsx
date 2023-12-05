@@ -21,21 +21,32 @@ const Blogs = () => {
       },
     }
   );
-  console.log(blogs);
+
+  if (isLoading) {
+    return (
+      <div className="my-container mt-14">
+        <div className=" md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
+          {[1, 2, 3, 4, 5].map((item, index) => (
+            <CardSkeleton key={index} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className=" my-container pt-14">
-      <h1 className="text-5xl font-semibold text-colorOne mb-4">
-        Morsel voices
-      </h1>
-      <div className="md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-5">
-        {[1, 2, 3, 4, 5].map((el, index) =>
-          isLoading ? (
-            <CardSkeleton key={index} />
-          ) : (
-            <Card itemType="blog" key={index}></Card>
-          )
-        )}
+    <div className=" my-container">
+      <div className={`overflow-hidden  mb-1`}>
+        <h1
+          className={`text-3xl md:text-5xl text-colorOne transition-all duration-500 `}
+        >
+          Morsel voices
+        </h1>
+      </div>
+      <div className="recipesContainer grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-x-6  gap-y-6  ">
+        {blogs.map((item, index) => (
+          <Card index={index} itemType="blog" item={item} key={index}></Card>
+        ))}
       </div>
     </div>
   );

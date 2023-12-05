@@ -56,3 +56,8 @@ input[type="number"]::-webkit-inner-spin-button {
 button:active {
   scale: 0.95;
 }
+
+/* background style for dashboard nav sidebar  */
+.css-d9ml5t-MuiDrawer-docked .MuiDrawer-paper {
+  background: #fdfbf8;
+}

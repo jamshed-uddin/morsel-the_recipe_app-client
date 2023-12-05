@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useState } from "react";
+import { createContext } from "react";
 import { useQuery } from "react-query";
 export const DashboardDataContext = createContext(null);
 const DashboardDataProvider = ({ children }) => {
@@ -28,6 +28,8 @@ const DashboardDataProvider = ({ children }) => {
     const result = await axios.get(`${import.meta.env.VITE_BASEURL}allBlogs`);
     return result.data;
   });
+
+  console.log(blogsData);
 
   const dashboardData = {
     userFetchLoading,

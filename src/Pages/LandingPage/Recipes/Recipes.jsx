@@ -3,6 +3,7 @@ import Card from "../../../Components/Card/Card";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import CardSkeleton from "../../../Components/Skeletons/CardSkeleton";
+import "./Recipes.css";
 
 const Recipes = () => {
   const [recipes, setRecipes] = useState([]);
@@ -68,9 +69,12 @@ const Recipes = () => {
           Cook something quick
         </h1>
       </div>
-      <div className=" md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
+      <div
+        id="recipesContainer"
+        className=" grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-x-6  gap-y-4 md:gap-y-5  "
+      >
         {recipes.map((item, index) => (
-          <Card itemType="recipe" item={item} key={index}></Card>
+          <Card index={index} itemType="recipe" item={item} key={index}></Card>
         ))}
       </div>
     </div>

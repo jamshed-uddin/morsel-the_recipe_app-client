@@ -59,6 +59,11 @@ const AdminDashboard = (props) => {
     }
   }, [location]);
 
+  const navLinkStyle = ({ isActive }) =>
+    isActive
+      ? "bg-colorTwo flex items-center rounded-lg bg-opacity-10 gap-5 pl-2 w-full py-1"
+      : " flex items-center gap-5  pl-2 w-full py-1 hover:bg-colorTwo hover:bg-opacity-10 rounded-lg transition-all duration-300";
+
   const drawer = (
     <div className="px-4 pt-3 mt-12 ">
       <Divider />
@@ -68,11 +73,7 @@ const AdminDashboard = (props) => {
             <li className="" key={text}>
               <p onClick={handleDrawerToggle} className="text-xl">
                 <NavLink
-                  className={({ isActive }) =>
-                    isActive
-                      ? "bg-colorTwo flex items-center rounded-lg bg-opacity-10 gap-5 pl-2 w-full py-1"
-                      : " flex items-center gap-5  pl-2 w-full py-1"
-                  }
+                  className={navLinkStyle}
                   to={`/dashboard/${routes.at(index)}`}
                 >
                   <span>
@@ -92,14 +93,7 @@ const AdminDashboard = (props) => {
       <ul className="">
         <li className="my-4">
           <p onClick={handleDrawerToggle} className="text-xl ">
-            <NavLink
-              className={({ isActive }) =>
-                isActive
-                  ? "bg-colorTwo flex items-center rounded-lg bg-opacity-10 gap-5 pl-2 w-full py-1"
-                  : " flex items-center gap-5  pl-2 w-full py-1"
-              }
-              to={`/dashboard/adminAccount`}
-            >
+            <NavLink className={navLinkStyle} to={`/dashboard/adminAccount`}>
               <span>
                 <PersonOutlineOutlinedIcon />
               </span>
@@ -108,7 +102,7 @@ const AdminDashboard = (props) => {
           </p>
         </li>
         <li className="my-4">
-          <p className="text-xl pl-2">
+          <p className="text-xl pl-2 py-1 hover:bg-colorTwo hover:bg-opacity-10 rounded-lg transition-all duration-300">
             <Link className="w-full" to={"/"}>
               <HomeOutlined />
               <span className="ml-5">Home</span>
@@ -151,7 +145,6 @@ const AdminDashboard = (props) => {
         <Box
           component="nav"
           sx={{
-            bgcolor: "red",
             width: { sm: drawerWidth },
             flexShrink: { sm: 0 },
           }}

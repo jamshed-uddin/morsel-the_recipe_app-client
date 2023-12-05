@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import forkSpoon from "../../../src/assets/images/forkSpoon.png";
+import "./Card.css";
 
-const Card = ({ itemType, item }) => {
+const Card = ({ itemType, item, index }) => {
   /*
    *itemType here is recipe/blog.did toLowerCase cause it may come in uppercase.
    *item is an individual item. it can be blog or recipe.
@@ -9,7 +10,7 @@ const Card = ({ itemType, item }) => {
    */
 
   return (
-    <div>
+    <div className={`${index === 0 ? "firstChild" : ""}`}>
       <Link
         to={
           itemType?.toLowerCase() === "recipe"
@@ -19,12 +20,14 @@ const Card = ({ itemType, item }) => {
       >
         {/* images */}
         <div
-          className={`w-full h-[22rem]  ${
-            itemType?.toLowerCase() === "blog" ? "" : "rounded-2xl"
+          className={`w-full h-[17rem] md:h-[22rem]  ${
+            index === 0 ? "firstChild-innerDiv" : ""
+          } ${
+            itemType?.toLowerCase() === "blog" ? "rounded-none" : "rounded-2xl"
           }  relative overflow-hidden`}
         >
           <img
-            className={`w-full h-full  object-cover  ${
+            className={`w-full h-full object-cover  object-center ${
               itemType?.toLowerCase() === "blog" ? "" : "rounded-2xl"
             }`}
             src={
@@ -39,7 +42,7 @@ const Card = ({ itemType, item }) => {
 
         {/* other info */}
         <div className="">
-          <div className="text-colorTwo mt-4">
+          <div className="text-colorTwo mt-3">
             {itemType?.toLowerCase() === "recipe" ? (
               <h2 className="text-2xl leading-5 font-medium">
                 {item?.recipeName}
@@ -49,9 +52,13 @@ const Card = ({ itemType, item }) => {
             )}
             <>
               {itemType?.toLowerCase() === "recipe" && (
-                <div className={`space-x-4 text-lg mt-1`}>
-                  <span>{`${item?.ingredients?.length} ingredients`}</span>
-                  <span>{`${item?.prepTime?.minutes} minutes`}</span>
+                <div
+                  className={`${
+                    index === 0 ? "ingredientMinute" : ""
+                  } text-lg mt-1 sm:flex items-center sm:gap-4 leading-5 md:leading-normal`}
+                >
+                  <p>{`${item?.ingredients?.length} ingredients`}</p>
+                  <p>{`${item?.prepTime?.minutes} minutes`}</p>
                 </div>
               )}
             </>

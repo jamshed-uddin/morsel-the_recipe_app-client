@@ -17,7 +17,7 @@ const StatusChanger = ({
   setOpen,
   setMessage,
 }) => {
-  const [updatedStatus, setUpdatedStatus] = useState(status);
+  const [updatedStatus, setUpdatedStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState("");
 
@@ -25,9 +25,6 @@ const StatusChanger = ({
     setUpdatedStatus(event.target.value);
     console.log(event.target.value);
   };
-
-  console.log(status);
-  console.log("upS", updatedStatus);
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -81,7 +78,7 @@ const StatusChanger = ({
 
   return (
     <div
-      className={`${
+      className={`text-colorTwo ${
         actionFrom === "table"
           ? ""
           : "py-2 shadow-lg mt-1 mb-4 rounded-xl px-4 flex justify-center"
@@ -102,6 +99,9 @@ const StatusChanger = ({
               displayEmpty
               inputProps={{ "aria-label": "Without label" }}
             >
+              <MenuItem value={""} disabled>
+                {status}
+              </MenuItem>
               <MenuItem value={"pending"}>Pending</MenuItem>
               <MenuItem value={"approved"}>Approved</MenuItem>
               <MenuItem value={"denied"}>Denied</MenuItem>
@@ -124,7 +124,8 @@ const StatusChanger = ({
                 onClick={handleStatusChange}
                 disabled={loading || updatedStatus === status}
                 className={`bg-colorOne text-white px-5 py-1 text-lg rounded-lg ${
-                  (loading || updatedStatus === status) && "opacity-70"
+                  (loading || updatedStatus === status || !updatedStatus) &&
+                  "opacity-70"
                 }`}
               >
                 Save
@@ -155,7 +156,7 @@ const StatusChanger = ({
       </div>
 
       {/* dialog for admin feedback */}
-      <div className="">
+      <div className="text-colorTwo">
         <Dialog fullWidth open={dialogOpen} onClose={handleClose}>
           <div className="ml-7 mt-5">
             <h1 className="text-3xl mb-1">Leave a feedback</h1>
@@ -174,7 +175,10 @@ const StatusChanger = ({
           </DialogContent>
           <DialogActions sx={{ padding: "0 20px 20px 0" }}>
             <button
-              onClick={handleClose}
+              onClick={() => {
+                handleClose();
+                setFeedback("");
+              }}
               disabled={loading}
               className={` border-2 border-colorOne px-5 py-1 text-xl rounded-lg `}
             >
