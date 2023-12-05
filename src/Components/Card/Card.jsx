@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import forkSpoon from "../../../public/images/forkSpoon.png";
+import forkSpoon from "../../../src/assets/images/forkSpoon.png";
 
-const Card = ({ itemType, item, itemId }) => {
+const Card = ({ itemType, item }) => {
   /*
    *itemType here is recipe/blog.did toLowerCase cause it may come in uppercase.
    *item is an individual item. it can be blog or recipe.
@@ -13,8 +13,8 @@ const Card = ({ itemType, item, itemId }) => {
       <Link
         to={
           itemType?.toLowerCase() === "recipe"
-            ? `/recipe/detail/${itemId}`
-            : `/blog/detail/${itemId}`
+            ? `/recipe/detail/${item?._id}`
+            : `/blog/detail/${item?._id}`
         }
       >
         {/* images */}

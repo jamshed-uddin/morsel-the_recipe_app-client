@@ -15,6 +15,7 @@
     "@heroicons/react": "^2.0.18",
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.11",
+    "@mui/x-data-grid": "^6.18.2",
     "axios": "^1.5.1",
     "dompurify": "^3.0.6",
     "firebase": "^10.6.0",

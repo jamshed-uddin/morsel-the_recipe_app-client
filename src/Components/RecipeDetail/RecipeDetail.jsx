@@ -12,12 +12,13 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import ErrorElement from "../ErrorElement";
-import DetailSkeleton from "../DetailSkeleton";
+import DetailSkeleton from "../../Components/Skeletons/DetailSkeleton";
 import { Avatar, Tooltip } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
 import useSingleUser from "../../hooks/useSingleUser";
 import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 import AlertDialog from "../AlertDialog/AlertDialog";
+import StatusChanger from "../StatusChanger/StatusChanger";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -163,6 +164,18 @@ const RecipeDetail = () => {
     </div>
   ) : (
     <div className="my-container lg:px-24 mt-20  text-colorTwo">
+      {/* status changer for admin only */}
+      {currentUser?.role === "admin" && (
+        <StatusChanger
+          itemId={recipeDetail?._id}
+          status={recipeDetail?.status}
+          actionFor="recipe"
+          actionFrom="detailPage"
+          adminEmail={currentUser?.email}
+          setOpen={setOpen}
+          setMessage={setMessage}
+        />
+      )}
       {/* recipe detail container */}
       <div>
         {/* recipe info and creator info */}
@@ -366,8 +379,8 @@ const RecipeDetail = () => {
         open={deleteAlertOpen}
         setOpen={setDeleteAlertOpen}
         itemType={"recipe"}
-        itemId={recipeDetail._id}
-        userEmail={currentUser.email}
+        itemId={recipeDetail?._id}
+        userEmail={currentUser?.email}
       />
     </div>
   );

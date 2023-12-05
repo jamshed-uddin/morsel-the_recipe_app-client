@@ -18,6 +18,12 @@ import RecipeDetail from "./Components/RecipeDetail/RecipeDetail.jsx";
 import BlogDetail from "./Components/BlogDetail/BlogDetail.jsx";
 import { QueryClient, QueryClientProvider } from "react-query";
 import PasswordReset from "./Pages/Login/PasswordReset.jsx";
+import Overview from "./Pages/AdminDashboard/Overview/Overview.jsx";
+import ManageUsers from "./Pages/AdminDashboard/ManageUsers/ManageUsers.jsx";
+import ManageRecipes from "./Pages/AdminDashboard/ManageRecipes/ManageRecipes.jsx";
+import AdminAccount from "./Pages/AdminDashboard/AdminAccount/AdminAccount.jsx";
+import ManageBlogs from "./Pages/AdminDashboard/ManageBlogs/ManageBlogs.jsx";
+import AdminDashboard from "./Pages/AdminDashboard/AdminDashboard.jsx";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -71,6 +77,33 @@ const router = createBrowserRouter([
   {
     path: "register",
     element: <Registration></Registration>,
+  },
+
+  {
+    path: "dashboard",
+    element: <AdminDashboard></AdminDashboard>,
+    children: [
+      {
+        path: "overview",
+        element: <Overview></Overview>,
+      },
+      {
+        path: "manageUsers",
+        element: <ManageUsers></ManageUsers>,
+      },
+      {
+        path: "manageRecipes",
+        element: <ManageRecipes></ManageRecipes>,
+      },
+      {
+        path: "manageBlogs",
+        element: <ManageBlogs></ManageBlogs>,
+      },
+      {
+        path: "adminAccount",
+        element: <AdminAccount></AdminAccount>,
+      },
+    ],
   },
 ]);
 

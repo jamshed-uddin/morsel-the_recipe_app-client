@@ -15,13 +15,14 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Avatar, Tooltip } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
-import DetailSkeleton from "../DetailSkeleton";
+import DetailSkeleton from "../../Components/Skeletons/DetailSkeleton";
 import ErrorElement from "../ErrorElement";
 import { useParams } from "react-router-dom";
 import useSingleUser from "../../hooks/useSingleUser";
 import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 
 import AlertDialog from "../AlertDialog/AlertDialog";
+import StatusChanger from "../StatusChanger/StatusChanger";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -33,8 +34,6 @@ const BlogDetail = () => {
   const [dialogFor, setDialogFor] = useState("delete");
   const { currentUser } = useSingleUser();
   const [optionsLoading, setOptionsLoading] = useState(false);
-  // console.log(blogDetail);
-  // console.log(window.location.href);
 
   const { isLoading, data, error, refetch } = useQuery(
     "blogDetail",
@@ -66,8 +65,6 @@ const BlogDetail = () => {
     );
     return result;
   });
-
-  // console.log(isLikedAndSaved);
 
   const handleBlogSave = () => {
     console.log("save cliked");
@@ -175,6 +172,21 @@ const BlogDetail = () => {
   ) : (
     <div className="my-container lg:px-24 mt-20  text-colorTwo">
       {/* blog & creator info */}
+
+      {/* status changer for admin only */}
+      {currentUser?.role === "admin" && (
+        <StatusChanger
+          itemId={blogDetail?._id}
+          status={blogDetail?.status}
+          actionFor="blog"
+          actionFrom="detailPage"
+          adminEmail={currentUser?.email}
+          setOpen={setOpen}
+          setMessage={setMessage}
+        />
+      )}
+
+      {/* blog sections starts */}
       <div className="space-y-5">
         <h1 className="text-4xl md:text-5xl font-bold">{blogDetail?.title}</h1>
         <div className="flex items-center gap-1">

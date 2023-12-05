@@ -48,7 +48,7 @@ const AlertDialog = ({
   return (
     <>
       <Dialog
-        fullWidth={"md"}
+        fullWidth
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"

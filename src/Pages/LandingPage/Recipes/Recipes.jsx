@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import Card from "../../../Components/Card/Card";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import CardSkeleton from "../../../Components/CardSkeleton";
+import CardSkeleton from "../../../Components/Skeletons/CardSkeleton";
 
 const Recipes = () => {
   const [recipes, setRecipes] = useState([]);

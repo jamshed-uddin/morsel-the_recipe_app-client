@@ -27,7 +27,7 @@ const AddBtn = () => {
   return (
     <div
       id="addBtn"
-      className="fixed right-16 bottom-12 text-colorTwo z-50  rounded-full"
+      className="fixed md:right-24 right-8 md:bottom-20 bottom-8 text-colorTwo z-50  rounded-full"
     >
       <div className="relative w-fit transition-all duration-500  rounded-full">
         {/* add button */}

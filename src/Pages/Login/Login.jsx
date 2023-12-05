@@ -181,8 +181,11 @@ const Login = () => {
             <h1 className="text-center text-2xl or">Or</h1>
             <h4 className="text-center text-lg">Continue with</h4>
             <div className="space-x-6 flex items-center justify-center py-2">
-              <div onClick={googleLoginHandler} className="cursor-pointer">
-                <GoogleIcon />
+              <div
+                onClick={googleLoginHandler}
+                className="cursor-pointer flex items-center gap-3 border-2 border-colorTwo  px-4 py-1 rounded-2xl"
+              >
+                <GoogleIcon /> <h3>Google</h3>
               </div>
             </div>
           </div>

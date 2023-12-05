@@ -5,6 +5,7 @@ import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import Checkbox from "@mui/material/Checkbox";
 import AddBtn from "../../Components/AddBtn/AddBtn";
 import { Avatar, CircularProgress, Dialog } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
@@ -13,7 +14,7 @@ import axios from "axios";
 import useSingleUser from "../../hooks/useSingleUser";
 import { useQuery } from "react-query";
 import MyItems from "./MyItems";
-import AccountPageSkeleton from "../../Components/AccountPageSkeleton";
+import AccountPageSkeleton from "../../Components/Skeletons/AccountPageSkeleton";
 
 const AccountPage = () => {
   const [activeTab, setActiveTab] = useState("myRecipes");
@@ -27,10 +28,12 @@ const AccountPage = () => {
   const { user, userLogout } = useAuthContext();
   const { currentUser, currentUserLoading } = useSingleUser();
   const [profilePhotoURL, setProfilePhotoURL] = useState(user && user.photoURL);
-  console.log("current", currentUserLoading);
-  const [pageLoading] = useState(true);
+  const [checked, setChecked] = useState(false);
 
-  // console.log(user);
+  const handleCheckBoxChange = (event) => {
+    setChecked(event.target.checked);
+  };
+
   // console.log(profilePhotoURL);
 
   const navigate = useNavigate();
@@ -137,7 +140,7 @@ const AccountPage = () => {
     }
   }, [data]);
 
-  console.log(myItems);
+  // console.log(myItems);
 
   // profile info updating function for both firebase and DB
   const handleUpdateProfile = (e) => {
@@ -151,17 +154,26 @@ const AccountPage = () => {
     console.log(updatedProfile);
   };
 
-  if (currentUserLoading) {
-    return (
-      <div className="my-container mt-24">
-        <AccountPageSkeleton />
-      </div>
-    );
+  if (currentUserLoading && !user) {
+    <div className="my-container mt-24">
+      <AccountPageSkeleton />
+    </div>;
   }
 
   return (
-    <div className=" my-container mt-6">
-      <div className="lg:w-11/12 h-full  mx-auto lg:px-6 md:pt-20 pt-5 text-colorTwo">
+    <div
+      className={`${
+        currentUser?.role === "admin"
+          ? "px-14 mt-6"
+          : "my-container mt-6 lg:mt-0"
+      }`}
+    >
+      <div
+        className={`${
+          currentUser?.role !== "admin" &&
+          "lg:w-11/12 h-full  mx-auto lg:px-6 md:pt-20 pt-5 text-colorTwo"
+        }`}
+      >
         <div className="flex flex-col md:flex-row items-start justify-between space-y-6 ">
           {/* user info */}
           <div className="lg:flex items-center gap-5 md:w-4/5 space-y-3">
@@ -240,58 +252,60 @@ const AccountPage = () => {
         </div>
 
         {/* recipe/blog/saved section */}
-        <div className=" mt-14">
-          {/* tab buttons  */}
-          <div className="flex items-end gap-10 text-2xl font-semibold border-b-[1px] border-slate-300">
-            <button
-              onClick={() => setActiveTab("myRecipes")}
-              className={` pb-2 cursor-pointer ${
-                activeTab === "myRecipes"
-                  ? "border-b-2  border-colorOne text-colorOne"
-                  : "text-colorTwo border-b-2 border-b-transparent "
-              }`}
-            >
-              Recipes
-            </button>
-            <button
-              onClick={() => setActiveTab("myBlogs")}
-              className={` pb-2 cursor-pointer ${
-                activeTab === "myBlogs"
-                  ? "border-b-2  border-colorOne text-colorOne"
-                  : "text-colorTwo border-b-2 border-b-transparent "
-              }`}
-            >
-              Blogs
-            </button>
-            <button
-              onClick={() => setActiveTab("savedItems")}
-              className={` pb-2 cursor-pointer  ${
-                activeTab === "savedItems"
-                  ? "border-b-2  border-colorOne text-colorOne"
-                  : "text-colorTwo border-b-2 border-b-transparent"
-              }`}
-            >
-              Saved
-            </button>
-          </div>
+        {currentUser?.role !== "admin" ? (
+          <div className=" mt-14">
+            {/* tab buttons  */}
+            <div className="flex items-end gap-10 text-2xl font-semibold border-b-[1px] border-slate-300">
+              <button
+                onClick={() => setActiveTab("myRecipes")}
+                className={` pb-2 cursor-pointer ${
+                  activeTab === "myRecipes"
+                    ? "border-b-2  border-colorOne text-colorOne"
+                    : "text-colorTwo border-b-2 border-b-transparent "
+                }`}
+              >
+                Recipes
+              </button>
+              <button
+                onClick={() => setActiveTab("myBlogs")}
+                className={` pb-2 cursor-pointer ${
+                  activeTab === "myBlogs"
+                    ? "border-b-2  border-colorOne text-colorOne"
+                    : "text-colorTwo border-b-2 border-b-transparent "
+                }`}
+              >
+                Blogs
+              </button>
+              <button
+                onClick={() => setActiveTab("savedItems")}
+                className={` pb-2 cursor-pointer  ${
+                  activeTab === "savedItems"
+                    ? "border-b-2  border-colorOne text-colorOne"
+                    : "text-colorTwo border-b-2 border-b-transparent"
+                }`}
+              >
+                Saved
+              </button>
+            </div>
 
-          {/*tab body */}
-          <div>
-            <MyItems
-              isLoading={isLoading}
-              MyItems={myItems}
-              activeTab={activeTab}
-            />
+            {/*tab body */}
+            <div className="pt-3 pb-6">
+              <MyItems
+                isLoading={isLoading}
+                myItems={myItems}
+                activeTab={activeTab}
+              />
+            </div>
           </div>
-        </div>
+        ) : null}
       </div>
 
       {/* button for adding recipe or blog */}
-      <AddBtn />
+      {currentUser?.role !== "admin" && <AddBtn />}
 
       {/* dialogue from setting button for updating/account/ sign out */}
       <Dialog fullWidth open={open} onClose={handleClose}>
-        <div className="h-[80vh] md:h-[90vh] grid items-center bg-bgColor">
+        <div className="h-[80vh] md:h-[90vh] pt-10 bg-bgColor">
           {/* update profile info  */}
           {modalContent === "editProfile" && (
             <div className=" w-[90%] mx-auto">
@@ -388,8 +402,68 @@ const AccountPage = () => {
             </div>
           )}
           {modalContent === "account" && (
-            <div>
-              <h2>account</h2>
+            <div className="text-colorTwo px-6">
+              <div className="p-4">
+                <h1 className=" text-4xl ">Delete account</h1>
+
+                {currentUser?.role === "admin" ? (
+                  <div className="mt-4 ml-1">
+                    <div className="text-colorOne">
+                      <h1 className="text-2xl ">This will also remove</h1>
+                      <div className="text-lg leading-6">
+                        <h4>- Personal information</h4>
+                        <h4>- Control over management</h4>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-4 ml-1">
+                    <div className="text-colorOne">
+                      <h1 className="text-2xl ">This will also remove</h1>
+                      <div className="text-lg leading-6">
+                        <h4>- Personal information</h4>
+                        <h4>- Recipes</h4>
+                        <h4>- Blogs </h4>
+                        <h4>- Saved items</h4>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className=" mt-8 ml-5">
+                <div className="flex gap-3 items-center  mb-3">
+                  <Checkbox
+                    sx={{
+                      p: 0,
+                      color: "inherit",
+                      "&.Mui-checked": {
+                        color: "inherit",
+                      },
+                    }}
+                    checked={checked}
+                    onChange={handleCheckBoxChange}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
+                  <p className="text-lg">I am aware</p>
+                </div>
+                <div className="space-x-5">
+                  <button
+                    disabled={checked}
+                    className={`text-lg text-white bg-colorOne rounded-lg px-4 py-1 border-2 border-colorOne cursor-pointer ${
+                      !checked && "opacity-50 "
+                    }`}
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={handleClose}
+                    className="text-lg  rounded-lg px-4 py-1 border-2 border-colorOne"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>

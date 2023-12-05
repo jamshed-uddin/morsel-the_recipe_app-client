@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
-import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
+import { useState } from "react";
+
 import "./Blogs.css";
 import Card from "../../../Components/Card/Card";
 import { useQuery } from "react-query";
-import CardSkeleton from "../../../Components/CardSkeleton";
+import CardSkeleton from "../../../Components/Skeletons/CardSkeleton";
 import axios from "axios";
 
 const Blogs = () => {

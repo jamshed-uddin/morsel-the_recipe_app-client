@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import CallMadeIcon from "@mui/icons-material/CallMade";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import "./Navbar.css";
 import { Avatar } from "@mui/material";
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 import useAuthContext from "../../hooks/useAuthContext";
+import useSingleUser from "../../hooks/useSingleUser";
 
 const Navbar = () => {
   const [showNav, setShowNav] = useState(false);
   const [scrollingDown, setScrollingDown] = useState(false);
   const { user } = useAuthContext();
+  const { currentUser } = useSingleUser();
 
   useEffect(() => {
     if (showNav) {
@@ -41,12 +43,12 @@ const Navbar = () => {
 
   return (
     <div
-      className={`px-1 md:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
+      className={`px-2 md:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
     ${scrollingDown ? "-translate-y-16" : "-translate-0"}`}
     >
       <div className="flex justify-between items-center  w-full ">
         <div>
-          <h2 className="text-4xl font-bold text-colorOne">
+          <h2 className="text-4xl font-bold text-colorOne relative z-50">
             <Link to={"/"}>Morsel</Link>
           </h2>
         </div>
@@ -63,7 +65,13 @@ const Navbar = () => {
             </div>
             <div className={`${!user && "link"}`}>
               {user ? (
-                <Link to={"/account"}>
+                <Link
+                  to={
+                    currentUser?.role === "admin"
+                      ? "/dashboard/overview"
+                      : "/account"
+                  }
+                >
                   <div className="flex items-center rounded-3xl cursor-pointer">
                     <Avatar
                       src={
@@ -87,11 +95,12 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div className="border-2 border-black block lg:hidden">
+      {/* mobile nav */}
+      <div className=" block lg:hidden ">
         {/* nav icon and it's transition classes */}
         <div
           onClick={() => setShowNav(!showNav)}
-          className={`  space-y-2  h-fit  flex flex-col   cursor-pointer z-50 select-none  absolute  left-[50%] top-4 pl-3 pb-2 `}
+          className={`  space-y-2  h-fit  flex flex-col   cursor-pointer z-50 select-none  absolute  right-3 top-4 pl-3 pb-2 `}
         >
           <div
             className={`mr-auto h-[2px]  bg-colorOne transition-all duration-700  ${
@@ -113,73 +122,63 @@ const Navbar = () => {
         </div>
 
         <div
-          className={`h-screen w-screen bg-bgColor -translate-y-full transition-all duration-700 absolute select-none flex lg:items-center ${
-            showNav && "translate-y-0"
+          className={`w-screen h-screen bg-bgColor absolute top-0 left-0 right-0 bottom-0  flex items-end transition-all duration-700 ${
+            showNav
+              ? "translate-x-0 opacity-100"
+              : "-translate-x-full opacity-10"
           }`}
         >
-          <div className="lg:w-3/4 w-[90%] h-2/3   mx-auto  flex flex-col lg:flex-row lg:items-center justify-between ">
-            <div className="link-container uppercase text-6xl lg:text-8xl text-colorOne tracking-tighter space-y-3 md:space-y-0 font-bold flex flex-col ">
-              <Link
-                className={`link`}
+          <div className=" w-full h-[70vh] flex flex-col">
+            <div className="pl-2 uppercase text-6xl  text-colorOne tracking-tighter space-y-4  font-bold flex flex-col ">
+              <NavLink
+                className={({ isActive }) => (isActive ? "italic pl-7" : "")}
                 to={"/"}
                 onClick={() => {
                   setShowNav(false);
                 }}
               >
                 Home
-              </Link>
-              <Link
-                className={`link`}
+              </NavLink>
+              <NavLink
+                className={({ isActive }) => (isActive ? "italic pl-7" : "")}
                 to={"/recipes"}
                 onClick={() => {
                   setShowNav(false);
                 }}
               >
                 Recipes
-              </Link>
-              <Link
-                className={`link`}
+              </NavLink>
+              <NavLink
+                className={({ isActive }) => (isActive ? "italic pl-7" : "")}
                 to={"/blogs"}
                 onClick={() => {
                   setShowNav(false);
                 }}
               >
                 Blogs
-              </Link>
-              <Link
-                className={`link`}
-                to={"/account"}
-                onClick={() => {
-                  setShowNav(false);
-                }}
-              >
-                Account
-              </Link>
-              <Link
-                className={`link`}
-                to={"/signin"}
-                onClick={() => {
-                  setShowNav(false);
-                }}
-              >
-                Sign in
-              </Link>
-            </div>
-            <div className="text-colorTwo  flex items-center   h-full">
-              <div className="flex  lg:flex-col text-xl  pb-3 lg:pb-0">
-                <a href="">
-                  Facebook
-                  <CallMadeIcon />{" "}
-                </a>
-                <a href="">
-                  Instagram
-                  <CallMadeIcon />
-                </a>
-                <a href="">
-                  Twitter
-                  <CallMadeIcon />
-                </a>
+              </NavLink>
+              <div className={`${!user && "link"}`}>
+                {user ? (
+                  <Link
+                    to={
+                      currentUser?.role === "admin"
+                        ? "/dashboard/overview"
+                        : "/account"
+                    }
+                  >
+                    <div className="flex items-center rounded-3xl cursor-pointer">
+                      {currentUser?.role === "admin" ? "Dashboard" : "Account"}
+                    </div>
+                  </Link>
+                ) : (
+                  <Link to={"/signin"}>Sign in</Link>
+                )}
               </div>
+            </div>
+            <div className="mt-auto flex justify-around mb-5">
+              <p>Facebook</p>
+              <p>Instagram</p>
+              <p>Twitter(X)</p>
             </div>
           </div>
         </div>
