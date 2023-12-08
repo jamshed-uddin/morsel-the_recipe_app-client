@@ -136,7 +136,7 @@ const AddRecipe = () => {
   const { currentUser } = useSingleUser();
 
   // console.log(currentUser);
-  console.log(formState.recipeImages);
+  console.log(formState);
   console.log(public_id);
   console.log(files);
   console.log(imageUploadLoading);
@@ -165,6 +165,9 @@ const AddRecipe = () => {
 
       // setting entire recipe data for edit to initial state
       dispatch({ type: "RECIPE_DATA_FOR_EDIT", recipeDataForEdit: data });
+
+      // dispatching the creatorId in creatorInfo right way cause it comes
+      // with whole creatorInfo and the whole info gets prevented by schema
       dispatch({
         type: "TEXT_INPUT",
         name: "creatorInfo",
@@ -174,6 +177,7 @@ const AddRecipe = () => {
     }
   }, [data, currentUser]);
 
+  // dispatching the creatorInfo when not in editmode
   useEffect(() => {
     if (!editMode) {
       dispatch({
@@ -292,6 +296,7 @@ const AddRecipe = () => {
   const filesHandler = (e) => {
     const imageObj = e.target.files;
 
+    // uploading to cloud
     const uploader = Array.from(imageObj).map(async (file) => {
       const formData = new FormData();
       formData.append("file", file);
@@ -317,6 +322,7 @@ const AddRecipe = () => {
       }
     });
 
+    // promise all for getting all url at once after uploading is finished
     Promise.all(uploader)
       .then((imageURLs) => {
         setImageUploadLoading(false);
@@ -654,7 +660,7 @@ const AddRecipe = () => {
                     {/* add another photo div */}
                     <div className="border-[1px] border-colorTwo md:h-32  md:w-32 w-28 h-28  grid place-items-center rounded-xl">
                       <label
-                        className="h-full w-full  flex flex-col justify-center items-center leading-3 text-lg font-semibold"
+                        className="h-full w-full  flex flex-col justify-center items-center leading-3 text-lg font-semibold mt-1"
                         htmlFor="recipeImages"
                       >
                         <CameraAltOutlinedIcon />
@@ -749,6 +755,7 @@ const AddRecipe = () => {
                     />
                     {/* btn for removing ingredient field */}
                     <button
+                      type="button"
                       onClick={() =>
                         dispatch({
                           type: "REMOVE_FIELD",
@@ -757,7 +764,7 @@ const AddRecipe = () => {
                         })
                       }
                       className="absolute top-2 right-1 opacity-50 hover:opacity-100 "
-                      disabled={formState.ingredients.length > 0}
+                      disabled={formState.ingredients.length === 1}
                     >
                       <CloseOutlinedIcon sx={{ fontSize: 30 }} />
                     </button>
@@ -806,6 +813,7 @@ const AddRecipe = () => {
                     />
                     {/* button for removing Instructions field */}
                     <button
+                      type="button"
                       onClick={() =>
                         dispatch({
                           type: "REMOVE_FIELD",
@@ -814,7 +822,7 @@ const AddRecipe = () => {
                         })
                       }
                       className="absolute top-3 right-1 opacity-50 hover:opacity-100 "
-                      disabled={formState.instructions.length > 0}
+                      disabled={formState.instructions.length === 1}
                     >
                       <CloseOutlinedIcon sx={{ fontSize: 30 }} />
                     </button>
