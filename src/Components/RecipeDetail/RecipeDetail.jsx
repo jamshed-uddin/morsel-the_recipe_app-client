@@ -10,7 +10,7 @@ import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ErrorElement from "../ErrorElement";
 import DetailSkeleton from "../../Components/Skeletons/DetailSkeleton";
 import { Avatar, Tooltip } from "@mui/material";
@@ -31,7 +31,7 @@ const RecipeDetail = () => {
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [recipeDetail, setRecipeDetail] = useState({});
   // console.log(currentUser);
-  console.log(recipeDetail?.prepTime);
+  console.log(recipeDetail);
   // console.log(Object.values(recipeDetail?.prepTime).some((value) => value));
   const { isLoading, data, error, refetch } = useQuery(
     "recipeDetail",
@@ -195,11 +195,14 @@ const RecipeDetail = () => {
             <div className="flex gap-5 items-center justify-end mr-3 md:mr-0">
               {user?.email === recipeDetail?.creatorInfo?.email && (
                 <Tooltip title="Edit">
-                  <button className="cursor-pointer p-1">
+                  <Link
+                    to={`/recipe/edit/${recipeDetail?._id}`}
+                    className="cursor-pointer p-1"
+                  >
                     <DriveFileRenameOutlineOutlinedIcon
                       sx={{ color: "#4B5365", fontSize: 30 }}
                     />
-                  </button>
+                  </Link>
                 </Tooltip>
               )}
               <Tooltip title="Share">

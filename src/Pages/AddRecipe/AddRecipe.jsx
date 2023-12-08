@@ -9,6 +9,8 @@ import "./AddRecipe.css";
 import axios from "axios";
 
 import useSingleUser from "../../hooks/useSingleUser";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "react-query";
 
 const initialState = {
   recipeName: "",
@@ -28,12 +30,19 @@ const initialState = {
   },
   tags: [],
   status: "pending",
+  feedback: "",
   likedBy: [],
   createdAt: new Date().toString(),
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case "RECIPE_DATA_FOR_EDIT":
+      return {
+        ...state,
+        ...action.recipeDataForEdit,
+      };
+
     case "TEXT_INPUT":
       return {
         ...state,
@@ -101,9 +110,15 @@ const reducer = (state, action) => {
 
 const AddRecipe = () => {
   const [formState, dispatch] = useReducer(reducer, initialState);
-  const [selectedFiles, setSelectedFiles] = useState([]); //original array of files
-  const [files, setFiles] = useState([]); //this state blobURLs(converted from fileList) for preview
-  const [imageToPreview, setImageToPreview] = useState(0); //for setting which to preview from multiple images under the big preview
+
+  // image states starts
+
+  const [files, setFiles] = useState([]); //this state blobURLs(converted from fileList) for instant preview
+  const [imageToPreview, setImageToPreview] = useState(0); //for setting which to preview from multiple images under the big preview(using this as index)
+  const [imageUploadLoading, setImageUploadLoading] = useState(false);
+  const [public_id, setPublic_id] = useState([]);
+  // image state ends
+
   const [tagInputValue, setTagInputValue] = useState(""); //this state used for storing initial user input for tags.
   const [loading, setLoading] = useState(false);
   const [scrollPosition, setScrollPosition] = useState({ left: 0, right: 7 });
@@ -117,9 +132,57 @@ const AddRecipe = () => {
     serving: "",
     prepTime: "",
   });
+  const navigate = useNavigate();
   const { currentUser } = useSingleUser();
 
   // console.log(currentUser);
+  console.log(formState.recipeImages);
+  console.log(public_id);
+  console.log(files);
+  console.log(imageUploadLoading);
+
+  // editing recipe id
+  const [editMode, setEditMode] = useState(false);
+  const { id } = useParams();
+
+  // using the add recipe form for editing recipe ..
+  const { isLoading, data, error, refetch } = useQuery(
+    ["recipeDetail", id],
+
+    async () => {
+      const result = await axios.get(
+        `${import.meta.env.VITE_BASEURL}singleRecipe/${id}`
+      );
+      return result.data;
+    },
+    { enabled: !!id } //query only enables when id is true or there is a id
+  );
+
+  useEffect(() => {
+    if (data) {
+      setEditMode(true);
+      console.log(data);
+
+      // setting entire recipe data for edit to initial state
+      dispatch({ type: "RECIPE_DATA_FOR_EDIT", recipeDataForEdit: data });
+      dispatch({
+        type: "TEXT_INPUT",
+        name: "creatorInfo",
+        value: currentUser?._id,
+      });
+      setFiles(data.recipeImages);
+    }
+  }, [data, currentUser]);
+
+  useEffect(() => {
+    if (!editMode) {
+      dispatch({
+        type: "TEXT_INPUT",
+        name: "creatorInfo",
+        value: currentUser?._id,
+      });
+    }
+  }, [currentUser, editMode]);
 
   // for the preview image slider with button
   useEffect(() => {
@@ -150,8 +213,6 @@ const AddRecipe = () => {
 
   // function for showing alert before user reload or goes back while changes made in form.
   useEffect(() => {
-    console.log(window.history);
-
     if (
       formState.instructions.length === 1 &&
       formState.ingredients.length === 1 &&
@@ -230,24 +291,52 @@ const AddRecipe = () => {
   //functions for files/images------------
   const filesHandler = (e) => {
     const imageObj = e.target.files;
-    if (selectedFiles.length === 0) {
-      setSelectedFiles(Array.from(imageObj));
-    } else {
-      setSelectedFiles((prev) => [...prev, ...Array.from(imageObj)]);
-    }
 
-    //stored these for uploading to the cloudinary when user submits the form
-    const imgArr = Array.from(imageObj).map((image) =>
-      URL.createObjectURL(image)
-    );
+    const uploader = Array.from(imageObj).map(async (file) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
+      try {
+        setImageUploadLoading(true);
+        const response = await axios.post(
+          `https://api.cloudinary.com/v1_1/${
+            import.meta.env.VITE_CLOUD_NAME
+          }/image/upload`,
+          formData,
+          {
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+          }
+        );
+        console.log(response);
+        const imgurl = response?.data.secure_url;
+        setPublic_id((prevState) => [...prevState, response?.data.public_id]);
+        return imgurl;
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    });
 
-    setFiles([...files, ...imgArr]);
-    // dispatch({
-    //   type: "IMAGES",
-    //   name: "recipeImages",
-    //   value: [...files, ...imgArr],
-    // });
+    Promise.all(uploader)
+      .then((imageURLs) => {
+        setImageUploadLoading(false);
+        console.log(imageURLs);
+        console.log(public_id);
+
+        dispatch({
+          type: "IMAGES",
+          name: "recipeImages",
+          value: [...formState["recipeImages"], ...imageURLs],
+        });
+      })
+      .catch((err) => console.log(err));
+
+    Array.from(imageObj).map((image) => {
+      const imageBlobURL = URL.createObjectURL(image);
+      setFiles([...files, imageBlobURL]);
+    });
   };
+
   const scrollToRight = () => {
     if (imgContainerRef.current) {
       imgContainerRef.current.scrollLeft += 80;
@@ -258,16 +347,71 @@ const AddRecipe = () => {
       imgContainerRef.current.scrollLeft -= 80;
     }
   };
-  const removePreviwedImage = (imageIndex) => {
+  const removePreviwedImage = async (imageIndex) => {
     const filesToModify = [...files];
-    const selectedFilesToModify = [...selectedFiles];
+    const recipeImageToModify = [...formState.recipeImages];
+
     if (imageToPreview !== 0) {
       setImageToPreview((prevState) => prevState - 1);
     }
     filesToModify.splice(imageIndex, 1);
-    selectedFilesToModify.splice(imageIndex, 1);
+    recipeImageToModify.splice(imageIndex, 1);
+    dispatch({
+      type: "IMAGES",
+      name: "recipeImages",
+      value: recipeImageToModify,
+    });
     setFiles(filesToModify);
-    setSelectedFiles(selectedFilesToModify);
+
+    async function digestMessage() {
+      const dToSign = `public_id=${public_id.at(
+        imageIndex
+      )}&timestamp=${Math.floor(Date.now() / 1000)}${
+        import.meta.env.VITE_CLOUDY_API_SECRET
+      }`;
+      const msgUint8 = new TextEncoder().encode(dToSign);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join(""); // convert bytes to hex string
+      return hashHex;
+    }
+
+    await digestMessage()
+      .then(async (hash) => {
+        try {
+          const response = await axios.post(
+            `https://api.cloudinary.com/v1_1/${
+              import.meta.env.VITE_CLOUD_NAME
+            }/image/destroy`,
+            {
+              public_id: public_id.at(imageIndex),
+              api_key: import.meta.env.VITE_APIKEY,
+              signature: hash,
+              timestamp: Math.floor(Date.now() / 1000),
+            },
+            {
+              headers: {
+                "X-Requested-With": "XMLHttpRequest",
+              },
+            }
+          );
+          console.log(response);
+          const public_idToModify = [...public_id];
+          public_idToModify.splice(imageIndex, 1);
+          setPublic_id(public_idToModify);
+        } catch (error) {
+          const public_idToModify = [...public_id];
+          public_idToModify.splice(imageIndex, 1);
+          setPublic_id(public_idToModify);
+          console.log(error);
+          return null;
+        }
+
+        console.log(hash);
+      })
+      .catch((err) => console.log(err));
   };
 
   //uploading images to cloudinary when user submit the whole form.Because in that time user gets confirm about the images user wants to keep.Before that user may add or remove images.Uploading to cloudinary whenever user adds a image may affect the cloud storage(free plan).
@@ -316,6 +460,7 @@ const AddRecipe = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("update");
     const errorMessages = inputValidationHandler(formState);
 
     if (Object.values(errorMessages).some((value) => value)) {
@@ -325,60 +470,77 @@ const AddRecipe = () => {
 
     setLoading(true);
 
-    if (selectedFiles) {
-      const uploader = selectedFiles.map(async (file) => {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
-        try {
-          const response = await axios.post(
-            `https://api.cloudinary.com/v1_1/${
-              import.meta.env.VITE_CLOUD_NAME
-            }/image/upload`,
-            formData,
-            {
-              headers: { "X-Requested-With": "XMLHttpRequest" },
-            }
-          );
+    // const uploader = selectedFiles.map(async (file) => {
+    //   const formData = new FormData();
+    //   formData.append("file", file);
+    //   formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
+    //   try {
+    //     const response = await axios.post(
+    //       `https://api.cloudinary.com/v1_1/${
+    //         import.meta.env.VITE_CLOUD_NAME
+    //       }/image/upload`,
+    //       formData,
+    //       {
+    //         headers: { "X-Requested-With": "XMLHttpRequest" },
+    //       }
+    //     );
+    //     console.log(response);
+    //     const imgurl = response?.data.secure_url;
+    //     return imgurl;
+    //   } catch (error) {
+    //     console.log(error);
+    //     return null;
+    //   }
+    // });
 
-          const imgurl = response.data.secure_url;
-          return imgurl;
-        } catch (error) {
-          console.log(error);
-          return null;
-        }
-      });
+    // uploader returns an array of imageURL even it's a single imageURL
 
-      try {
-        Promise.all(uploader).then((imageURLs) => {
-          if (imageURLs) {
-            dispatch({
-              type: "IMAGES",
-              name: "recipeImages",
-              value: [...formState["recipeImages"], ...imageURLs],
-            });
-            // passing only creator id .by this id we will get a recipe data populated creatorInfo with userInfo
-            dispatch({
-              type: "TEXT_INPUT",
-              name: "creatorInfo",
-              value: currentUser._id,
-            });
-          }
+    try {
+      // Promise.all(uploader).then((imageURLs) => {
+      //   console.log(imageURLs);
+      //   if (imageURLs) {
+      //     dispatch({
+      //       type: "IMAGES",
+      //       name: "recipeImages",
+      //       value: [...formState["recipeImages"], ...imageURLs],
+      //     });
+      //     // passing only creator id .by this id we will get a recipe data populated creatorInfo with userInfo
+      //   }
 
-          axios
-            .post(`${import.meta.env.VITE_BASEURL}createRecipe`, formState)
-            .then((result) => {
-              console.log(result);
-              setLoading(false);
-            })
-            .catch((err) => {
-              console.log(err);
-              setLoading(false);
-            });
-        });
-      } catch (error) {
-        console.log(error);
+      if (!editMode) {
+        console.log("post block");
+        axios
+          .post(`${import.meta.env.VITE_BASEURL}createRecipe`, formState)
+          .then((result) => {
+            console.log(result);
+            setLoading(false);
+            // navigate(`/recipe/detail/${result.data.id}`);
+            //id here is coming from created recipe.and using it to navigate to detail page after creating
+          })
+          .catch((err) => {
+            console.log(err);
+            setLoading(false);
+          });
+      } else {
+        console.log("update block");
+        axios
+          .put(
+            `${import.meta.env.VITE_BASEURL}updateRecipe/${currentUser?.email}`,
+            formState
+          )
+          .then((result) => {
+            console.log(result);
+            setLoading(false);
+            // navigate(`/recipe/detail/${result.data.id}`);
+            //id here is coming from created recipe.and using it to navigate to detail page after creating
+          })
+          .catch((err) => {
+            console.log(err);
+            setLoading(false);
+          });
       }
+    } catch (error) {
+      console.log(error);
     }
 
     console.log(formState);
@@ -391,8 +553,7 @@ const AddRecipe = () => {
       <div className="lg:w-4/5 md:w-11/12 mx-auto md:shadow-xl md:rounded-xl h-full  py-10 px-5 relative">
         <div className="bg-bgColor z-20 flex justify-between items-center uppercase sticky top-0 left-0 right-0 shadow-sm py-3">
           <h1 className="md:text-3xl text-2xl font-bold text-colorOne">
-            <span className="md:text-4xl text-3xl font-extrabold"></span>
-            Add Recipe
+            {editMode ? "Edit" : "Add"} Recipe
           </h1>
         </div>
         {/* the recipe form  */}
@@ -440,12 +601,16 @@ const AddRecipe = () => {
                     alt=""
                     draggable="false"
                   />
-                  <div
+                  <button
+                    type="button"
                     onClick={() => removePreviwedImage(imageToPreview)}
-                    className="absolute bottom-2 left-2 bg-bgColor text-colorOne rounded-full flex items-center p-[2px] cursor-pointer"
+                    className={`absolute bottom-2 left-2 bg-bgColor text-colorOne rounded-full flex items-center p-[2px] cursor-pointer ${
+                      imageUploadLoading ? "opacity-60" : ""
+                    }`}
+                    disabled={imageUploadLoading}
                   >
                     <DeleteOutlinedIcon />
-                  </div>
+                  </button>
                 </div>
                 <label
                   className={`w-full h-full text-center flex flex-col justify-center items-center leading-3 text-lg font-semibold ${
@@ -583,7 +748,7 @@ const AddRecipe = () => {
                       key={`ingredient-${index}`}
                     />
                     {/* btn for removing ingredient field */}
-                    <p
+                    <button
                       onClick={() =>
                         dispatch({
                           type: "REMOVE_FIELD",
@@ -591,11 +756,11 @@ const AddRecipe = () => {
                           index,
                         })
                       }
-                      className="absolute top-3 right-1 opacity-50 hover:opacity-100 "
-                      disabled={formState.ingredients.length === 1}
+                      className="absolute top-2 right-1 opacity-50 hover:opacity-100 "
+                      disabled={formState.ingredients.length > 0}
                     >
                       <CloseOutlinedIcon sx={{ fontSize: 30 }} />
-                    </p>
+                    </button>
                   </div>
                 ))}
               </div>
@@ -640,7 +805,7 @@ const AddRecipe = () => {
                       key={`instruction-${index}`}
                     />
                     {/* button for removing Instructions field */}
-                    <p
+                    <button
                       onClick={() =>
                         dispatch({
                           type: "REMOVE_FIELD",
@@ -649,10 +814,10 @@ const AddRecipe = () => {
                         })
                       }
                       className="absolute top-3 right-1 opacity-50 hover:opacity-100 "
-                      disabled={formState.instructions.length === 1}
+                      disabled={formState.instructions.length > 0}
                     >
                       <CloseOutlinedIcon sx={{ fontSize: 30 }} />
-                    </p>
+                    </button>
                   </div>
                 ))}
               </div>
@@ -843,7 +1008,7 @@ const AddRecipe = () => {
                 }`}
                 disabled={loading}
               >
-                Submit recipe
+                {editMode ? "Update" : "Submit"} recipe
               </button>
             </div>
           </form>

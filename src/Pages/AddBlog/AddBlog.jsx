@@ -13,6 +13,7 @@ const initialState = {
   creatorInfo: "",
   blogBody: "",
   status: "pending",
+  feedback: "",
   likedBy: [],
   tags: [],
   createdAt: new Date().toString(),
