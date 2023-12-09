@@ -112,19 +112,18 @@ const AddRecipe = () => {
   const [formState, dispatch] = useReducer(reducer, initialState);
 
   // image states starts
-
   const [files, setFiles] = useState([]); //this state blobURLs(converted from fileList) for instant preview
   const [imageToPreview, setImageToPreview] = useState(0); //for setting which to preview from multiple images under the big preview(using this as index)
-  const [imageUploadLoading, setImageUploadLoading] = useState(false);
+  const [imageUploadLoading, setImageUploadLoading] = useState(false); //loading state for image uploading
   const [public_id, setPublic_id] = useState([]);
   // image state ends
-
   const [tagInputValue, setTagInputValue] = useState(""); //this state used for storing initial user input for tags.
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); //loading state for submiting or updating
   const [scrollPosition, setScrollPosition] = useState({ left: 0, right: 7 });
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const imgContainerRef = useRef(null); //used this to make a image slider
   //state for showing specific error message
+  const { currentUser } = useSingleUser();
   const [errorsObj, setErrorsObj] = useState({
     recipeName: "",
     ingredients: "",
@@ -133,7 +132,6 @@ const AddRecipe = () => {
     prepTime: "",
   });
   const navigate = useNavigate();
-  const { currentUser } = useSingleUser();
 
   // console.log(currentUser);
   console.log(formState);
@@ -141,7 +139,8 @@ const AddRecipe = () => {
   console.log(files);
   console.log(imageUploadLoading);
 
-  // editing recipe id
+  // When user navigate to this page for edit the item it comes with item id and and item data floods the initialState
+  //for edit mode------------ starts
   const [editMode, setEditMode] = useState(false);
   const { id } = useParams();
 
@@ -155,7 +154,7 @@ const AddRecipe = () => {
       );
       return result.data;
     },
-    { enabled: !!id } //query only enables when id is true or there is a id
+    { enabled: !!id } //query only enables when id is true or there is a id(id that comes in params)
   );
 
   useEffect(() => {
@@ -166,16 +165,27 @@ const AddRecipe = () => {
       // setting entire recipe data for edit to initial state
       dispatch({ type: "RECIPE_DATA_FOR_EDIT", recipeDataForEdit: data });
 
-      // dispatching the creatorId in creatorInfo right way cause it comes
-      // with whole creatorInfo and the whole info gets prevented by schema
+      // dispatching the creatorId in creatorInfo right way because it comes with whole creatorInfo gets prevented by schema
       dispatch({
         type: "TEXT_INPUT",
         name: "creatorInfo",
         value: currentUser?._id,
       });
       setFiles(data.recipeImages);
+
+      // getting publicId part from url and setting it to public_id state.it requires for deleting image from cloudinary
+      const public_id = data.recipeImages.map((url) => {
+        const splitedURL = url.split("/");
+        const publicIdPart = `${splitedURL.at(-2)}/${splitedURL
+          .at(-1)
+          .split(".")
+          .at(0)}`;
+        return publicIdPart;
+      });
+      setPublic_id(public_id);
     }
   }, [data, currentUser]);
+  //  edit mode block ends -------------------------------
 
   // dispatching the creatorInfo when not in editmode
   useEffect(() => {
@@ -295,7 +305,6 @@ const AddRecipe = () => {
   //functions for files/images------------
   const filesHandler = (e) => {
     const imageObj = e.target.files;
-
     // uploading to cloud
     const uploader = Array.from(imageObj).map(async (file) => {
       const formData = new FormData();
@@ -314,6 +323,7 @@ const AddRecipe = () => {
         );
         console.log(response);
         const imgurl = response?.data.secure_url;
+        // setting image public_id.it requires for deleting from cloud
         setPublic_id((prevState) => [...prevState, response?.data.public_id]);
         return imgurl;
       } catch (error) {
@@ -342,7 +352,6 @@ const AddRecipe = () => {
       setFiles([...files, imageBlobURL]);
     });
   };
-
   const scrollToRight = () => {
     if (imgContainerRef.current) {
       imgContainerRef.current.scrollLeft += 80;
@@ -419,9 +428,6 @@ const AddRecipe = () => {
       })
       .catch((err) => console.log(err));
   };
-
-  //uploading images to cloudinary when user submit the whole form.Because in that time user gets confirm about the images user wants to keep.Before that user may add or remove images.Uploading to cloudinary whenever user adds a image may affect the cloud storage(free plan).
-
   const inputValidationHandler = (form) => {
     const newErrorObj = { ...errorsObj };
 
@@ -464,7 +470,7 @@ const AddRecipe = () => {
     ) : null;
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("update");
     const errorMessages = inputValidationHandler(formState);
@@ -476,46 +482,10 @@ const AddRecipe = () => {
 
     setLoading(true);
 
-    // const uploader = selectedFiles.map(async (file) => {
-    //   const formData = new FormData();
-    //   formData.append("file", file);
-    //   formData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
-    //   try {
-    //     const response = await axios.post(
-    //       `https://api.cloudinary.com/v1_1/${
-    //         import.meta.env.VITE_CLOUD_NAME
-    //       }/image/upload`,
-    //       formData,
-    //       {
-    //         headers: { "X-Requested-With": "XMLHttpRequest" },
-    //       }
-    //     );
-    //     console.log(response);
-    //     const imgurl = response?.data.secure_url;
-    //     return imgurl;
-    //   } catch (error) {
-    //     console.log(error);
-    //     return null;
-    //   }
-    // });
-
-    // uploader returns an array of imageURL even it's a single imageURL
-
     try {
-      // Promise.all(uploader).then((imageURLs) => {
-      //   console.log(imageURLs);
-      //   if (imageURLs) {
-      //     dispatch({
-      //       type: "IMAGES",
-      //       name: "recipeImages",
-      //       value: [...formState["recipeImages"], ...imageURLs],
-      //     });
-      //     // passing only creator id .by this id we will get a recipe data populated creatorInfo with userInfo
-      //   }
-
       if (!editMode) {
         console.log("post block");
-        axios
+        await axios
           .post(`${import.meta.env.VITE_BASEURL}createRecipe`, formState)
           .then((result) => {
             console.log(result);
@@ -529,7 +499,7 @@ const AddRecipe = () => {
           });
       } else {
         console.log("update block");
-        axios
+        await axios
           .put(
             `${import.meta.env.VITE_BASEURL}updateRecipe/${currentUser?.email}`,
             formState
