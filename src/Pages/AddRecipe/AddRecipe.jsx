@@ -134,7 +134,7 @@ const AddRecipe = () => {
   const navigate = useNavigate();
 
   // console.log(currentUser);
-  console.log(formState);
+  console.log(JSON.stringify(formState));
   console.log(public_id);
   console.log(files);
   console.log(imageUploadLoading);
@@ -171,18 +171,21 @@ const AddRecipe = () => {
         name: "creatorInfo",
         value: currentUser?._id,
       });
-      setFiles(data.recipeImages);
 
       // getting publicId part from url and setting it to public_id state.it requires for deleting image from cloudinary
-      const public_id = data.recipeImages.map((url) => {
-        const splitedURL = url.split("/");
-        const publicIdPart = `${splitedURL.at(-2)}/${splitedURL
-          .at(-1)
-          .split(".")
-          .at(0)}`;
-        return publicIdPart;
-      });
-      setPublic_id(public_id);
+      if (data.recipeImages.length) {
+        setFiles(data.recipeImages);
+
+        const public_id = data.recipeImages.map((url) => {
+          const splitedURL = url.split("/");
+          const publicIdPart = `${splitedURL.at(-2)}/${splitedURL
+            .at(-1)
+            .split(".")
+            .at(0)}`;
+          return publicIdPart;
+        });
+        setPublic_id(public_id);
+      }
     }
   }, [data, currentUser]);
   //  edit mode block ends -------------------------------
@@ -472,51 +475,42 @@ const AddRecipe = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("update");
     const errorMessages = inputValidationHandler(formState);
-
     if (Object.values(errorMessages).some((value) => value)) {
-      console.log("error detected");
       return;
     }
 
     setLoading(true);
 
-    try {
-      if (!editMode) {
-        console.log("post block");
-        await axios
-          .post(`${import.meta.env.VITE_BASEURL}createRecipe`, formState)
-          .then((result) => {
-            console.log(result);
-            setLoading(false);
-            // navigate(`/recipe/detail/${result.data.id}`);
-            //id here is coming from created recipe.and using it to navigate to detail page after creating
-          })
-          .catch((err) => {
-            console.log(err);
-            setLoading(false);
-          });
-      } else {
-        console.log("update block");
-        await axios
-          .put(
-            `${import.meta.env.VITE_BASEURL}updateRecipe/${currentUser?.email}`,
-            formState
-          )
-          .then((result) => {
-            console.log(result);
-            setLoading(false);
-            // navigate(`/recipe/detail/${result.data.id}`);
-            //id here is coming from created recipe.and using it to navigate to detail page after creating
-          })
-          .catch((err) => {
-            console.log(err);
-            setLoading(false);
-          });
-      }
-    } catch (error) {
-      console.log(error);
+    if (!editMode) {
+      await axios
+        .post(`${import.meta.env.VITE_BASEURL}createRecipe`, formState)
+        .then((result) => {
+          console.log(result);
+          setLoading(false);
+          navigate(`/recipe/detail/${result.data.id}`);
+          //id here is coming from created recipe.and using it to navigate to detail page after creating
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    } else {
+      await axios
+        .put(
+          `${import.meta.env.VITE_BASEURL}updateRecipe/${currentUser?.email}`,
+          formState
+        )
+        .then((result) => {
+          console.log(result);
+          setLoading(false);
+          navigate(`/recipe/detail/${result.data.id}`);
+          //id here is coming from created recipe.and using it to navigate to detail page after updating
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
     }
 
     console.log(formState);

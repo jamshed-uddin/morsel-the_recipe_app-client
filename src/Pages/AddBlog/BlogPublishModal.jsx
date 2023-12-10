@@ -13,11 +13,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
+const BlogPublishModal = ({
+  editMode,
+  modalOpen,
+  setModalOpen,
+  state,
+  dispatch,
+  currentUser,
+}) => {
   const [blogBodyimages, setBlogBodyImages] = React.useState([]);
   const [tagInputValue, setTagInputValue] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const { user } = useAuthContext();
+
   const navigate = useNavigate();
 
   console.log(state);
@@ -65,18 +73,36 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
     console.log("state", state);
 
     setLoading(true);
-    await axios
-      .post(`${import.meta.env.VITE_BASEURL}createBlog`, state)
-      .then((result) => {
-        console.log(result);
-        setLoading(false);
-        navigate(`/blog/detail/${result.data.id}`);
-        //id here is coming from created blog.and using it to navigate to detail page after creating
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoading(false);
-      });
+    if (!editMode) {
+      await axios
+        .post(`${import.meta.env.VITE_BASEURL}createBlog`, state)
+        .then((result) => {
+          console.log(result);
+          setLoading(false);
+          navigate(`/blog/detail/${result.data.id}`);
+          //id here is coming from created blog.and using it to navigate to detail page after creating
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    } else {
+      await axios
+        .put(
+          `${import.meta.env.VITE_BASEURL}updateBlog/${currentUser?.email}`,
+          state
+        )
+        .then((result) => {
+          console.log(result);
+          setLoading(false);
+          navigate(`/blog/detail/${result.data.id}`);
+          //id here is coming from created recipe.and using it to navigate to detail page after updating
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    }
   };
 
   return (
@@ -219,7 +245,7 @@ const BlogPublishModal = ({ modalOpen, setModalOpen, state, dispatch }) => {
                   loading && "opacity-50 cursor-not-allowed"
                 } ${!state.blogBody || (!state.title && "opacity-50 ")}`}
               >
-                Create
+                {editMode ? "Update" : "Create"}
               </button>
               <button
                 onClick={handleClose}

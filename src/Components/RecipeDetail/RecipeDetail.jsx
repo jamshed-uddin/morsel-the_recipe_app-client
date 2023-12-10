@@ -31,7 +31,9 @@ const RecipeDetail = () => {
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [recipeDetail, setRecipeDetail] = useState({});
   // console.log(currentUser);
-  console.log(recipeDetail);
+  console.log(user);
+  console.log(recipeDetail?.creatorInfo?.email);
+  console.log(user?.email);
   // console.log(Object.values(recipeDetail?.prepTime).some((value) => value));
   const { isLoading, data, error, refetch } = useQuery(
     "recipeDetail",
@@ -192,7 +194,7 @@ const RecipeDetail = () => {
 
           <div className="md:mt-1 flex-grow bg-bgColor -mt-4 relative z-20 rounded-3xl ">
             {/* edit , share, delete button */}
-            <div className="flex gap-5 items-center justify-end mr-3 md:mr-0">
+            <div className="flex gap-5 items-center justify-end mr-3 md:mr-0 mb-1">
               {user?.email === recipeDetail?.creatorInfo?.email && (
                 <Tooltip title="Edit">
                   <Link

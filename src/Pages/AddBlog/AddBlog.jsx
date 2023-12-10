@@ -6,6 +6,8 @@ import "./AddBlog.css";
 
 import BlogPublishModal from "./BlogPublishModal";
 import useSingleUser from "../../hooks/useSingleUser";
+import { useParams } from "react-router-dom";
+import { useQuery } from "react-query";
 
 const initialState = {
   title: "",
@@ -21,6 +23,12 @@ const initialState = {
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case "BLOG_DATA_FOR_EDIT":
+      return {
+        ...state,
+        ...action.blogDataForEdit,
+      };
+
     case "BLOG_TITLE":
       return {
         ...state,
@@ -65,6 +73,37 @@ const AddBlog = () => {
   // const editor = editorRef.current?.getEditor();
   // const delta = editor.getContents();
   // console.log(delta);
+
+  // When user navigate to this page for edit the item it comes with item id and and item data floods the initialState
+  //for edit mode------------ starts
+  const [editMode, setEditMode] = useState(false);
+  const { id } = useParams();
+
+  console.log(editMode);
+
+  // using the add recipe form for editing recipe ..
+  const { isLoading, data, error, refetch } = useQuery(
+    ["recipeDetail", id],
+
+    async () => {
+      const result = await axios.get(
+        `${import.meta.env.VITE_BASEURL}singleBlog/${id}`
+      );
+      return result.data;
+    },
+    { enabled: !!id } //query only enables when id is true or there is a id(id that comes in params)
+  );
+
+  useEffect(() => {
+    if (data) {
+      setEditMode(true);
+      console.log(data);
+
+      // setting entire recipe data for edit to initial state
+      dispatch({ type: "BLOG_DATA_FOR_EDIT", blogDataForEdit: data });
+      setValue(data.blogBody);
+    }
+  }, [data, currentUser]);
 
   const toolbarOptions = [
     [{ header: [1, 2, 3, 4, false] }],
@@ -242,10 +281,12 @@ const AddBlog = () => {
         ></ReactQuill>
       </div>
       <BlogPublishModal
+        editMode={editMode}
         modalOpen={modalOpen}
         setModalOpen={setModalOpen}
         state={state}
         dispatch={dispatch}
+        currentUser={currentUser}
       ></BlogPublishModal>
     </div>
   );

@@ -17,7 +17,7 @@ import { Avatar, Tooltip } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
 import DetailSkeleton from "../../Components/Skeletons/DetailSkeleton";
 import ErrorElement from "../ErrorElement";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useSingleUser from "../../hooks/useSingleUser";
 import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 
@@ -246,11 +246,14 @@ const BlogDetail = () => {
           <div className="flex gap-6 items-center">
             {user?.email === blogDetail?.creatorInfo?.email && (
               <Tooltip title="Edit">
-                <button className="cursor-pointer p-1">
+                <Link
+                  to={`/blog/edit/${blogDetail?._id}`}
+                  className="cursor-pointer p-1"
+                >
                   <DriveFileRenameOutlineOutlinedIcon
                     sx={{ color: "#4B5365", fontSize: 30 }}
                   />
-                </button>
+                </Link>
               </Tooltip>
             )}
             <Tooltip title="Share">
