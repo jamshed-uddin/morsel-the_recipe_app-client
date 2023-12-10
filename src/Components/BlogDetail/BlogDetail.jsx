@@ -35,15 +35,15 @@ const BlogDetail = () => {
   const { currentUser } = useSingleUser();
   const [optionsLoading, setOptionsLoading] = useState(false);
 
-  const { isLoading, data, error, refetch } = useQuery(
-    "blogDetail",
-    async () => {
-      const result = axios.get(
-        `${import.meta.env.VITE_BASEURL}singleBlog/${id}`
-      );
-      return result;
-    }
-  );
+  const {
+    isLoading,
+    data,
+    error,
+    refetch: blogDetailRefetch,
+  } = useQuery("blogDetail", async () => {
+    const result = axios.get(`${import.meta.env.VITE_BASEURL}singleBlog/${id}`);
+    return result;
+  });
 
   useEffect(() => {
     if (data) {
@@ -57,14 +57,18 @@ const BlogDetail = () => {
     data: isLikedAndSaved,
     error: errorMessage,
     refetch: reloadPage,
-  } = useQuery(["isSavedAndLiked", currentUser], async () => {
-    const result = axios.get(
-      `${import.meta.env.VITE_BASEURL}isLikedAndSaved?userEmail=${
-        currentUser?.email
-      }&itemId=${blogDetail?._id}&itemType=blog`
-    );
-    return result;
-  });
+  } = useQuery(
+    "isSavedAndLiked",
+    async () => {
+      const result = axios.get(
+        `${import.meta.env.VITE_BASEURL}isLikedAndSaved?userEmail=${
+          currentUser?.email
+        }&itemId=${blogDetail?._id}&itemType=blog`
+      );
+      return result;
+    },
+    { enabled: !!currentUser } // query enables if currentUser is available
+  );
 
   const handleBlogSave = () => {
     console.log("save cliked");
@@ -116,7 +120,6 @@ const BlogDetail = () => {
   };
 
   const handleReaction = () => {
-    console.log("reaction clicked");
     // if item already liked calls dislike action
     if (isLikedAndSaved?.data?.isLiked) {
       const body = {
@@ -133,7 +136,7 @@ const BlogDetail = () => {
         .then(() => {
           setOptionsLoading(false);
 
-          refetch();
+          blogDetailRefetch();
           reloadPage();
         })
         .catch((err) => console.log(err));
@@ -155,14 +158,14 @@ const BlogDetail = () => {
       .then(() => {
         setOptionsLoading(false);
 
-        refetch();
+        blogDetailRefetch();
         reloadPage();
       })
       .catch((err) => console.log(err));
   };
 
   if (error) {
-    return <ErrorElement refetch={refetch} />;
+    return <ErrorElement blogDetailRefetch={blogDetailRefetch} />;
   }
 
   return isLoading ? (
@@ -183,6 +186,7 @@ const BlogDetail = () => {
           adminEmail={currentUser?.email}
           setOpen={setOpen}
           setMessage={setMessage}
+          blogDetailRefetch={blogDetailRefetch}
         />
       )}
 

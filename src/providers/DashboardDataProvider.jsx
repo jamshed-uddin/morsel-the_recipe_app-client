@@ -1,35 +1,43 @@
 import axios from "axios";
-import { createContext } from "react";
+import { createContext, useState } from "react";
 import { useQuery } from "react-query";
 export const DashboardDataContext = createContext(null);
 const DashboardDataProvider = ({ children }) => {
+  const [usersRefetch, setUsersRefetch] = useState(false);
+  const [recipesRefetch, setRecipesRefetch] = useState(false);
+  const [blogsRefetch, setBlogsRefetch] = useState(false);
+
+  // users data
   const {
     isLoading: userFetchLoading,
     data: userData,
     error: userFetchError,
-  } = useQuery("users", async () => {
+  } = useQuery(["users", usersRefetch], async () => {
     const result = await axios.get(`${import.meta.env.VITE_BASEURL}users`);
     return result.data;
   });
 
+  // recipes data
   const {
     isLoading: recipesFetchLoading,
     data: recipesData,
     error: recipesFetchError,
-  } = useQuery("allRecipes", async () => {
+  } = useQuery(["allRecipes", recipesRefetch], async () => {
     const result = await axios.get(`${import.meta.env.VITE_BASEURL}allRecipes`);
     return result.data;
   });
+
+  // blogs data
   const {
     isLoading: blogsFetchLoading,
     data: blogsData,
     error: blogsFetchError,
-  } = useQuery("allBlogs", async () => {
+  } = useQuery(["allBlogs", blogsRefetch], async () => {
     const result = await axios.get(`${import.meta.env.VITE_BASEURL}allBlogs`);
     return result.data;
   });
 
-  console.log(blogsData);
+  console.log(userData);
 
   const dashboardData = {
     userFetchLoading,
@@ -38,6 +46,9 @@ const DashboardDataProvider = ({ children }) => {
     userData,
     recipesData,
     blogsData,
+    setUsersRefetch,
+    setRecipesRefetch,
+    setBlogsRefetch,
   };
 
   return (

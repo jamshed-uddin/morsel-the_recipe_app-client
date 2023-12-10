@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
+import useDashboardContext from "../../hooks/useDashboardContext";
 
 const StatusChanger = ({
   status,
@@ -16,10 +17,22 @@ const StatusChanger = ({
   snackbarHandler,
   setOpen,
   setMessage,
+  blogDetailRefetch,
+  recipeDetailRefetch,
+  //info about props at the end of the code
 }) => {
   const [updatedStatus, setUpdatedStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const { setRecipesRefetch, setBlogsRefetch } = useDashboardContext();
+
+  const refetcher = () => {
+    if (actionFor === "blog") {
+      setBlogsRefetch((prev) => !prev);
+    } else {
+      setRecipesRefetch((prev) => !prev);
+    }
+  };
 
   const handleChange = (event) => {
     setUpdatedStatus(event.target.value);
@@ -55,24 +68,37 @@ const StatusChanger = ({
       handleClose();
       setFeedback("");
 
+      // snackbar and refetch for table
       if (actionFrom === "table") {
-        return snackbarHandler("Status changed");
+        refetcher();
+        snackbarHandler("Status changed");
+        return;
       }
 
+      // snackbar props for detail page snackbar
       setOpen((prev) => !prev);
       setMessage("Status changed");
+      {
+        actionFor === "blog" ? blogDetailRefetch() : recipeDetailRefetch();
+      }
     } catch (error) {
-      console.log(error);
-
       setLoading(false);
       handleClose();
       setFeedback("");
+
+      // snackbar and refetch for table
       if (actionFrom === "table") {
-        return snackbarHandler("Status changed");
+        refetcher();
+        snackbarHandler(error?.response?.data?.error);
+        return;
       }
 
+      // snackbar props for detail page snackbar
       setOpen((prev) => !prev);
       setMessage(error?.response?.data?.error);
+      {
+        actionFor === "blog" ? blogDetailRefetch() : recipeDetailRefetch();
+      }
     }
   };
 
@@ -226,6 +252,7 @@ props
   * snackbarHandler - snackbar for showing updating message
  * setOpen - setOpen to show snackbar only for detailPage
  * setMessage - message for snackbar( only for detail page) 
- 
+ * blogDetailRefetch - when statusChanger is in blogDetail and when status changed this will refetch the blogDetail    data
+ * recipeDetailRefetch-  when statusChanger is in recipeDetail and when status changed this will refetch the recipeDetail data
 
 */

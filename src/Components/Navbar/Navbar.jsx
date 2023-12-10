@@ -72,7 +72,7 @@ const Navbar = () => {
                       : "/account"
                   }
                 >
-                  <div className="flex items-center rounded-3xl cursor-pointer">
+                  <div className="flex items-center  rounded-3xl cursor-pointer">
                     <Avatar
                       src={
                         user.photoURL ||
@@ -80,11 +80,10 @@ const Navbar = () => {
                       }
                       sx={{ width: "35px", height: "35px" }}
                     ></Avatar>
-                    {
-                      <p>
-                        <NavigateNextOutlinedIcon sx={{ fontSize: 28 }} />
-                      </p>
-                    }
+
+                    <p>
+                      <NavigateNextOutlinedIcon sx={{ fontSize: 28 }} />
+                    </p>
                   </div>
                 </Link>
               ) : (

@@ -6,10 +6,9 @@ import useSingleUser from "../../../hooks/useSingleUser";
 import useDashboardContext from "../../../hooks/useDashboardContext";
 
 const UserActions = ({ params, rowId, setRowId, snackbarHandler }) => {
-  const { refetch } = useDashboardContext();
   const { currentUser } = useSingleUser();
   const [loading, setLoading] = useState(false);
-
+  const { setUsersRefetch } = useDashboardContext();
   const handleRoleChange = async () => {
     setRowId(params.row._id);
 
@@ -25,7 +24,7 @@ const UserActions = ({ params, rowId, setRowId, snackbarHandler }) => {
 
       setLoading(false);
       setRowId(null);
-      refetch();
+      setUsersRefetch((prev) => !prev);
     } catch (error) {
       console.log(error);
 
@@ -33,7 +32,7 @@ const UserActions = ({ params, rowId, setRowId, snackbarHandler }) => {
 
       setLoading(false);
       setRowId(null);
-      refetch();
+      setUsersRefetch((prev) => !prev);
     }
   };
 

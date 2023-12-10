@@ -35,15 +35,17 @@ const RecipeDetail = () => {
   console.log(recipeDetail?.creatorInfo?.email);
   console.log(user?.email);
   // console.log(Object.values(recipeDetail?.prepTime).some((value) => value));
-  const { isLoading, data, error, refetch } = useQuery(
-    "recipeDetail",
-    async () => {
-      const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}singleRecipe/${id}`
-      );
-      return result;
-    }
-  );
+  const {
+    isLoading,
+    data,
+    error,
+    refetch: recipeDetailRefetch,
+  } = useQuery("recipeDetail", async () => {
+    const result = await axios.get(
+      `${import.meta.env.VITE_BASEURL}singleRecipe/${id}`
+    );
+    return result;
+  });
 
   useEffect(() => {
     if (data) {
@@ -55,14 +57,18 @@ const RecipeDetail = () => {
     data: isLikedAndSaved,
     error: errorMessage,
     refetch: reloadPage,
-  } = useQuery(["isSavedAndLiked", currentUser], async () => {
-    const result = await axios.get(
-      `${import.meta.env.VITE_BASEURL}isLikedAndSaved?userEmail=${
-        currentUser?.email
-      }&itemId=${recipeDetail?._id}&itemType=recipe`
-    );
-    return result;
-  });
+  } = useQuery(
+    "isSavedAndLiked",
+    async () => {
+      const result = await axios.get(
+        `${import.meta.env.VITE_BASEURL}isLikedAndSaved?userEmail=${
+          currentUser?.email
+        }&itemId=${recipeDetail?._id}&itemType=recipe`
+      );
+      return result;
+    },
+    { enabled: !!currentUser } // query enables if currentUser is available
+  );
 
   // console.log(data);
 
@@ -176,6 +182,7 @@ const RecipeDetail = () => {
           adminEmail={currentUser?.email}
           setOpen={setOpen}
           setMessage={setMessage}
+          recipeDetailRefetch={recipeDetailRefetch}
         />
       )}
       {/* recipe detail container */}
