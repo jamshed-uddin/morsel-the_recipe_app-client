@@ -8,6 +8,7 @@ import BlogPublishModal from "./BlogPublishModal";
 import useSingleUser from "../../hooks/useSingleUser";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
+import MyButton from "../../Components/Button/MyButton";
 
 const initialState = {
   title: "",
@@ -67,7 +68,7 @@ const AddBlog = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const { currentUser } = useSingleUser();
 
-  console.log(currentUser);
+  // console.log(currentUser);
   // console.log(value);
   // console.log(state);
   // const editor = editorRef.current?.getEditor();
@@ -79,7 +80,7 @@ const AddBlog = () => {
   const [editMode, setEditMode] = useState(false);
   const { id } = useParams();
 
-  console.log(editMode);
+  // console.log(editMode);
 
   // using the add recipe form for editing recipe ..
   const { isLoading, data, error, refetch } = useQuery(
@@ -243,16 +244,13 @@ const AddBlog = () => {
               <span className="animate-ping relative inline-flex rounded-full h-3 w-3 bg-colorOne"></span>
             </p>
           )}
-          <button
-            disabled={state.blogBody.length < 20}
-            type="submit"
-            className={`text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3 ${
-              state.blogBody.length < 20 && "opacity-50 "
-            }`}
-            onClick={handlePublishModalOpen}
+          <MyButton
+            type={"button"}
+            disabledForOthers={state.blogBody.length < 20 ? true : false}
+            clickFunction={handlePublishModalOpen}
           >
             Next
-          </button>
+          </MyButton>
         </div>
         <div className=" relative mb-3">
           <input

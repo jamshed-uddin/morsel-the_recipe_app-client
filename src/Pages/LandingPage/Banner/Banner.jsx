@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
 import "./Banner.css";
 import EastOutlinedIcon from "@mui/icons-material/EastOutlined";
-import bannerImage from "../../../assets/banner.jpg";
+import MyButton from "../../../Components/Button/MyButton";
 
 const Banner = () => {
+  const testFunc = () => {
+    console.log("curtom slick");
+  };
+
   return (
     <div className="my-container  mt-28  relative mb-3">
       <div className="text-colorOne ">

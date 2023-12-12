@@ -19,6 +19,9 @@ import {
 } from "react-share";
 import { useState } from "react";
 import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
+import MyButton from "../Button/MyButton";
+import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AlertDialog = ({
   open,
@@ -30,6 +33,9 @@ const AlertDialog = ({
   userEmail,
 }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleClose = () => {
     setOpen(false);
@@ -39,8 +45,28 @@ const AlertDialog = ({
     try {
       await navigator.clipboard.writeText(shareURL);
       setSnackbarOpen(true);
+      setSnackbarMessage("Linked copied to clipboard");
       console.log("text copied ");
     } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleItemDelete = async () => {
+    try {
+      setDeleteLoading(true);
+      await axios.delete(
+        `${import.meta.env.VITE_BASEURL}${
+          itemType === "recipe" ? "deleteRecipe" : "deleteBlog"
+        }?userEmail=${userEmail}&itemId=${itemId}`
+      );
+
+      setDeleteLoading(false);
+      navigate(-1);
+    } catch (error) {
+      setSnackbarOpen(true);
+      setSnackbarMessage("Something went wrong");
+      setDeleteLoading(false);
       console.log(error);
     }
   };
@@ -54,8 +80,9 @@ const AlertDialog = ({
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
+        {/* dialog for deleting items */}
         {dialogFor === "delete" && (
-          <div className="bg-bgColor text-colorTwo">
+          <div className="bg-bgColor text-colorTwo px-5 py-3">
             <DialogTitle id="alert-dialog-title">
               {"Confirm delete"}
             </DialogTitle>
@@ -74,26 +101,25 @@ const AlertDialog = ({
                 }}
                 id="alert-dialog-description"
               >
-                Also be deleted from saved item!
+                Also be deleted from saved items!
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <button
-                className="border-2 border-colorOne text-lg px-3 py-1 rounded-lg"
-                onClick={handleClose}
-              >
+              <MyButton variant={"outlined"} clickFunction={handleClose}>
                 Cancel
-              </button>
-              <button
-                className="bg-colorOne border-2 border-colorOne text-white text-lg px-3 py-1 rounded-lg "
-                onClick={handleClose}
+              </MyButton>
+
+              <MyButton
+                loading={deleteLoading}
+                clickFunction={handleItemDelete}
               >
                 Delete
-              </button>
+              </MyButton>
             </DialogActions>
           </div>
         )}
 
+        {/* dialog for share options */}
         {dialogFor === "shareOptions" && (
           <div className="text-colorTwo mb-5">
             <DialogContent>
@@ -154,7 +180,7 @@ const AlertDialog = ({
             <SimpleSnackbar
               open={snackbarOpen}
               setOpen={setSnackbarOpen}
-              message={"Link copied to clipboard"}
+              message={snackbarMessage}
             />
           </div>
         )}

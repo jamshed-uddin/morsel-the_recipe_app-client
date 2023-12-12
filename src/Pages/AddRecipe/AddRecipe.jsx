@@ -11,6 +11,7 @@ import axios from "axios";
 import useSingleUser from "../../hooks/useSingleUser";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
+import MyButton from "../../Components/Button/MyButton";
 
 const initialState = {
   recipeName: "",
@@ -134,10 +135,10 @@ const AddRecipe = () => {
   const navigate = useNavigate();
 
   // console.log(currentUser);
-  console.log(JSON.stringify(formState));
-  console.log(public_id);
-  console.log(files);
-  console.log(imageUploadLoading);
+  // console.log(formState);
+  // console.log(public_id);
+  // console.log(files);
+  // console.log(imageUploadLoading);
 
   // When user navigate to this page for edit the item it comes with item id and and item data floods the initialState
   //for edit mode------------ starts
@@ -702,7 +703,7 @@ const AddRecipe = () => {
               </div>
               <div>
                 {formState.ingredients.map((ingredient, index) => (
-                  <div key={index} className="relative mb-1">
+                  <div key={index} className="relative mb-2">
                     <input
                       onChange={(e) =>
                         handleInputValue(e.target.name, e.target.value, index)
@@ -737,15 +738,14 @@ const AddRecipe = () => {
               </div>
 
               {/* button for adding  new ingredient field */}
-              <button
-                type="button"
-                onClick={() =>
+              <MyButton
+                type={"button"}
+                clickFunction={() =>
                   dispatch({ type: "ADD_FIELD", name: "ingredients" })
                 }
-                className="text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80  rounded-xl mt-3"
               >
-                + Add ingredients
-              </button>
+                Add ingredients
+              </MyButton>
             </div>
 
             {/* Instructions field ----------------*/}
@@ -760,7 +760,7 @@ const AddRecipe = () => {
               </div>
               <div>
                 {formState.instructions.map((instruction, index) => (
-                  <div key={index} className="relative mb-1">
+                  <div key={index} className="relative ">
                     <textarea
                       onChange={(e) =>
                         handleInputValue(e.target.name, e.target.value, index)
@@ -794,15 +794,14 @@ const AddRecipe = () => {
                 ))}
               </div>
               {/* button for adding  new Instructions field */}
-              <button
-                type="button"
-                onClick={() =>
+              <MyButton
+                type={"button"}
+                clickFunction={() =>
                   dispatch({ type: "ADD_FIELD", name: "instructions" })
                 }
-                className="text-white text-lg font-semibold px-3 py-1 bg-colorOne hover:bg-opacity-80   rounded-xl mt-3"
               >
-                + Add instruction
-              </button>
+                Add instruction
+              </MyButton>
             </div>
 
             {/* serving ------------------ */}
@@ -935,7 +934,7 @@ const AddRecipe = () => {
               <div className="flex flex-wrap gap-2">
                 {formState.tags.map((tag, index) => (
                   <div
-                    className="flex gap-1 border-[1.3px] border-colorTwo mb-1 pl-2 py-1 rounded-xl"
+                    className="flex gap-1 border-[1.3px]  border-colorTwo mb-1 pl-2 py-1 rounded-xl"
                     key={index}
                   >
                     <p className="">{tag}</p>
@@ -951,7 +950,7 @@ const AddRecipe = () => {
                   </div>
                 ))}
               </div>
-              <div>
+              <div className="space-y-2">
                 <input
                   className=""
                   type="text"
@@ -961,27 +960,19 @@ const AddRecipe = () => {
                   id="tags"
                   onChange={(e) => setTagInputValue(e.target.value)}
                 />
-                <button
-                  type="button"
-                  onClick={addTags}
-                  className="text-white text-lg font-semibold px-3 py-1 bg-colorOne   rounded-xl mt-3"
-                >
-                  + Add tag
-                </button>
+                <div>
+                  <MyButton type={"button"} clickFunction={addTags}>
+                    Add tags
+                  </MyButton>
+                </div>
               </div>
             </div>
 
             {/* submit button ------------*/}
             <div className="text-end">
-              <button
-                type="submit"
-                className={`text-white text-lg font-semibold px-3 py-1 bg-colorOne   rounded-xl mt-3 ${
-                  loading && "bg-opacity-50 cursor-not-allowed"
-                }`}
-                disabled={loading}
-              >
+              <MyButton type={"submit"} loading={loading}>
                 {editMode ? "Update" : "Submit"} recipe
-              </button>
+              </MyButton>
             </div>
           </form>
         </div>

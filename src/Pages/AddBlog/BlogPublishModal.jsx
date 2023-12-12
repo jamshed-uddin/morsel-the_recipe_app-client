@@ -8,6 +8,7 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAuthContext from "../../hooks/useAuthContext";
+import MyButton from "../../Components/Button/MyButton";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -28,7 +29,7 @@ const BlogPublishModal = ({
 
   const navigate = useNavigate();
 
-  console.log(state);
+  // console.log(state);
   // console.log(blogBodyimages);
   React.useEffect(() => {
     const domParser = new DOMParser();
@@ -68,9 +69,6 @@ const BlogPublishModal = ({
   //submit/create blog handler
   const createBlogHandler = async () => {
     // passing only creator id .by this id we will get a recipe data populated creatorInfo with userInfo and using BLOG-TITLE case for that.
-
-    console.log("submit");
-    console.log("state", state);
 
     setLoading(true);
     if (!editMode) {
@@ -223,12 +221,8 @@ const BlogPublishModal = ({
                     id="tags"
                     onChange={(e) => setTagInputValue(e.target.value)}
                   />
-                  <button
-                    onClick={addTagsHandler}
-                    className="text-white text-lg font-semibold px-3 py-1 bg-colorOne  rounded-xl mt-2"
-                  >
-                    + Add tag
-                  </button>
+
+                  <MyButton clickFunction={addTagsHandler}>Add tag</MyButton>
                 </div>
               </div>
             </div>
@@ -238,21 +232,17 @@ const BlogPublishModal = ({
                 <span className="text-base">Story by: </span>
                 {user?.displayName}
               </h3>
-              <button
-                disabled={loading}
-                onClick={createBlogHandler}
-                className={`text-white text-lg font-semibold px-4 py-1 bg-colorOne   rounded-xl mt-3 ${
-                  loading && "opacity-50 cursor-not-allowed"
-                } ${!state.blogBody || (!state.title && "opacity-50 ")}`}
+
+              <MyButton
+                loading={loading}
+                clickFunction={createBlogHandler}
+                disabledForOthers={!state.blogBody || !state.titel}
               >
                 {editMode ? "Update" : "Create"}
-              </button>
-              <button
-                onClick={handleClose}
-                className={`text-colorOne border-2 border-colorOne text-lg font-semibold px-3 ml-4 py-[0.1rem] b rounded-xl mt-3 `}
-              >
+              </MyButton>
+              <MyButton clickFunction={handleClose} variant={"outlined"}>
                 Cancel
-              </button>
+              </MyButton>
             </div>
           </div>
         </div>

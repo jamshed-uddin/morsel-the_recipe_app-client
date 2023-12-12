@@ -104,7 +104,7 @@ const StatusChanger = ({
 
   return (
     <div
-      className={`text-colorTwo ${
+      className={`no-print text-colorTwo ${
         actionFrom === "table"
           ? ""
           : "py-2 shadow-lg mt-1 mb-4 rounded-xl px-4 flex justify-center"

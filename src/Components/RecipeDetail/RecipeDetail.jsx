@@ -6,14 +6,14 @@ import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-
+//------icons ends----
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import ErrorElement from "../ErrorElement";
 import DetailSkeleton from "../../Components/Skeletons/DetailSkeleton";
-import { Avatar, Tooltip } from "@mui/material";
+import { Avatar, Divider, Tooltip } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
 import useSingleUser from "../../hooks/useSingleUser";
 import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
@@ -24,17 +24,18 @@ const RecipeDetail = () => {
   const { id } = useParams();
   const { user } = useAuthContext();
   const { currentUser } = useSingleUser();
-  const [open, setOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [dialogFor, setDialogFor] = useState("delete");
   const [optionsLoading, setOptionsLoading] = useState(false);
   const [recipeDetail, setRecipeDetail] = useState({});
-  // console.log(currentUser);
-  console.log(user);
-  console.log(recipeDetail?.creatorInfo?.email);
-  console.log(user?.email);
-  // console.log(Object.values(recipeDetail?.prepTime).some((value) => value));
+  const [isSaved, setIsSaved] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  // console.log(user);
+  // console.log(recipeDetail?.creatorInfo?.email);
+  // console.log(user?.email);
+
   const {
     isLoading,
     data,
@@ -44,15 +45,16 @@ const RecipeDetail = () => {
     const result = await axios.get(
       `${import.meta.env.VITE_BASEURL}singleRecipe/${id}`
     );
-    return result;
+    return result.data;
   });
 
   useEffect(() => {
     if (data) {
-      setRecipeDetail(data.data);
+      setRecipeDetail(data);
     }
   }, [data]);
 
+  // is liked and is saved
   const {
     data: isLikedAndSaved,
     error: errorMessage,
@@ -67,10 +69,8 @@ const RecipeDetail = () => {
       );
       return result;
     },
-    { enabled: !!currentUser } // query enables if currentUser is available
+    { enabled: !!currentUser } // query enables when currentUser is available
   );
-
-  // console.log(data);
 
   // saving on savedItems collection
   const handleRecipeSave = async () => {
@@ -94,7 +94,7 @@ const RecipeDetail = () => {
           setOptionsLoading(false);
           reloadPage();
           //  setOpen and message for snackbar alert for save/unsave
-          setOpen((prev) => !prev);
+          setSnackbarOpen((prev) => !prev);
           setMessage("Recipe unsaved");
         })
         .catch((err) => {
@@ -112,7 +112,7 @@ const RecipeDetail = () => {
       .then(() => {
         setOptionsLoading(false);
         reloadPage();
-        setOpen((prev) => !prev);
+        setSnackbarOpen((prev) => !prev);
         setMessage("Recipe saved");
       })
       .catch((err) => {
@@ -163,7 +163,7 @@ const RecipeDetail = () => {
   };
 
   if (error) {
-    return <ErrorElement refetch={refetch} />;
+    return <ErrorElement refetch={recipeDetailRefetch} />;
   }
 
   return isLoading ? (
@@ -173,24 +173,31 @@ const RecipeDetail = () => {
   ) : (
     <div className="my-container lg:px-24 mt-20  text-colorTwo">
       {/* status changer for admin only */}
-      {currentUser?.role === "admin" && (
+      {currentUser?.role !== "admin" && (
         <StatusChanger
           itemId={recipeDetail?._id}
           status={recipeDetail?.status}
           actionFor="recipe"
           actionFrom="detailPage"
           adminEmail={currentUser?.email}
-          setOpen={setOpen}
+          setOpen={setSnackbarOpen}
           setMessage={setMessage}
           recipeDetailRefetch={recipeDetailRefetch}
         />
       )}
+
+      {/* this div below only print app name in print page it stays hidden normally */}
+      <div className="app-name hidden mb-5">
+        <h2 className="text-2xl  font-bold text-colorOne relative z-50">
+          Morsel
+        </h2>
+      </div>
       {/* recipe detail container */}
       <div>
         {/* recipe info and creator info */}
-        <div className="md:flex gap-4">
+        <div className="md:flex items-center gap-4">
           {/* recipe images */}
-          <div className="md:w-[45%] h-[65vh] overflow-hidden rounded-tl-xl  rounded-tr-xl md:rounded-xl select-none">
+          <div className="no-print md:w-[45%] h-[65vh] overflow-hidden rounded-tl-xl  rounded-tr-xl md:rounded-xl select-none">
             <img
               className="object-cover"
               src={recipeDetail?.recipeImages}
@@ -198,10 +205,9 @@ const RecipeDetail = () => {
             />
           </div>
           {/* recipe & creator info */}
-
           <div className="md:mt-1 flex-grow bg-bgColor -mt-4 relative z-20 rounded-3xl ">
-            {/* edit , share, delete button */}
-            <div className="flex gap-5 items-center justify-end mr-3 md:mr-0 mb-1">
+            {/* edit  delete button */}
+            <div className="no-print flex gap-5 items-center justify-end mr-3 md:mr-0 mb-1">
               {user?.email === recipeDetail?.creatorInfo?.email && (
                 <Tooltip title="Edit">
                   <Link
@@ -214,17 +220,7 @@ const RecipeDetail = () => {
                   </Link>
                 </Tooltip>
               )}
-              <Tooltip title="Share">
-                <button
-                  onClick={() => {
-                    setDialogFor("shareOptions");
-                    setDeleteAlertOpen((prev) => !prev);
-                  }}
-                  className="cursor-pointer p-1"
-                >
-                  <ShareOutlinedIcon sx={{ color: "#4B5365", fontSize: 28 }} />
-                </button>
-              </Tooltip>
+
               {user?.email === recipeDetail?.creatorInfo?.email && (
                 <Tooltip title="Delete">
                   <button
@@ -245,25 +241,16 @@ const RecipeDetail = () => {
               {recipeDetail?.recipeName}
             </h1>
             <div className="flex items-center gap-1">
-              {/* <Avatar
-              sx={{ width: 30, height: 30 }}
-              src={
-                recipeDetail?.creatorInfo?.photoURL ||
-                "https://i.ibb.co/Twp960D/default-profile-400x400.png"
-              }
-            /> */}
-
               <h3 className="text-lg ">
-                {" "}
                 By{" "}
                 <span className="text-base">
-                  {recipeDetail?.creatorInfo?.name}
+                  {recipeDetail?.creatorInfo?.name || "Morsel creator"}
                 </span>
               </h3>
             </div>
 
             {/* like save print button */}
-            <div className="flex items-center gap-6 mt-2">
+            <div className="no-print  mt-2">
               <p className="flex-grow">
                 <button
                   disabled={optionsLoading}
@@ -280,85 +267,94 @@ const RecipeDetail = () => {
                 </button>{" "}
                 {recipeDetail?.likedBy?.length}
               </p>
-              <button
-                disabled={optionsLoading}
-                onClick={handleRecipeSave}
-                className="cursor-pointer flex items-center"
-              >
-                {isLikedAndSaved?.data?.isSaved ? (
-                  <>
-                    {" "}
-                    <BookmarkOutlinedIcon
-                      sx={{ color: "#4B5365", fontSize: 28 }}
-                    />
-                    <span> Saved</span>{" "}
-                  </>
-                ) : (
-                  <>
-                    {" "}
-                    <BookmarkBorderOutlinedIcon
-                      sx={{ color: "#4B5365", fontSize: 28 }}
-                    />
-                    <span> Save</span>{" "}
-                  </>
-                )}
-              </button>
-              <button
-                onClick={window.print}
-                className="cursor-pointer flex items-center"
-              >
-                <LocalPrintshopOutlinedIcon
-                  sx={{ color: "#4B5365", fontSize: 28 }}
-                />
-                <span>Print</span>
-              </button>
             </div>
-            {/* cooktime preptime servings */}
-            <div className=" flex items-center justify-between mt-14">
-              <div className=" text-center">
-                <p className="text-lg font-semibold">Prep time</p>
-                <p>
-                  <span>
-                    {recipeDetail?.prepTime?.hours
-                      ? `${recipeDetail?.prepTime?.hours} hours`
-                      : " "}
-                  </span>
-                  <span>
-                    {recipeDetail?.prepTime?.minutes
-                      ? `${recipeDetail?.prepTime?.minutes} minutes`
-                      : "0"}
-                  </span>
-                </p>
-              </div>
-              <div className=" text-center">
-                <p className="text-lg font-semibold">Cook time</p>
-                <p>
-                  <span>
-                    {recipeDetail?.cookTime?.hours
-                      ? `${recipeDetail?.cookTime?.hours} hours`
-                      : " "}
-                  </span>
-                  <span>
-                    {recipeDetail?.cookTime?.minutes
-                      ? `${recipeDetail?.cookTime?.minutes} minutes`
-                      : "0"}
-                  </span>
-                </p>
-              </div>
-
-              <div className=" text-center">
-                <p className="text-lg font-semibold">Serves</p>
-                <p>{recipeDetail?.serving}</p>
-              </div>
+            {/* description */}
+            <div className="mt-1">
+              <p className="text-xl">{recipeDetail?.description}</p>
             </div>
           </div>
         </div>
+
+        {/* save, print , share button */}
+        <div className="no-print">
+          <hr />
+          <div className=" flex items-center gap-28 my-4 text-lg">
+            <button disabled={optionsLoading} onClick={handleRecipeSave}>
+              {isLikedAndSaved?.data?.isSaved ? (
+                <>
+                  <BookmarkOutlinedIcon
+                    sx={{ color: "#4B5365", fontSize: 28 }}
+                  />
+                  <span> Saved</span>
+                </>
+              ) : (
+                <>
+                  <BookmarkBorderOutlinedIcon
+                    sx={{ color: "#4B5365", fontSize: 28 }}
+                  />
+                  <span> Save</span>
+                </>
+              )}
+            </button>
+            <button onClick={window.print}>
+              <LocalPrintshopOutlinedIcon
+                sx={{ color: "#4B5365", fontSize: 28 }}
+              />
+
+              <span> Print</span>
+            </button>
+            <button
+              onClick={() => {
+                setDialogFor("shareOptions");
+                setDeleteAlertOpen((prev) => !prev);
+              }}
+            >
+              <ShareOutlinedIcon sx={{ color: "#4B5365", fontSize: 28 }} />
+              <span> Share</span>
+            </button>
+          </div>
+          <hr />
+        </div>
+
         {/* recipe body */}
         <div className="mt-6 space-y-5">
-          {/* description */}
-          <div>
-            <h1 className="text-3xl">Description</h1>
-            <p className="text-xl">{recipeDetail?.description}</p>
+          {/* cooktime preptime servings */}
+          <div className=" flex items-center gap-32">
+            <div className=" text-center">
+              <p className="text-lg font-semibold">Prep time</p>
+              <p className="space-x-3">
+                <span>
+                  {recipeDetail?.prepTime?.hours
+                    ? `${recipeDetail?.prepTime?.hours} hours`
+                    : ""}
+                </span>
+                <span>
+                  {recipeDetail?.prepTime?.minutes
+                    ? `${recipeDetail?.prepTime?.minutes} minutes`
+                    : "0"}
+                </span>
+              </p>
+            </div>
+            <div className=" text-center">
+              <p className="text-lg font-semibold">Cook time</p>
+              <p className="space-x-3">
+                <span>
+                  {recipeDetail?.cookTime?.hours
+                    ? `${recipeDetail?.cookTime?.hours} hours`
+                    : " "}
+                </span>
+                <span>
+                  {recipeDetail?.cookTime?.minutes
+                    ? `${recipeDetail?.cookTime?.minutes} minutes`
+                    : "0"}
+                </span>
+              </p>
+            </div>
+
+            <div className=" text-center">
+              <p className="text-lg font-semibold">Serves</p>
+              <p>{recipeDetail?.serving}</p>
+            </div>
           </div>
           {/* ingredients */}
           <div>
@@ -384,7 +380,11 @@ const RecipeDetail = () => {
         </div>
       </div>
 
-      <SimpleSnackbar open={open} setOpen={setOpen} message={message} />
+      <SimpleSnackbar
+        open={snackbarOpen}
+        setOpen={setSnackbarOpen}
+        message={message}
+      />
       <AlertDialog
         shareURL={"http://www.google.com"}
         dialogFor={dialogFor}

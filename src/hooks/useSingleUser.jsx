@@ -12,16 +12,22 @@ const useSingleUser = () => {
     data,
     isError,
     error,
-  } = useQuery(["singleUser", user], async () => {
-    const result = await axios.get(
-      `${import.meta.env.VITE_BASEURL}singleUser/${user?.email}`
-    );
-    return result;
-  });
+  } = useQuery(
+    ["singleUser", user],
+    async () => {
+      const result = await axios.get(
+        `${import.meta.env.VITE_BASEURL}singleUser/${user?.email}`
+      );
+      return result.data;
+    },
+    {
+      enabled: !!user,
+    }
+  );
 
   useEffect(() => {
     if (data) {
-      setCurrentUser(data.data);
+      setCurrentUser(data);
     }
   }, [data]);
 

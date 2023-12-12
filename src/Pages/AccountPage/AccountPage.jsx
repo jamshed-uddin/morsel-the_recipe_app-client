@@ -15,6 +15,7 @@ import useSingleUser from "../../hooks/useSingleUser";
 import { useQuery } from "react-query";
 import MyItems from "./MyItems";
 import AccountPageSkeleton from "../../Components/Skeletons/AccountPageSkeleton";
+import MyButton from "../../Components/Button/MyButton";
 
 const AccountPage = () => {
   const [activeTab, setActiveTab] = useState("myRecipes");
@@ -33,8 +34,6 @@ const AccountPage = () => {
   const handleCheckBoxChange = (event) => {
     setChecked(event.target.checked);
   };
-
-  // console.log(profilePhotoURL);
 
   const navigate = useNavigate();
 
@@ -56,7 +55,6 @@ const AccountPage = () => {
   // uploading changed profile photo to cloudinary
   const handleProfilePhotoChange = async (e) => {
     const file = e.target.files[0];
-    console.log(file);
 
     if (file) {
       const imageData = new FormData();
@@ -74,16 +72,17 @@ const AccountPage = () => {
         .then((response) => {
           if (response) {
             const cloudImageUrl = response.data.secure_url;
+
             setProfilePhotoURL(cloudImageUrl);
           }
 
           setLoading(false);
         })
-        .catch((error) => console.log(error));
+        .catch(() => {});
     }
   };
 
-  // for the setting button and image select button.to close when clicked outside
+  // for the setting button and image select button to close when clicked outside
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (
@@ -162,19 +161,16 @@ const AccountPage = () => {
 
   return (
     <div
-      className={`${
-        currentUser?.role === "admin"
-          ? "px-14 mt-6"
-          : "my-container mt-6 lg:mt-0"
-      }`}
+      className={`
+          "my-container mt-6 lg:mt-0"
+      `}
     >
       <div
-        className={`${
-          currentUser?.role !== "admin" &&
-          "lg:w-11/12 h-full  mx-auto lg:px-6 md:pt-20 pt-5 text-colorTwo"
-        }`}
+        className={
+          " lg:w-11/12 h-full  mx-auto lg:px-10 md:pt-20 pt-5 text-colorTwo"
+        }
       >
-        <div className="flex flex-col md:flex-row items-start justify-between space-y-6 ">
+        <div className="flex flex-col md:flex-row items-start justify-between space-y-6 px-2 md:px-0">
           {/* user info */}
           <div className="lg:flex items-center gap-5 md:w-4/5 space-y-3">
             <div>
@@ -189,24 +185,21 @@ const AccountPage = () => {
 
             <div>
               <h1 className="text-4xl font-semibold mb-1">
-                {currentUser?.name}{" "}
+                {currentUser?.name}
                 {currentUser?.role === "admin" && (
                   <sup className="mb-2 font-light text-lg p-1 border-[1px] border-colorOne rounded-lg">
                     Admin
                   </sup>
                 )}
               </h1>
-              <p className="text-lg font-light leading-5">
-                {" "}
-                {currentUser?.bio}
-              </p>
+              <p className="text-lg font-light leading-6">{currentUser?.bio}</p>
             </div>
           </div>
 
           {/* settings */}
           <div
             id="settings"
-            className=" order-first md:order-none relative  ml-auto mr-2"
+            className=" order-first md:order-none relative  ml-auto -bottom-12 md:bottom-0 mr-3"
           >
             {/* setting button */}
             <button
@@ -251,11 +244,11 @@ const AccountPage = () => {
           </div>
         </div>
 
-        {/* recipe/blog/saved section */}
-        {currentUser?.role !== "admin" ? (
-          <div className=" mt-14">
+        {/* recipe/blog/saved section  --- conditionally rendering this tab part becaues this account component also used in admin dashboard for admin profile */}
+        {currentUser?.role !== "admin" && (
+          <div className=" mt-14 px-2">
             {/* tab buttons  */}
-            <div className="flex items-end gap-10 text-2xl font-semibold border-b-[1px] border-slate-300">
+            <div className="flex items-end gap-10 text-2xl font-semibold border-b-[1px] border-slate-300 ">
               <button
                 onClick={() => setActiveTab("myRecipes")}
                 className={` pb-2 cursor-pointer ${
@@ -297,7 +290,7 @@ const AccountPage = () => {
               />
             </div>
           </div>
-        ) : null}
+        )}
       </div>
 
       {/* button for adding recipe or blog */}
@@ -305,10 +298,10 @@ const AccountPage = () => {
 
       {/* dialogue from setting button for updating/account/ sign out */}
       <Dialog fullWidth open={open} onClose={handleClose}>
-        <div className="h-[80vh] md:h-[90vh] pt-10 bg-bgColor">
+        <div className="h-[70vh] md:h-[90vh] pt-10 bg-bgColor text-colorTwo">
           {/* update profile info  */}
           {modalContent === "editProfile" && (
-            <div className=" w-[90%] mx-auto">
+            <div className="w-[90%] mx-auto ">
               {/* image div */}
               <div className="flex justify-center  select-none">
                 <div id="imgTooltip" className="relative ">
@@ -316,7 +309,7 @@ const AccountPage = () => {
                     sx={{ width: 135, height: 135 }}
                     className="w-32 rounded-full object-cover"
                     src={
-                      user?.photoURL ||
+                      profilePhotoURL ||
                       `https://i.ibb.co/Twp960D/default-profile-400x400.png`
                     }
                     alt={`${user?.displayName}'s photo`}
@@ -383,27 +376,22 @@ const AccountPage = () => {
                     <label htmlFor="bio">Bio</label>
                     <textarea id="bio" name="bio"></textarea>
                   </div>
-                  <div className="space-x-3">
-                    <button
-                      type="submit"
-                      className="border-2 border-colorOne bg-colorOne px-5 py-1 rounded-xl text-lg text-white"
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={handleClose}
-                      className="border-2 border-colorOne px-3 py-1 rounded-xl text-lg"
-                    >
+                  <div>
+                    <MyButton type={"submit"}>Save</MyButton>
+
+                    <MyButton variant={"outlined"} clickFunction={handleClose}>
                       Cancel
-                    </button>
+                    </MyButton>
                   </div>
                 </form>
               </div>
             </div>
           )}
+
+          {/* account deleting info */}
           {modalContent === "account" && (
-            <div className="text-colorTwo px-6">
-              <div className="p-4">
+            <div className=" w-[90%] mx-auto">
+              <div className="">
                 <h1 className=" text-4xl ">Delete account</h1>
 
                 {currentUser?.role === "admin" ? (
@@ -431,7 +419,7 @@ const AccountPage = () => {
                 )}
               </div>
 
-              <div className=" mt-8 ml-5">
+              <div className=" mt-8 ">
                 <div className="flex gap-3 items-center  mb-3">
                   <Checkbox
                     sx={{
@@ -447,21 +435,11 @@ const AccountPage = () => {
                   />
                   <p className="text-lg">I am aware</p>
                 </div>
-                <div className="space-x-5">
-                  <button
-                    disabled={checked}
-                    className={`text-lg text-white bg-colorOne rounded-lg px-4 py-1 border-2 border-colorOne cursor-pointer ${
-                      !checked && "opacity-50 "
-                    }`}
-                  >
-                    Delete
-                  </button>
-                  <button
-                    onClick={handleClose}
-                    className="text-lg  rounded-lg px-4 py-1 border-2 border-colorOne"
-                  >
+                <div className="">
+                  <MyButton disabledForOthers={!checked}>Delete</MyButton>
+                  <MyButton variant={"outlined"} clickFunction={handleClose}>
                     Cancel
-                  </button>
+                  </MyButton>
                 </div>
               </div>
             </div>

@@ -43,7 +43,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`px-2 lg:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
+      className={`no-print px-2 lg:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
     ${scrollingDown ? "-translate-y-16" : "-translate-0"}`}
     >
       <div className="flex justify-between items-center  w-full ">
@@ -156,6 +156,9 @@ const Navbar = () => {
               <div className={`${!user && "link"}`}>
                 {user ? (
                   <Link
+                    onClick={() => {
+                      setShowNav(false);
+                    }}
                     to={
                       currentUser?.role === "admin"
                         ? "/dashboard/overview"
@@ -167,7 +170,14 @@ const Navbar = () => {
                     </div>
                   </Link>
                 ) : (
-                  <Link to={"/signin"}>Sign in</Link>
+                  <Link
+                    onClick={() => {
+                      setShowNav(false);
+                    }}
+                    to={"/signin"}
+                  >
+                    Sign in
+                  </Link>
                 )}
               </div>
             </div>
