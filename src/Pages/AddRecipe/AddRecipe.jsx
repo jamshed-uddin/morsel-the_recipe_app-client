@@ -396,7 +396,6 @@ const AddRecipe = () => {
         .join(""); // convert bytes to hex string
       return hashHex;
     }
-
     await digestMessage()
       .then(async (hash) => {
         try {

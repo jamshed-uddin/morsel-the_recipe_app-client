@@ -1,7 +1,7 @@
 const AccountPageSkeleton = () => {
   return (
-    <div className=" lg:w-11/12 mx-auto">
-      <div className="flex items-center gap-5">
+    <div className="w-full lg:w-11/12 mx-auto">
+      <div className="lg:flex items-center gap-5">
         {/* profile photo */}
         <div>
           <p className="w-36 h-36 rounded-full bg-slate-200 animate-pulse"></p>

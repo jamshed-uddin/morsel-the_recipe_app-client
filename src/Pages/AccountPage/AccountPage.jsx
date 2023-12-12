@@ -25,10 +25,11 @@ const AccountPage = () => {
   const [open, setOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [profileUpdateLoading, setProfileUpdateLoading] = useState(false);
   const [modalContent, setModalContent] = useState("");
-  const { user, userLogout } = useAuthContext();
+  const { user, userLogout, updateUserNamePhoto } = useAuthContext();
   const { currentUser, currentUserLoading } = useSingleUser();
-  const [profilePhotoURL, setProfilePhotoURL] = useState(user && user.photoURL);
+  const [profilePhotoURL, setProfilePhotoURL] = useState(user?.photoURL);
   const [checked, setChecked] = useState(false);
 
   const handleCheckBoxChange = (event) => {
@@ -36,6 +37,9 @@ const AccountPage = () => {
   };
 
   const navigate = useNavigate();
+
+  console.log(currentUser);
+  console.log(user);
 
   // setting modal open
   const handleClickOpen = () => {
@@ -55,6 +59,9 @@ const AccountPage = () => {
   // uploading changed profile photo to cloudinary
   const handleProfilePhotoChange = async (e) => {
     const file = e.target.files[0];
+
+    const previewUrl = URL.createObjectURL(file);
+    setProfilePhotoURL(previewUrl);
 
     if (file) {
       const imageData = new FormData();
@@ -78,7 +85,9 @@ const AccountPage = () => {
 
           setLoading(false);
         })
-        .catch(() => {});
+        .catch(() => {
+          setLoading(false);
+        });
     }
   };
 
@@ -130,6 +139,9 @@ const AccountPage = () => {
 
         return result;
       }
+    },
+    {
+      enabled: !!currentUser,
     }
   );
   // setting the fetched tab data to state(myItems)
@@ -142,21 +154,45 @@ const AccountPage = () => {
   // console.log(myItems);
 
   // profile info updating function for both firebase and DB
-  const handleUpdateProfile = (e) => {
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
 
     const updatedProfile = {
-      name: e.target.name.value,
+      ...(e.target.name.value && { name: e.target.name.value }),
       photoURL: profilePhotoURL || "",
-      bio: e.target.bio.value,
+      ...(e.target.bio.value && { bio: e.target.bio.value }),
     };
     console.log(updatedProfile);
+
+    try {
+      setProfileUpdateLoading(true);
+      await axios
+        .put(
+          `${import.meta.env.VITE_BASEURL}updateUser/${user?.email}`,
+          updatedProfile
+        )
+        .then(() => {
+          updateUserNamePhoto(
+            updatedProfile.name,
+            updatedProfile.photoURL
+          ).then((res) => {
+            console.log(res);
+            setProfileUpdateLoading(false);
+            handleClose();
+          });
+        });
+    } catch (error) {
+      setProfileUpdateLoading(false);
+      return null;
+    }
   };
 
-  if (currentUserLoading && !user) {
-    <div className="my-container mt-24">
-      <AccountPageSkeleton />
-    </div>;
+  if (currentUserLoading || !user || !currentUser) {
+    return (
+      <div className="my-container mt-24">
+        <AccountPageSkeleton />
+      </div>
+    );
   }
 
   return (
@@ -192,7 +228,7 @@ const AccountPage = () => {
                   </sup>
                 )}
               </h1>
-              <p className="text-lg font-light leading-6">{currentUser?.bio}</p>
+              <p className="text-lg  leading-6">{currentUser?.bio}</p>
             </div>
           </div>
 
@@ -245,7 +281,7 @@ const AccountPage = () => {
         </div>
 
         {/* recipe/blog/saved section  --- conditionally rendering this tab part becaues this account component also used in admin dashboard for admin profile */}
-        {currentUser?.role !== "admin" && (
+        {currentUser?.role !== "admin" && user && currentUser && (
           <div className=" mt-14 px-2">
             {/* tab buttons  */}
             <div className="flex items-end gap-10 text-2xl font-semibold border-b-[1px] border-slate-300 ">
@@ -341,6 +377,7 @@ const AccountPage = () => {
                       />
                     </div>
                     <button
+                      type="button"
                       onClick={() => setProfilePhotoURL("")}
                       className="bg-slate-50 p-1  rounded-lg text-lg cursor-pointer"
                     >
@@ -377,9 +414,19 @@ const AccountPage = () => {
                     <textarea id="bio" name="bio"></textarea>
                   </div>
                   <div>
-                    <MyButton type={"submit"}>Save</MyButton>
+                    <MyButton
+                      disabledForOthers={loading}
+                      loading={profileUpdateLoading}
+                      type={"submit"}
+                    >
+                      Save
+                    </MyButton>
 
-                    <MyButton variant={"outlined"} clickFunction={handleClose}>
+                    <MyButton
+                      type={"button"}
+                      variant={"outlined"}
+                      clickFunction={handleClose}
+                    >
                       Cancel
                     </MyButton>
                   </div>

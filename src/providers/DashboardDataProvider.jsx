@@ -37,7 +37,7 @@ const DashboardDataProvider = ({ children }) => {
     return result.data;
   });
 
-  console.log(userData);
+  // console.log(userData);
 
   const dashboardData = {
     userFetchLoading,
