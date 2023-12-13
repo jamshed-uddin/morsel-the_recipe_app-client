@@ -32,6 +32,11 @@ const AccountPage = () => {
   const [profilePhotoURL, setProfilePhotoURL] = useState(user?.photoURL);
   const [checked, setChecked] = useState(false);
 
+  // const [updatedProfileInfo, setUpdatedProfileInfo] = useState({
+  //   name: currentUser?.name,
+  //   bio: currentUser?.bio,
+  // });
+
   const handleCheckBoxChange = (event) => {
     setChecked(event.target.checked);
   };
@@ -406,12 +411,21 @@ const AccountPage = () => {
                 <form onSubmit={handleUpdateProfile}>
                   <div>
                     <label htmlFor="name">Name</label>
-                    <input id="name" name="name" type="text" />
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      defaultValue={currentUser?.name}
+                    />
                   </div>
 
                   <div>
                     <label htmlFor="bio">Bio</label>
-                    <textarea id="bio" name="bio"></textarea>
+                    <textarea
+                      id="bio"
+                      name="bio"
+                      defaultValue={currentUser?.bio}
+                    ></textarea>
                   </div>
                   <div>
                     <MyButton

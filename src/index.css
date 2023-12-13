@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 .my-container {
-  @apply lg:w-[85%] md:w-[93%] w-[95%] mx-auto;
+  @apply lg:w-[85%] md:w-[93%] w-[95%] mt-16 lg:mt-20 mx-auto;
 }
 
 body {
@@ -60,18 +60,4 @@ button:active {
 /* background style for dashboard nav sidebar  */
 .css-d9ml5t-MuiDrawer-docked .MuiDrawer-paper {
   background: #fdfbf8;
-}
-
-@media print {
-  body {
-    padding: 0 0.6in;
-  }
-
-  .no-print {
-    display: none;
-  }
-
-  .app-name {
-    display: block;
-  }
 }

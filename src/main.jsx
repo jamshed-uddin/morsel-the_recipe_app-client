@@ -24,6 +24,7 @@ import ManageRecipes from "./Pages/AdminDashboard/ManageRecipes/ManageRecipes.js
 import AdminAccount from "./Pages/AdminDashboard/AdminAccount/AdminAccount.jsx";
 import ManageBlogs from "./Pages/AdminDashboard/ManageBlogs/ManageBlogs.jsx";
 import AdminDashboard from "./Pages/AdminDashboard/AdminDashboard.jsx";
+import { HelmetProvider } from "react-helmet-async";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -117,10 +118,12 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router}></RouterProvider>
-      </QueryClientProvider>
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router}></RouterProvider>
+        </QueryClientProvider>
+      </AuthProvider>
+    </HelmetProvider>
   </React.StrictMode>
 );

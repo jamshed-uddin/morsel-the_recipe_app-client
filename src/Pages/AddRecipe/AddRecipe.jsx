@@ -519,13 +519,14 @@ const AddRecipe = () => {
   // styles for input label
   const labelStyle = `block text-colorTwo text-2xl font-semibold `;
   return (
-    <div className=" my-container text-colorTwo mt-4">
-      <div className="lg:w-4/5 md:w-11/12 mx-auto md:shadow-xl md:rounded-xl h-full  py-10 px-5 relative">
-        <div className="bg-bgColor z-20 flex justify-between items-center uppercase sticky top-0 left-0 right-0 shadow-sm py-3">
+    <div className=" my-container text-colorTwo">
+      <div className="lg:w-4/5 md:w-11/12 mx-auto md:shadow-xl md:rounded-xl h-full  pb-10 lg:px-5 relative">
+        <div className="bg-bgColor py-2  z-20 flex justify-between items-center uppercase sticky top-0 left-0 right-0 shadow-sm ">
           <h1 className="md:text-3xl text-2xl font-bold text-colorOne">
             {editMode ? "Edit" : "Add"} Recipe
           </h1>
         </div>
+
         {/* the recipe form  */}
         <div className="md:w-3/4 pt-4  mx-auto h-full">
           <form className="space-y-4" onSubmit={handleSubmit}>

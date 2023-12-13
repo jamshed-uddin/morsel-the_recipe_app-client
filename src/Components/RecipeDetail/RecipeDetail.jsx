@@ -19,6 +19,7 @@ import useSingleUser from "../../hooks/useSingleUser";
 import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 import AlertDialog from "../AlertDialog/AlertDialog";
 import StatusChanger from "../StatusChanger/StatusChanger";
+import ReactHelmet from "../ReactHelmet/ReactHelmet";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -32,9 +33,6 @@ const RecipeDetail = () => {
   const [recipeDetail, setRecipeDetail] = useState({});
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-  // console.log(user);
-  // console.log(recipeDetail?.creatorInfo?.email);
-  // console.log(user?.email);
 
   const {
     isLoading,
@@ -58,7 +56,7 @@ const RecipeDetail = () => {
   const {
     data: isLikedAndSaved,
     error: errorMessage,
-    refetch: reloadPage,
+    refetch: reloadIslikedAndIsSaved,
   } = useQuery(
     "isSavedAndLiked",
     async () => {
@@ -67,6 +65,8 @@ const RecipeDetail = () => {
           currentUser?.email
         }&itemId=${recipeDetail?._id}&itemType=recipe`
       );
+      setIsLiked({ ...isLiked, liked: result?.data?.isLiked });
+      setIsSaved(result?.data?.isSaved);
       return result;
     },
     { enabled: !!currentUser } // query enables when currentUser is available
@@ -74,14 +74,15 @@ const RecipeDetail = () => {
 
   // saving on savedItems collection
   const handleRecipeSave = async () => {
+    setIsSaved((prevState) => !prevState);
+
     const body = {
       userId: currentUser?._id,
       userEmail: currentUser?.email,
       itemType: "Recipe", //need the first letter in capital because it's given as refPath in DB schema.
     };
-
     // if item already saved call delete action
-    if (isLikedAndSaved?.data?.isSaved) {
+    if (isSaved) {
       setOptionsLoading(true);
       console.log("delte action");
       await axios
@@ -92,7 +93,7 @@ const RecipeDetail = () => {
         )
         .then(() => {
           setOptionsLoading(false);
-          reloadPage();
+          reloadIslikedAndIsSaved();
           //  setOpen and message for snackbar alert for save/unsave
           setSnackbarOpen((prev) => !prev);
           setMessage("Recipe unsaved");
@@ -104,6 +105,7 @@ const RecipeDetail = () => {
       return;
     }
     setOptionsLoading(true);
+
     await axios
       .post(
         `${import.meta.env.VITE_BASEURL}saveNewItem/${recipeDetail?._id}`,
@@ -111,7 +113,7 @@ const RecipeDetail = () => {
       )
       .then(() => {
         setOptionsLoading(false);
-        reloadPage();
+        reloadIslikedAndIsSaved();
         setSnackbarOpen((prev) => !prev);
         setMessage("Recipe saved");
       })
@@ -122,8 +124,10 @@ const RecipeDetail = () => {
   };
 
   const handleReaction = async () => {
+    setIsLiked((prevState) => !prevState);
+
     // if item already liked calls dislike action
-    if (isLikedAndSaved?.data?.isLiked) {
+    if (isLiked) {
       const body = {
         userId: currentUser?._id,
         action: "dislike",
@@ -136,8 +140,7 @@ const RecipeDetail = () => {
         )
         .then((result) => {
           console.log(result);
-          refetch();
-          reloadPage();
+          recipeDetailRefetch();
         })
         .catch((err) => console.log(err));
       return;
@@ -156,8 +159,8 @@ const RecipeDetail = () => {
       )
       .then((result) => {
         console.log(result);
-        refetch();
-        reloadPage();
+
+        recipeDetailRefetch();
       })
       .catch((err) => console.log(err));
   };
@@ -167,11 +170,12 @@ const RecipeDetail = () => {
   }
 
   return isLoading ? (
-    <div className="my-container lg:px-24 mt-20  ">
+    <div className="my-container lg:px-20  mt-20  ">
       <DetailSkeleton itemType={"Recipe"} />
     </div>
   ) : (
-    <div className="my-container lg:px-24 mt-20  text-colorTwo">
+    <div className="my-container lg:px-20 print:mx-12    text-colorTwo print:bg-bgColor">
+      <ReactHelmet title={`${recipeDetail?.recipeName}_Morsel`}></ReactHelmet>
       {/* status changer for admin only */}
       {currentUser?.role !== "admin" && (
         <StatusChanger
@@ -187,7 +191,7 @@ const RecipeDetail = () => {
       )}
 
       {/* this div below only print app name in print page it stays hidden normally */}
-      <div className="app-name hidden mb-5">
+      <div className="print:block hidden mb-5">
         <h2 className="text-2xl  font-bold text-colorOne relative z-50">
           Morsel
         </h2>
@@ -195,9 +199,12 @@ const RecipeDetail = () => {
       {/* recipe detail container */}
       <div>
         {/* recipe info and creator info */}
-        <div className="md:flex items-center gap-4">
+        <div
+          className="md:flex items-center justify-between
+        "
+        >
           {/* recipe images */}
-          <div className="no-print md:w-[45%] h-[65vh] overflow-hidden rounded-tl-xl  rounded-tr-xl md:rounded-xl select-none">
+          <div className="print:hidden md:w-[45%] h-[65vh] overflow-hidden rounded-tl-xl  rounded-tr-xl md:rounded-xl select-none">
             <img
               className="object-cover"
               src={recipeDetail?.recipeImages}
@@ -205,42 +212,53 @@ const RecipeDetail = () => {
             />
           </div>
           {/* recipe & creator info */}
-          <div className="md:mt-1 flex-grow bg-bgColor -mt-4 relative z-20 rounded-3xl ">
-            {/* edit  delete button */}
-            <div className="no-print flex gap-5 items-center justify-end mr-3 md:mr-0 mb-1">
+          <div className="md:mt-1 flex-grow text-center print:text-left bg-bgColor -mt-4 relative z-20 rounded-3xl ">
+            {/* edit  delete share button */}
+            <div className="print:hidden flex gap-5 items-center justify-end mr-3 md:mr-0 lg:mb-4">
               {user?.email === recipeDetail?.creatorInfo?.email && (
-                <Tooltip title="Edit">
-                  <Link
-                    to={`/recipe/edit/${recipeDetail?._id}`}
-                    className="cursor-pointer p-1"
-                  >
-                    <DriveFileRenameOutlineOutlinedIcon
-                      sx={{ color: "#4B5365", fontSize: 30 }}
-                    />
-                  </Link>
-                </Tooltip>
+                <>
+                  <Tooltip title="Edit">
+                    <Link
+                      to={`/recipe/edit/${recipeDetail?._id}`}
+                      className="cursor-pointer p-1"
+                    >
+                      <DriveFileRenameOutlineOutlinedIcon
+                        sx={{ color: "#4B5365", fontSize: 30 }}
+                      />
+                    </Link>
+                  </Tooltip>
+                  <Tooltip title="Delete">
+                    <button
+                      onClick={() => {
+                        setDialogFor("delete");
+                        setDeleteAlertOpen((prev) => !prev);
+                      }}
+                      className="cursor-pointer p-1"
+                    >
+                      <DeleteOutlinedIcon
+                        sx={{ color: "#4B5365", fontSize: 30 }}
+                      />
+                    </button>
+                  </Tooltip>
+                </>
               )}
-
-              {user?.email === recipeDetail?.creatorInfo?.email && (
-                <Tooltip title="Delete">
-                  <button
-                    onClick={() => {
-                      setDialogFor("delete");
-                      setDeleteAlertOpen((prev) => !prev);
-                    }}
-                    className="cursor-pointer p-1"
-                  >
-                    <DeleteOutlinedIcon
-                      sx={{ color: "#4B5365", fontSize: 30 }}
-                    />
-                  </button>
-                </Tooltip>
-              )}
+              <Tooltip title="Share">
+                <button
+                  onClick={() => {
+                    setDialogFor("shareOptions");
+                    setDeleteAlertOpen((prev) => !prev);
+                  }}
+                >
+                  <ShareOutlinedIcon sx={{ color: "#4B5365", fontSize: 28 }} />
+                </button>
+              </Tooltip>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold">
+            {/* recipe name */}
+            <h1 className="text-3xl md:text-5xl font-bold ">
               {recipeDetail?.recipeName}
             </h1>
-            <div className="flex items-center gap-1">
+
+            <div className="flex items-center gap-1 justify-center print:justify-start ">
               <h3 className="text-lg ">
                 By{" "}
                 <span className="text-base">
@@ -249,15 +267,15 @@ const RecipeDetail = () => {
               </h3>
             </div>
 
-            {/* like save print button */}
-            <div className="no-print  mt-2">
+            {/* like button */}
+            <div className="print:hidden  mt-2">
               <p className="flex-grow">
                 <button
                   disabled={optionsLoading}
                   onClick={handleReaction}
                   className="cursor-pointer "
                 >
-                  {isLikedAndSaved?.data?.isLiked ? (
+                  {isLiked ? (
                     <FavoriteOutlinedIcon sx={{ color: "red", fontSize: 28 }} />
                   ) : (
                     <FavoriteBorderOutlinedIcon
@@ -272,54 +290,47 @@ const RecipeDetail = () => {
             <div className="mt-1">
               <p className="text-xl">{recipeDetail?.description}</p>
             </div>
-          </div>
-        </div>
-
-        {/* save, print , share button */}
-        <div className="no-print">
-          <hr />
-          <div className=" flex items-center gap-28 my-4 text-lg">
-            <button disabled={optionsLoading} onClick={handleRecipeSave}>
-              {isLikedAndSaved?.data?.isSaved ? (
-                <>
-                  <BookmarkOutlinedIcon
+            {/* save, print button */}
+            <div className="print:hidden mt-6">
+              <div className=" flex items-center justify-center gap-8 my-3 text-lg">
+                <button disabled={optionsLoading} onClick={handleRecipeSave}>
+                  {isSaved ? (
+                    <>
+                      <BookmarkOutlinedIcon
+                        sx={{ color: "#4B5365", fontSize: 28 }}
+                      />
+                      <span>Saved</span>
+                    </>
+                  ) : (
+                    <>
+                      <BookmarkBorderOutlinedIcon
+                        sx={{ color: "#4B5365", fontSize: 28 }}
+                      />
+                      <span>Save</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={() => {
+                    document.title = `${recipeDetail?.recipeName}_Morsel`;
+                    window.print();
+                  }}
+                >
+                  <LocalPrintshopOutlinedIcon
                     sx={{ color: "#4B5365", fontSize: 28 }}
                   />
-                  <span> Saved</span>
-                </>
-              ) : (
-                <>
-                  <BookmarkBorderOutlinedIcon
-                    sx={{ color: "#4B5365", fontSize: 28 }}
-                  />
-                  <span> Save</span>
-                </>
-              )}
-            </button>
-            <button onClick={window.print}>
-              <LocalPrintshopOutlinedIcon
-                sx={{ color: "#4B5365", fontSize: 28 }}
-              />
 
-              <span> Print</span>
-            </button>
-            <button
-              onClick={() => {
-                setDialogFor("shareOptions");
-                setDeleteAlertOpen((prev) => !prev);
-              }}
-            >
-              <ShareOutlinedIcon sx={{ color: "#4B5365", fontSize: 28 }} />
-              <span> Share</span>
-            </button>
+                  <span>Print</span>
+                </button>
+              </div>
+            </div>
           </div>
-          <hr />
         </div>
 
         {/* recipe body */}
-        <div className="mt-6 space-y-5">
+        <div className="mt-8 space-y-5">
           {/* cooktime preptime servings */}
-          <div className=" flex items-center gap-32">
+          <div className=" flex items-center lg:gap-32 print:gap-12 justify-between lg:justify-normal print:justify-normal">
             <div className=" text-center">
               <p className="text-lg font-semibold">Prep time</p>
               <p className="space-x-3">
@@ -359,6 +370,7 @@ const RecipeDetail = () => {
           {/* ingredients */}
           <div>
             <h1 className="text-3xl">Ingredients</h1>
+
             {recipeDetail?.ingredients?.map((ingredient, index) => (
               <p key={index} className="text-xl">
                 {ingredient}

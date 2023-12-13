@@ -173,7 +173,7 @@ const BlogDetail = () => {
       <DetailSkeleton itemType={"Blog"} />
     </div>
   ) : (
-    <div className="my-container lg:px-24 mt-20  text-colorTwo">
+    <div className="my-container lg:px-24   text-colorTwo">
       {/* blog & creator info */}
 
       {/* status changer for admin only */}
