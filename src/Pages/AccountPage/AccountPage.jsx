@@ -27,24 +27,19 @@ const AccountPage = () => {
   const [loading, setLoading] = useState(false);
   const [profileUpdateLoading, setProfileUpdateLoading] = useState(false);
   const [modalContent, setModalContent] = useState("");
-  const { user, userLogout, updateUserNamePhoto } = useAuthContext();
+  const { user, userLogout, updateUserNamePhoto, deleteUserHandler } =
+    useAuthContext();
   const { currentUser, currentUserLoading } = useSingleUser();
   const [profilePhotoURL, setProfilePhotoURL] = useState(user?.photoURL);
   const [checked, setChecked] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
-  // const [updatedProfileInfo, setUpdatedProfileInfo] = useState({
-  //   name: currentUser?.name,
-  //   bio: currentUser?.bio,
-  // });
-
+  // console.log(user);
   const handleCheckBoxChange = (event) => {
     setChecked(event.target.checked);
   };
 
   const navigate = useNavigate();
-
-  console.log(currentUser);
-  console.log(user);
 
   // setting modal open
   const handleClickOpen = () => {
@@ -54,6 +49,7 @@ const AccountPage = () => {
   // setting modal close
   const handleClose = () => {
     setOpen(false);
+    setChecked(false);
   };
 
   // user logout funciton(firebase)
@@ -192,6 +188,30 @@ const AccountPage = () => {
     }
   };
 
+  // delete account handler
+  // const deleteAccountHandler = async () => {
+  //   console.log("clicked");
+  //   try {
+  //     setDeleteLoading(true);
+  //     await deleteUserHandler();
+
+  //     await axios
+  //       .delete(
+  //         `${import.meta.env.VITE_BASEURL}deleteUser?userEmail=${
+  //           user?.email
+  //         }&userId=${currentUser?._id}`
+  //       )
+  //       .then(() => {
+  //         setDeleteLoading(false);
+  //         navigate("/");
+  //       });
+  //   } catch (error) {
+  //     console.log(error);
+  //     setDeleteLoading(false);
+  //     handleClose();
+  //   }
+  // };
+
   if (currentUserLoading || !user || !currentUser) {
     return (
       <div className="my-container mt-24">
@@ -211,7 +231,7 @@ const AccountPage = () => {
           " lg:w-11/12 h-full  mx-auto lg:px-10 md:pt-20 pt-5 text-colorTwo"
         }
       >
-        <div className="flex flex-col md:flex-row items-start justify-between space-y-6 px-2 md:px-0">
+        <div className="flex flex-col md:flex-row items-start justify-between space-y-6 px-2 md:px-2 lg:px-0">
           {/* user info */}
           <div className="lg:flex items-center gap-5 md:w-4/5 space-y-3">
             <div>
@@ -497,7 +517,12 @@ const AccountPage = () => {
                   <p className="text-lg">I am aware</p>
                 </div>
                 <div className="">
-                  <MyButton disabledForOthers={!checked}>Delete</MyButton>
+                  <MyButton
+                    loading={deleteLoading}
+                    disabledForOthers={!checked}
+                  >
+                    Delete
+                  </MyButton>
                   <MyButton variant={"outlined"} clickFunction={handleClose}>
                     Cancel
                   </MyButton>

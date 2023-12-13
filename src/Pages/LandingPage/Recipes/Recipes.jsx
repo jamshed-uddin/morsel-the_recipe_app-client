@@ -9,8 +9,6 @@ const Recipes = () => {
   const [recipes, setRecipes] = useState([]);
   const [showTitle, setShowTitle] = useState(false);
 
-  console.log(recipes);
-
   useEffect(() => {
     let prevScrollY = window.scrollY;
 

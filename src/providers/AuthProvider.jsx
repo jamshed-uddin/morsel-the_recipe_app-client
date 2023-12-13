@@ -9,6 +9,8 @@ import {
   updateProfile,
   sendPasswordResetEmail,
   signInWithPopup,
+  deleteUser,
+  reauthenticateWithCredential,
 } from "firebase/auth";
 import app from "./../firebase/firebase.config";
 
@@ -53,6 +55,23 @@ const AuthProvider = ({ children }) => {
     return sendPasswordResetEmail(auth, email);
   };
 
+  // delete user
+  // const deleteUserHandler = (credential) => {
+  //   const isGoogleProvided = user.providerData.some(
+  //     (provider) => provider.providerId === "google.com"
+  //   );
+
+  //   return reauthenticateWithCredential(
+  //     user,
+  //     isGoogleProvided ? googleProvider : credential
+  //   )
+  //     .then((res) => {
+  //       console.log(res);
+  //       deleteUser(user);
+  //     })
+  //     .catch((error) => console.log(error));
+  // };
+
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -74,7 +93,9 @@ const AuthProvider = ({ children }) => {
     updateUserNamePhoto,
     signInWithGoogle,
     passwordResetHandler,
+    // deleteUserHandler,
   };
+
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
   );

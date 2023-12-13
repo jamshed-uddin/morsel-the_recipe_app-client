@@ -40,28 +40,6 @@ const Registration = () => {
     });
   };
 
-  const googleLoginHandler = () => {
-    signInWithGoogle()
-      .then((result) => {
-        console.log("google", result);
-
-        if (result.user) {
-          navigate(from, { replace: true });
-          const body = {
-            name: result.user.displayName,
-            email: result.user.email,
-            photoURL: result.user.photoURL || "",
-            role: "creator",
-          };
-
-          axios
-            .post(`${import.meta.env.VITE_BASEURL}newUser`, body)
-            .then(() => {});
-        }
-      })
-      .catch((err) => console.log(err));
-  };
-
   const handleLoginData = (e) => {
     e.preventDefault();
     if (!formData.name) {
@@ -242,13 +220,6 @@ const Registration = () => {
                 sign in
               </Link>
             </h4>
-            <h1 className="text-center text-2xl or">Or</h1>
-            <h4 className="text-center text-lg">Continue with</h4>
-            <div className="space-x-6 flex items-center justify-center py-2">
-              <div onClick={googleLoginHandler} className="cursor-pointer">
-                <GoogleIcon />
-              </div>
-            </div>
           </div>
         </div>
       </div>

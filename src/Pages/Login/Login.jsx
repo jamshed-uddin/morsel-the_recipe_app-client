@@ -1,6 +1,5 @@
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import GoogleIcon from "@mui/icons-material/Google";
 import "./Login.css";
 import { useState } from "react";
@@ -34,6 +33,13 @@ const Login = () => {
     signInWithGoogle()
       .then((result) => {
         console.log("google", result);
+
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
+        // console.log("credential", credential);
+        // const token = credential.accessToken;
+        // console.log("token", token);
+        // The signed-in user info.
 
         if (result.user) {
           navigate(from, { replace: true });
