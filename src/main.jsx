@@ -25,6 +25,9 @@ import AdminAccount from "./Pages/AdminDashboard/AdminAccount/AdminAccount.jsx";
 import ManageBlogs from "./Pages/AdminDashboard/ManageBlogs/ManageBlogs.jsx";
 import AdminDashboard from "./Pages/AdminDashboard/AdminDashboard.jsx";
 import { HelmetProvider } from "react-helmet-async";
+import PrivateRoute from "./PrivateRoutes/PrivateRoute.jsx";
+import AdminRoute from "./PrivateRoutes/AdminRoute.jsx";
+import RecipesAndBlogsProvider from "./providers/recipesAndBlogsProvider.jsx";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -59,7 +62,11 @@ const router = createBrowserRouter([
       },
       {
         path: "addrecipe",
-        element: <AddRecipe></AddRecipe>,
+        element: (
+          <PrivateRoute>
+            <AddRecipe></AddRecipe>
+          </PrivateRoute>
+        ),
       },
       {
         path: "recipe/edit/:id",
@@ -67,7 +74,11 @@ const router = createBrowserRouter([
       },
       {
         path: "addblog",
-        element: <AddBlog></AddBlog>,
+        element: (
+          <PrivateRoute>
+            <AddBlog></AddBlog>
+          </PrivateRoute>
+        ),
       },
       {
         path: "blog/edit/:id",
@@ -90,27 +101,51 @@ const router = createBrowserRouter([
 
   {
     path: "dashboard",
-    element: <AdminDashboard></AdminDashboard>,
+    element: (
+      <AdminRoute>
+        <AdminDashboard></AdminDashboard>
+      </AdminRoute>
+    ),
     children: [
       {
         path: "overview",
-        element: <Overview></Overview>,
+        element: (
+          <AdminRoute>
+            <Overview></Overview>
+          </AdminRoute>
+        ),
       },
       {
         path: "manageUsers",
-        element: <ManageUsers></ManageUsers>,
+        element: (
+          <AdminRoute>
+            <ManageUsers></ManageUsers>
+          </AdminRoute>
+        ),
       },
       {
         path: "manageRecipes",
-        element: <ManageRecipes></ManageRecipes>,
+        element: (
+          <AdminRoute>
+            <ManageRecipes></ManageRecipes>
+          </AdminRoute>
+        ),
       },
       {
         path: "manageBlogs",
-        element: <ManageBlogs></ManageBlogs>,
+        element: (
+          <AdminRoute>
+            <ManageBlogs></ManageBlogs>
+          </AdminRoute>
+        ),
       },
       {
         path: "adminAccount",
-        element: <AdminAccount></AdminAccount>,
+        element: (
+          <AdminRoute>
+            <AdminAccount></AdminAccount>
+          </AdminRoute>
+        ),
       },
     ],
   },
@@ -119,11 +154,13 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <HelmetProvider>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router}></RouterProvider>
-        </QueryClientProvider>
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <RecipesAndBlogsProvider>
+          <AuthProvider>
+            <RouterProvider router={router}></RouterProvider>
+          </AuthProvider>
+        </RecipesAndBlogsProvider>
+      </QueryClientProvider>
     </HelmetProvider>
   </React.StrictMode>
 );

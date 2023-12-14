@@ -102,8 +102,8 @@ const Registration = () => {
   const labelStyle = `block text-colorTwo text-lg font-semibold `;
 
   return (
-    <div className="h-screen flex items-center justify-center my-container">
-      <div className="w-full lg:w-4/5 h-4/5  lg:mx-auto lg:flex   rounded-2xl overflow-hidden lg:shadow-lg">
+    <div className="h-screen flex items-center justify-center ">
+      <div className="w-full lg:w-4/5 h-5/6  lg:mx-auto lg:flex   rounded-2xl overflow-hidden lg:shadow-lg">
         <div className="w-1/2 h-full hidden lg:block">
           <img
             className="object-cover w-full h-full"
@@ -111,7 +111,7 @@ const Registration = () => {
             alt=""
           />
         </div>
-        <div className="px-4 lg:px-0 lg:w-1/2 h-full  overflow-y-auto ">
+        <div className="px-4 lg:px-0 lg:w-1/2 h-full pb-2  overflow-y-auto ">
           {/* Title text not button */}
           <h1 className="text-colorOne text-5xl font-bold  tracking-tighter uppercase ">
             sign up

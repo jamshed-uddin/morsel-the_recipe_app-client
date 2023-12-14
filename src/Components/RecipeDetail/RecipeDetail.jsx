@@ -34,6 +34,8 @@ const RecipeDetail = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
 
+  console.log(isSaved, isLiked);
+
   const {
     isLoading,
     data,
@@ -65,7 +67,7 @@ const RecipeDetail = () => {
           currentUser?.email
         }&itemId=${recipeDetail?._id}&itemType=recipe`
       );
-      setIsLiked({ ...isLiked, liked: result?.data?.isLiked });
+      setIsLiked(result?.data?.isLiked);
       setIsSaved(result?.data?.isSaved);
       return result;
     },
@@ -177,7 +179,7 @@ const RecipeDetail = () => {
     <div className="my-container lg:px-20 print:mx-12    text-colorTwo print:bg-bgColor">
       <ReactHelmet title={`${recipeDetail?.recipeName}_Morsel`}></ReactHelmet>
       {/* status changer for admin only */}
-      {currentUser?.role !== "admin" && (
+      {currentUser?.role === "admin" && (
         <StatusChanger
           itemId={recipeDetail?._id}
           status={recipeDetail?.status}
