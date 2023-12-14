@@ -34,6 +34,8 @@ const BlogDetail = () => {
   const [dialogFor, setDialogFor] = useState("delete");
   const { currentUser } = useSingleUser();
   const [optionsLoading, setOptionsLoading] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   const {
     isLoading,
@@ -56,32 +58,36 @@ const BlogDetail = () => {
   const {
     data: isLikedAndSaved,
     error: errorMessage,
-    refetch: reloadPage,
+    refetch: reloadIslikedAndIsSaved,
   } = useQuery(
     "isSavedAndLiked",
     async () => {
-      const result = axios.get(
+      const result = await axios.get(
         `${import.meta.env.VITE_BASEURL}isLikedAndSaved?userEmail=${
           currentUser?.email
         }&itemId=${blogDetail?._id}&itemType=blog`
       );
+      setIsLiked(result?.data?.isLiked);
+      setIsSaved(result?.data?.isSaved);
       return result;
     },
-    { enabled: !!currentUser } // query enables if currentUser is available
+    { enabled: !!currentUser } // query enables when currentUser is available
   );
 
-  const handleBlogSave = () => {
-    console.log("save cliked");
+  // saving on savedItems collection
+  const handleBlogSave = async () => {
+    setIsSaved((prevState) => !prevState);
+
     const body = {
       userId: currentUser?._id,
       userEmail: currentUser?.email,
       itemType: "Blog", //need the first letter in capital because it's given as refPath in DB schema.
     };
-
     // if item already saved call delete action
-    if (isLikedAndSaved?.data?.isSaved) {
+    if (isSaved) {
       setOptionsLoading(true);
-      axios
+
+      await axios
         .delete(
           `${import.meta.env.VITE_BASEURL}deleteSavedItem?itemId=${
             blogDetail?._id
@@ -89,7 +95,7 @@ const BlogDetail = () => {
         )
         .then(() => {
           setOptionsLoading(false);
-          reloadPage();
+          reloadIslikedAndIsSaved();
           //  setOpen and message for snackbar alert for save/unsave
           setOpen((prev) => !prev);
           setMessage("Blog unsaved");
@@ -100,16 +106,16 @@ const BlogDetail = () => {
         });
       return;
     }
-
     setOptionsLoading(true);
-    axios
+
+    await axios
       .post(
         `${import.meta.env.VITE_BASEURL}saveNewItem/${blogDetail?._id}`,
         body
       )
       .then(() => {
         setOptionsLoading(false);
-        reloadPage();
+        reloadIslikedAndIsSaved();
         setOpen((prev) => !prev);
         setMessage("Blog saved");
       })
@@ -119,25 +125,24 @@ const BlogDetail = () => {
       });
   };
 
-  const handleReaction = () => {
+  const handleReaction = async () => {
+    setIsLiked((prevState) => !prevState);
+
     // if item already liked calls dislike action
-    if (isLikedAndSaved?.data?.isLiked) {
+    if (isLiked) {
       const body = {
         userId: currentUser?._id,
         action: "dislike",
         actionFrom: "blog",
       };
-      setOptionsLoading(true);
-      axios
+      await axios
         .patch(
           `${import.meta.env.VITE_BASEURL}changeReaction/${blogDetail?._id}`,
           body
         )
-        .then(() => {
-          setOptionsLoading(false);
-
+        .then((result) => {
+          console.log(result);
           blogDetailRefetch();
-          reloadPage();
         })
         .catch((err) => console.log(err));
       return;
@@ -149,17 +154,15 @@ const BlogDetail = () => {
       action: "like",
       actionFrom: "blog",
     };
-    setOptionsLoading(true);
-    axios
+    await axios
       .patch(
         `${import.meta.env.VITE_BASEURL}changeReaction/${blogDetail?._id}`,
         body
       )
-      .then(() => {
-        setOptionsLoading(false);
+      .then((result) => {
+        console.log(result);
 
         blogDetailRefetch();
-        reloadPage();
       })
       .catch((err) => console.log(err));
   };
@@ -169,11 +172,11 @@ const BlogDetail = () => {
   }
 
   return isLoading ? (
-    <div className="my-container lg:px-24 mt-20  ">
+    <div className="my-container lg:px-20 ">
       <DetailSkeleton itemType={"Blog"} />
     </div>
   ) : (
-    <div className="my-container lg:px-24   text-colorTwo">
+    <div className="my-container lg:px-20   text-colorTwo">
       {/* blog & creator info */}
 
       {/* status changer for admin only */}
@@ -212,7 +215,7 @@ const BlogDetail = () => {
                 onClick={handleReaction}
                 className="cursor-pointer "
               >
-                {isLikedAndSaved?.data?.isLiked ? (
+                {isLiked ? (
                   <FavoriteOutlinedIcon sx={{ color: "red", fontSize: 28 }} />
                 ) : (
                   <FavoriteBorderOutlinedIcon
@@ -227,7 +230,7 @@ const BlogDetail = () => {
               onClick={handleBlogSave}
               className="cursor-pointer flex items-center"
             >
-              {isLikedAndSaved?.data?.isSaved ? (
+              {isSaved ? (
                 <>
                   {" "}
                   <BookmarkOutlinedIcon

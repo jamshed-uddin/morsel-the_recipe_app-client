@@ -24,7 +24,7 @@ const Blogs = () => {
 
   if (isLoading) {
     return (
-      <div className="my-container mt-14">
+      <div className="mt-12">
         <div className=" md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
           {[1, 2, 3, 4, 5].map((item, index) => (
             <CardSkeleton key={index} />
@@ -35,7 +35,7 @@ const Blogs = () => {
   }
 
   return (
-    <div className=" my-container">
+    <div className=" mt-12">
       <div className={`overflow-hidden  mb-1`}>
         <h1
           className={`text-3xl md:text-5xl text-colorOne transition-all duration-500 `}

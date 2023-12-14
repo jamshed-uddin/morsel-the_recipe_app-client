@@ -4,8 +4,32 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import CardSkeleton from "../../../Components/Skeletons/CardSkeleton";
 
-const Recipes = () => {
+const Trending = () => {
   const [recipes, setRecipes] = useState([]);
+  const [showTitle, setShowTitle] = useState(false);
+
+  useEffect(() => {
+    let prevScrollY = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > prevScrollY) {
+        setShowTitle(true);
+      }
+
+      if (currentScrollY === 0) {
+        setShowTitle(false);
+      }
+
+      prevScrollY = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [showTitle]);
 
   const { isLoading, isError, data, error } = useQuery("recipes", async () => {
     const result = await axios.get(`${import.meta.env.VITE_BASEURL}allRecipes`);
@@ -20,7 +44,7 @@ const Recipes = () => {
 
   if (isLoading) {
     return (
-      <div className="mt-12">
+      <div className="">
         <div className=" md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
           {[1, 2, 3, 4, 5].map((item, index) => (
             <CardSkeleton key={index} />
@@ -31,10 +55,14 @@ const Recipes = () => {
   }
 
   return (
-    <div className="mt-12">
+    <div className="">
       <div className={`overflow-hidden  mb-1`}>
-        <h1 className={`text-3xl md:text-5xl text-colorOne`}>
-          Cook something quick
+        <h1
+          className={`text-3xl md:text-5xl text-colorOne transition-all duration-500  ${
+            showTitle ? "translate-y-0 " : "translate-y-14 opacity-0"
+          }`}
+        >
+          Trending this week
         </h1>
       </div>
       <div
@@ -42,16 +70,11 @@ const Recipes = () => {
         className=" grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-x-6  gap-y-4 md:gap-y-5  "
       >
         {recipes.map((item, index) => (
-          <Card
-            placedIn="cookQuick"
-            itemType="recipe"
-            item={item}
-            key={index}
-          ></Card>
+          <Card itemType="recipe" item={item} key={index}></Card>
         ))}
       </div>
     </div>
   );
 };
 
-export default Recipes;
+export default Trending;

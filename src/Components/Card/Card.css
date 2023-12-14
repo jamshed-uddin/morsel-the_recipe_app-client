@@ -1,13 +1,1 @@
-@media (max-width: 600px) {
-  .firstChild {
-    grid-column: span 2;
-  }
-  .firstChild .firstChild-innerDiv {
-    height: 23rem;
-  }
 
-  .ingredientMinute {
-    display: inline-flex;
-    gap: 3rem;
-  }
-}

@@ -70,7 +70,11 @@ const router = createBrowserRouter([
       },
       {
         path: "recipe/edit/:id",
-        element: <AddRecipe></AddRecipe>,
+        element: (
+          <PrivateRoute>
+            <AddRecipe></AddRecipe>
+          </PrivateRoute>
+        ),
       },
       {
         path: "addblog",
@@ -82,7 +86,12 @@ const router = createBrowserRouter([
       },
       {
         path: "blog/edit/:id",
-        element: <AddBlog></AddBlog>,
+        element: (
+          <PrivateRoute>
+            {" "}
+            <AddBlog></AddBlog>
+          </PrivateRoute>
+        ),
       },
     ],
   },

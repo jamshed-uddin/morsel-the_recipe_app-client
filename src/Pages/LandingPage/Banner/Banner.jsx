@@ -4,12 +4,8 @@ import EastOutlinedIcon from "@mui/icons-material/EastOutlined";
 import MyButton from "../../../Components/Button/MyButton";
 
 const Banner = () => {
-  const testFunc = () => {
-    console.log("curtom slick");
-  };
-
   return (
-    <div className="my-container  mt-28  relative mb-3">
+    <div className=" relative mb-3">
       <div className="text-colorOne ">
         <div className=" font-semibold">
           <p className="block md:inline text-[7rem] leading-[7rem] md:text-9xl ">

@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import forkSpoon from "../../../src/assets/images/forkSpoon.png";
 import "./Card.css";
+import { useState } from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const Card = ({ itemType, item, index }) => {
+const Card = ({ itemType, item, placedIn }) => {
+  const [openFeedback, setOpenFeedback] = useState(false);
   /*
    *itemType here is recipe/blog.did toLowerCase cause it may come in uppercase.
    *item is an individual item. it can be blog or recipe.
@@ -10,7 +13,42 @@ const Card = ({ itemType, item, index }) => {
    */
 
   return (
-    <div className={`${index === 0 ? "firstChild" : ""}`}>
+    <div>
+      {/* showing the recipe/blog status(pending/approved/denied) in the tab section of account page for the creator  */}
+      {placedIn === "cookQuick" && (
+        <div className="flex justify-end -mb-4 relative z-40 ">
+          <div className=" text-white text-lg font-semibold bg-colorOne px-3  rounded-xl flex items-center relative">
+            {/* status and toggler */}
+            <div className="">
+              {item?.status}{" "}
+              {/* toggler only available if there is any feedback */}
+              {item?.feedback && (
+                <span
+                  onClick={() => setOpenFeedback((p) => !p)}
+                  className={`cursor-pointer `}
+                >
+                  <ExpandMoreIcon
+                    sx={
+                      openFeedback ? { rotate: "180deg" } : { rotate: "0deg" }
+                    }
+                  />
+                </span>
+              )}
+            </div>
+            {/* feedback body */}
+            <div
+              className={`${
+                openFeedback
+                  ? "absolute -bottom-11 px-2  right-0 bg-colorOne rounded-xl leading-5 font-light block "
+                  : "hidden"
+              }`}
+            >
+              {item?.feedback}
+            </div>
+          </div>
+        </div>
+      )}
+
       <Link
         to={
           itemType?.toLowerCase() === "recipe"
@@ -20,9 +58,7 @@ const Card = ({ itemType, item, index }) => {
       >
         {/* images */}
         <div
-          className={`w-full h-[17rem] md:h-[22rem]  ${
-            index === 0 ? "firstChild-innerDiv" : ""
-          } ${
+          className={`w-full h-[17rem] md:h-[22rem] ${
             itemType?.toLowerCase() === "blog" ? "rounded-none" : "rounded-2xl"
           }  relative overflow-hidden`}
         >
@@ -38,6 +74,18 @@ const Card = ({ itemType, item, index }) => {
             }
             alt=""
           />
+
+          {/* in the cook something quick section showed the easy or quick based on the number of ingredients and preptime */}
+          {placedIn === "cookQuick" && itemType === "recipe" && (
+            <p className=" text-colorOne text-lg font-semibold absolute top-1 left-1 space-x-1">
+              {item?.ingredients.length <= 7 && (
+                <span className="bg-bgColor px-4 py-1 rounded-xl">Quick</span>
+              )}
+              {item?.prepTime?.minutes <= 20 && (
+                <span className="bg-bgColor px-4 py-1 rounded-xl">Easy</span>
+              )}
+            </p>
+          )}
         </div>
 
         {/* other info */}
@@ -53,9 +101,7 @@ const Card = ({ itemType, item, index }) => {
             <>
               {itemType?.toLowerCase() === "recipe" && (
                 <div
-                  className={`${
-                    index === 0 ? "ingredientMinute" : ""
-                  } text-lg mt-1 sm:flex items-center sm:gap-4 leading-5 md:leading-normal`}
+                  className={`text-lg mt-1 sm:flex items-center sm:gap-4 leading-5 md:leading-normal`}
                 >
                   <p>{`${item?.ingredients?.length} ingredients`}</p>
                   <p>{`${item?.prepTime?.minutes} minutes`}</p>
