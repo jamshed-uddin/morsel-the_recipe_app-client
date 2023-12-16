@@ -56,7 +56,6 @@ const RecipesAndBlogsProvider = ({ children }) => {
     blogsLoading,
   };
 
-  console.log(recipes);
   return (
     <RecipesAndBlogsDataContext.Provider value={recipesAndBlogsData}>
       {children}
