@@ -35,7 +35,7 @@ const Blogs = () => {
   }
 
   return (
-    <div className=" mt-12">
+    <div className="mt-4 md:mt-12">
       <div className={`overflow-hidden  mb-1`}>
         <h1
           className={`text-3xl md:text-5xl text-colorOne transition-all duration-500 `}
@@ -43,10 +43,15 @@ const Blogs = () => {
           Morsel voices
         </h1>
       </div>
-      <div className="recipesContainer grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-x-6  gap-y-6  ">
-        {blogs.map((item, index) => (
-          <Card index={index} itemType="blog" item={item} key={index}></Card>
-        ))}
+      <div
+        id="outer-container"
+        className="overflow-x-auto md:overflow-hidden py-6 md:py-0"
+      >
+        <div className="w-max flex flex-nowrap md:grid  md:grid-cols-2 lg:grid-cols-3 gap-x-6  md:gap-y-6  ">
+          {blogs?.slice(0, 4).map((item, index) => (
+            <Card index={index} itemType="blog" item={item} key={index}></Card>
+          ))}
+        </div>
       </div>
     </div>
   );

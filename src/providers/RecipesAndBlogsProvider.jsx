@@ -26,17 +26,21 @@ const RecipesAndBlogsProvider = ({ children }) => {
   );
 
   useEffect(() => {
+    // fil
     const recentRecipes = recipes?.filter((recipe) => {
-      const timeDifference = new Date() - recipe.createdAt;
-      const differenceInDays = timeDifference / (1000 * 60 * 60 * 24);
+      const timeDifference = new Date() - new Date(recipe.createdAt);
+      const differenceInDays = parseInt(timeDifference / (1000 * 60 * 60 * 24));
+
       return differenceInDays <= 7;
     });
 
+    console.log(recentRecipes);
     const sortedTrendingRecipes = recentRecipes?.sort(
-      (a, b) => b.likedBy.length - b.likedBy.length
+      (a, b) => b.likedBy?.length - a.likedBy?.length
     );
     setTrendingRecipes(sortedTrendingRecipes?.slice(0, 3));
 
+    // filtering for quick and easy recipes
     const filteredQuickRecipes = recipes?.filter((recipe) => {
       return recipe.ingredients.length <= 7 || recipe.prepTime.minutes <= 20;
     });

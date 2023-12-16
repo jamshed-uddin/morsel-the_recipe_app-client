@@ -216,7 +216,7 @@ const RecipeDetail = () => {
           {/* recipe & creator info */}
           <div className="md:mt-1 flex-grow text-center print:text-left bg-bgColor -mt-4 relative z-20 rounded-3xl ">
             {/* edit  delete share button */}
-            <div className="print:hidden flex gap-5 items-center justify-end mr-3 md:mr-0 lg:mb-4">
+            <div className="print:hidden flex gap-5 items-center justify-end  pt-2 mr-4 md:mr-0 lg:mb-4">
               {user?.email === recipeDetail?.creatorInfo?.email && (
                 <>
                   <Tooltip title="Edit">

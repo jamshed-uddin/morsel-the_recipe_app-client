@@ -13,7 +13,7 @@ const RecipesPage = () => {
             Recipes
           </h1>
         </div>
-        <div className=" grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
+        <div className=" grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 md:space-y-0">
           {[1, 2, 3].map((item, index) => (
             <CardSkeleton key={index} />
           ))}

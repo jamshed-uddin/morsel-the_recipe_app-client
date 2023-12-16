@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import CallMadeIcon from "@mui/icons-material/CallMade";
-import { Link, NavLink } from "react-router-dom";
+
+import { Link } from "react-router-dom";
 import "./Navbar.css";
 import { Avatar } from "@mui/material";
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
@@ -43,7 +43,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`print:hidden px-2 lg:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
+      className={`print:hidden px-3 lg:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
     ${scrollingDown ? "-translate-y-16" : "-translate-0"}`}
     >
       <div className="flex justify-between items-center  w-full ">

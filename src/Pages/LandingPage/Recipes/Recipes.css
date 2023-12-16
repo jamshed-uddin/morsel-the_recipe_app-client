@@ -1,1 +1,11 @@
-
+@media only screen and (max-width: 600px) {
+  #recipesContainer #card:nth-child(1) {
+    grid-column: 1/-1;
+  }
+  #recipesContainer #card:last-child {
+    display: none;
+  }
+  #recipesContainer #card:nth-child(1) #image-container {
+    height: 22rem;
+  }
+}
