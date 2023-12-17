@@ -78,14 +78,10 @@ export default SearchBar;
 /*
 props
 
- value----state input value
-  inputChangeFunction---- to set the input value to state
-  searchFunction--- searching filter function for search button onClick.
-  keyPressFunction----- function for enter key press
-  clearSearchbarHandler --- clear button function which set input value state to empty and set isSearchng to false
-
-  by isSearcing(true/false) conditionally rendering all result and searched result
-
+ data  --- data that is for filtering
+ searchFor--- recipe/blog  dinamically setting recipeName/title to get title 
+ setIsSearching--- a state based on this the ui changes for all data or searched data
+  setSearchResult--- set the filtered result.it comes from recipe or blog page
 
 
 */

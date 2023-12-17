@@ -46,6 +46,7 @@ const Navbar = () => {
       className={`print:hidden px-3 lg:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
     ${scrollingDown ? "-translate-y-16" : "-translate-0"}`}
     >
+      {/* desktop nav */}
       <div className="flex justify-between items-center  w-full ">
         <div>
           <h2 className="text-[2.6rem] leading-4 font-bold text-colorOne relative z-50">
