@@ -24,11 +24,24 @@ function App() {
   // }
 
   return (
-    <>
-      {!hideNav && <Navbar />}
-      <Outlet />
-      {!hideNav && <Footer />}
-    </>
+    <div className="flex flex-col min-h-screen ">
+      {!hideNav && (
+        <div>
+          {" "}
+          <Navbar />
+        </div>
+      )}
+      <div className="flex-grow">
+        {" "}
+        <Outlet />
+      </div>
+      {!hideNav && (
+        <div>
+          {" "}
+          <Footer />
+        </div>
+      )}
+    </div>
   );
 }
 
