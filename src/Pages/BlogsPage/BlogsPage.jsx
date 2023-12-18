@@ -3,6 +3,7 @@ import Card from "../../Components/Card/Card";
 import SearchBar from "../../Components/SearchBar/SearchBar";
 import CardSkeleton from "../../Components/Skeletons/CardSkeleton";
 import useRecipesBlogsData from "../../hooks/useRecipesBlogsData";
+import AddBtn from "../../Components/AddBtn/AddBtn";
 
 const BlogsPage = () => {
   const { blogs, blogsLoading } = useRecipesBlogsData();
@@ -54,6 +55,7 @@ const BlogsPage = () => {
           ))
         )}
       </div>
+      <AddBtn />
     </div>
   );
 };

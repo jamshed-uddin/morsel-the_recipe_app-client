@@ -42,7 +42,7 @@ const AddBtn = () => {
 
         {/* tooltip */}
         <div
-          className={`absolute bottom-10 right-10  bg-bgColor w-max lg:p-7 p-3 space-y-5  rounded-xl shadow-lg text-xl font-semibold flex flex-col  ${
+          className={`absolute bottom-10 right-10  bg-bgColor w-max md:px-5 md:py-3  px-2 py-3 space-y-3 md:space-y-5  rounded-xl shadow-lg text-xl font-semibold flex flex-col  ${
             showOptions ? "block " : "hidden"
           } `}
         >

@@ -311,9 +311,6 @@ const AddRecipe = () => {
   //functions for files/images------------
   const filesHandler = (e) => {
     const imageObj = e.target.files;
-
-    console.log(imageObj);
-
     Array.from(imageObj).map((image) => {
       const imageBlobURL = URL.createObjectURL(image);
       setFiles([...files, imageBlobURL]);

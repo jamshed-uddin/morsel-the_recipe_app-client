@@ -83,8 +83,6 @@ const Registration = () => {
               }
             });
         }
-
-        //TODO: redirect to the required page
       })
       .catch((error) => {
         setLoading((prev) => !prev);

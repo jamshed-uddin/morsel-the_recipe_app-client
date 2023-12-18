@@ -28,12 +28,19 @@ import { HelmetProvider } from "react-helmet-async";
 import PrivateRoute from "./PrivateRoutes/PrivateRoute.jsx";
 import AdminRoute from "./PrivateRoutes/AdminRoute.jsx";
 import RecipesAndBlogsProvider from "./providers/recipesAndBlogsProvider.jsx";
+import ScrollTop from "./ScrollTop.jsx";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App></App>,
+    element: (
+      <>
+        {/* this scrollTop to prevent a page scrolled down when first renders */}
+        <ScrollTop />
+        <App></App>
+      </>
+    ),
     children: [
       {
         path: "/",
@@ -88,7 +95,6 @@ const router = createBrowserRouter([
         path: "blog/edit/:id",
         element: (
           <PrivateRoute>
-            {" "}
             <AddBlog></AddBlog>
           </PrivateRoute>
         ),

@@ -10,7 +10,7 @@ const RecipesAndBlogsProvider = ({ children }) => {
     ["approvedRecipes"],
     async () => {
       const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}allRecipes`
+        `${import.meta.env.VITE_BASEURL}allRecipes/approved`
       );
       return result.data;
     }
@@ -20,7 +20,9 @@ const RecipesAndBlogsProvider = ({ children }) => {
   const { isLoading: blogsLoading, data: blogs } = useQuery(
     ["approvedBlogs"],
     async () => {
-      const result = await axios.get(`${import.meta.env.VITE_BASEURL}allBlogs`);
+      const result = await axios.get(
+        `${import.meta.env.VITE_BASEURL}allBlogs/approved`
+      );
       return result.data;
     }
   );
@@ -55,7 +57,7 @@ const RecipesAndBlogsProvider = ({ children }) => {
     blogsLoading,
   };
 
-  console.log(recipes);
+  // console.log(recipes);
 
   return (
     <RecipesAndBlogsDataContext.Provider value={recipesAndBlogsData}>

@@ -4,6 +4,7 @@ import CardSkeleton from "../../Components/Skeletons/CardSkeleton";
 import useRecipesBlogsData from "../../hooks/useRecipesBlogsData";
 
 import SearchBar from "../../Components/SearchBar/SearchBar";
+import AddBtn from "../../Components/AddBtn/AddBtn";
 
 const RecipesPage = () => {
   const { recipes, recipesLoading } = useRecipesBlogsData();
@@ -58,6 +59,7 @@ const RecipesPage = () => {
           ))
         )}
       </div>
+      <AddBtn />
     </div>
   );
 };

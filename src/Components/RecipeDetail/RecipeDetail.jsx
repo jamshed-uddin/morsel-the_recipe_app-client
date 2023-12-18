@@ -36,7 +36,11 @@ const RecipeDetail = () => {
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [recipeImageIndex, setRecipeImageIndex] = useState(0);
-  // console.log(recipeDetail?.recipeImages.at(0));
+
+  // to prevent page scrolled all way down when renders
+  // useEffect(() => {
+  //   window.scrollTo(0, 0);
+  // }, []);
 
   const {
     isLoading,
@@ -209,7 +213,7 @@ const RecipeDetail = () => {
         "
         >
           {/* recipe images */}
-          <div className="print:hidden md:w-[45%] h-[65vh] md:h-[50vh] overflow-hidden rounded-tl-xl  rounded-tr-xl md:rounded-xl select-none relative ">
+          <div className="print:hidden md:w-[45%] h-[60vh] md:h-[50vh] overflow-hidden rounded-tl-xl  rounded-tr-xl md:rounded-xl select-none relative ">
             <span
               onClick={() => {
                 setRecipeImageIndex((prev) => prev - 1);
@@ -223,7 +227,7 @@ const RecipeDetail = () => {
             {recipeDetail?.recipeImages?.map((image, index) => (
               <img
                 key={index}
-                className={`object-cover absolute inset-0 transition-opacity duration-300 ease-linear ${
+                className={`object-cover absolute inset-0 h-full w-full transition-opacity duration-300 ease-linear ${
                   recipeImageIndex === index ? "opacity-100" : "opacity-0"
                 }`}
                 src={image}
@@ -245,7 +249,7 @@ const RecipeDetail = () => {
           </div>
           {/* recipe & creator info */}
           <div className="md:mt-1 flex-grow text-center print:text-left bg-bgColor -mt-4 relative z-20 rounded-3xl ">
-            {/* edit  delete share button */}
+            {/* edit  delete share button (creator only action) */}
             <div className="print:hidden flex gap-5 items-center justify-end  pt-2 mr-4 md:mr-0 lg:mb-4">
               {user?.email === recipeDetail?.creatorInfo?.email && (
                 <>
@@ -274,16 +278,6 @@ const RecipeDetail = () => {
                   </Tooltip>
                 </>
               )}
-              <Tooltip title="Share">
-                <button
-                  onClick={() => {
-                    setDialogFor("shareOptions");
-                    setDeleteAlertOpen((prev) => !prev);
-                  }}
-                >
-                  <ShareOutlinedIcon sx={{ color: "#4B5365", fontSize: 28 }} />
-                </button>
-              </Tooltip>
             </div>
             {/* recipe name */}
             <h1 className="text-3xl md:text-5xl font-bold ">
@@ -300,7 +294,7 @@ const RecipeDetail = () => {
             </div>
 
             {/* like button */}
-            <div className="print:hidden  mt-2 ">
+            <div className="print:hidden  mt-1 ">
               {isLikedAndSavedLoading ? (
                 <p>
                   <FavoriteBorderOutlinedIcon
@@ -329,12 +323,12 @@ const RecipeDetail = () => {
               )}
             </div>
             {/* description */}
-            <div className="mt-1">
+            <div className="mt-3">
               <p className="text-xl">{recipeDetail?.description}</p>
             </div>
             {/* save, print button */}
-            <div className="print:hidden mt-6">
-              <div className=" flex items-center justify-center gap-8 my-3 text-lg">
+            <div className="print:hidden mt-8">
+              <div className=" flex items-center justify-center gap-8  text-lg">
                 {isLikedAndSavedLoading ? (
                   <div className="w-fit opacity-40">
                     <BookmarkBorderOutlinedIcon
@@ -371,6 +365,15 @@ const RecipeDetail = () => {
                   />
 
                   <span>Print</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setDialogFor("shareOptions");
+                    setDeleteAlertOpen((prev) => !prev);
+                  }}
+                >
+                  <ShareOutlinedIcon sx={{ color: "#4B5365", fontSize: 28 }} />{" "}
+                  Share
                 </button>
               </div>
             </div>

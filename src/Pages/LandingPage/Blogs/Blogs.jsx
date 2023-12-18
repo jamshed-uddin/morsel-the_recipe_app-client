@@ -1,28 +1,14 @@
-import { useState } from "react";
-
-import "./Blogs.css";
+// import "./Blogs.css";
 import Card from "../../../Components/Card/Card";
-import { useQuery } from "react-query";
+
 import CardSkeleton from "../../../Components/Skeletons/CardSkeleton";
-import axios from "axios";
+
+import useRecipesBlogsData from "../../../hooks/useRecipesBlogsData";
 
 const Blogs = () => {
-  const [blogs, setBlogs] = useState([]);
+  const { blogs, blogsLoading } = useRecipesBlogsData();
 
-  const { isLoading, isError, data, error } = useQuery(
-    "blogs",
-    async () => {
-      const result = axios.get(`${import.meta.env.VITE_BASEURL}allBlogs`);
-      return result;
-    },
-    {
-      onSuccess: (data) => {
-        setBlogs(data.data);
-      },
-    }
-  );
-
-  if (isLoading) {
+  if (blogsLoading) {
     return (
       <div className="mt-12">
         <div className=" md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
@@ -37,15 +23,13 @@ const Blogs = () => {
   return (
     <div className="mt-4 md:mt-12">
       <div className={`overflow-hidden  mb-1`}>
-        <h1
-          className={`text-3xl md:text-5xl text-colorOne transition-all duration-500 `}
-        >
+        <h1 className={`text-3xl md:text-5xl text-colorOne  `}>
           Morsel voices
         </h1>
       </div>
       <div
         id="outer-container"
-        className="overflow-x-auto md:overflow-hidden py-6 md:py-0"
+        className="overflow-auto md:overflow-hidden py-6 md:py-0"
       >
         <div className="w-max flex flex-nowrap md:grid  md:grid-cols-2 lg:grid-cols-3 gap-x-6  md:gap-y-6  ">
           {blogs?.slice(0, 4).map((item, index) => (

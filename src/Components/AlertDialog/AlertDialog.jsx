@@ -82,7 +82,7 @@ const AlertDialog = ({
       >
         {/* dialog for deleting items */}
         {dialogFor === "delete" && (
-          <div className="bg-bgColor text-colorTwo px-5 py-3">
+          <div className="bg-bgColor text-colorTwo md:px-5 py-3">
             <DialogTitle id="alert-dialog-title">
               {"Confirm delete"}
             </DialogTitle>

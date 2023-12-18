@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import "./App.css";
 import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer.jsx/Footer";
+
 // import { useState } from "react";
 
 function App() {

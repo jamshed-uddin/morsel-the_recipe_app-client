@@ -35,9 +35,9 @@ const Trending = () => {
 
   if (recipesLoading) {
     return (
-      <div className="">
+      <div className="mt-12">
         <div className=" md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
-          {[1, 2, 3, 4, 5].map((item, index) => (
+          {[1, 2, 3].map((item, index) => (
             <CardSkeleton key={index} />
           ))}
         </div>
@@ -46,7 +46,7 @@ const Trending = () => {
   }
 
   return (
-    <div className="mt-10">
+    <div className="mt-8">
       <div className={`overflow-hidden  mb-2`}>
         <h1
           className={`text-3xl md:text-4xl  text-colorOne transition-all duration-700  ${

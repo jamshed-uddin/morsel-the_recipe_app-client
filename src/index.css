@@ -4,12 +4,8 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
-}
-
 .my-container {
-  @apply lg:w-[85%] md:w-[93%] w-[95%] mt-16  mx-auto;
+  @apply lg:w-[85%] md:w-[93%] w-[95%] mt-20  mx-auto;
 }
 
 body {

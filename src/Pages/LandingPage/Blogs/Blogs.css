@@ -1,14 +1,1 @@
-#outer-container::-webkit-scrollbar {
-  height: 4px;
-}
 
-#outer-container::-webkit-scrollbar-track {
-  border-radius: 10px;
-  width: 60%;
-}
-
-/* Handle */
-#outer-container::-webkit-scrollbar-thumb {
-  background: #4b5365;
-  border-radius: 10px;
-}
