@@ -30,8 +30,7 @@
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.15.0",
     "react-share": "^5.0.3",
-    "sort-by": "^1.2.0",
-    "swiper": "^10.2.0"
+    "sort-by": "^1.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

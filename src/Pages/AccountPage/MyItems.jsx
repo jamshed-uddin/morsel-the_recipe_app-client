@@ -60,7 +60,7 @@ const MyItems = ({ isLoading, myItems, activeTab }) => {
             item={savedItem?.item}
             itemType={savedItem?.itemType}
             key={savedItem._id}
-            itemId={savedItem?.item?._id}
+
             // the unique of the item is inside item property of savedItem
           ></Card>
         ))}
@@ -75,7 +75,7 @@ const MyItems = ({ isLoading, myItems, activeTab }) => {
           item={singleItem}
           itemType={activeTab === "myRecipes" ? "recipe" : "blog"}
           key={singleItem._id}
-          itemId={singleItem?._id}
+          placedIn={"account-tab"}
         ></Card>
       ))}
     </div>

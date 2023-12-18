@@ -34,6 +34,8 @@ const AccountPage = () => {
   const [checked, setChecked] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
+  console.log(myItems);
+
   // console.log(user);
   const handleCheckBoxChange = (event) => {
     setChecked(event.target.checked);

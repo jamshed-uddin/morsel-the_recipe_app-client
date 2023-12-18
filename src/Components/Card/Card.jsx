@@ -12,42 +12,45 @@ const Card = ({ itemType, item, placedIn }) => {
    *itemId is the unique id of each item(recipe/blog).But in savedItem the unique itemId stored in item property.so the item field can be populated with that particular item by the id.
    */
 
+  console.log(item);
+
   return (
     <div id="card">
       {/* showing the recipe/blog status(pending/approved/denied) in the tab section of account page for the creator  */}
-      {placedIn === "account-tab" && (
-        <div className="flex justify-end -mb-4 relative z-40 ">
-          <div className=" text-white text-lg font-semibold bg-colorOne px-3  rounded-xl flex items-center relative">
-            {/* status and toggler */}
-            <div className="">
-              {item?.status}{" "}
-              {/* toggler only available if there is any feedback */}
-              {item?.feedback && (
-                <span
-                  onClick={() => setOpenFeedback((p) => !p)}
-                  className={`cursor-pointer `}
-                >
-                  <ExpandMoreIcon
-                    sx={
-                      openFeedback ? { rotate: "180deg" } : { rotate: "0deg" }
-                    }
-                  />
-                </span>
-              )}
-            </div>
-            {/* feedback body */}
-            <div
-              className={`${
-                openFeedback
-                  ? "absolute -bottom-11 px-2  right-0 bg-colorOne rounded-xl leading-5 font-light block "
-                  : "hidden"
-              }`}
-            >
-              {item?.feedback}
+      {placedIn === "account-tab" &&
+        (item?.status !== "approved" || item?.feedback) && (
+          <div className="flex justify-end -mb-4 relative z-40 ">
+            <div className=" text-white text-lg font-semibold bg-colorOne px-3  rounded-xl flex items-center relative">
+              {/* status and toggler */}
+              <div className="">
+                {item?.status}
+                {/* toggler only available if there is any feedback */}
+                {item?.feedback && (
+                  <span
+                    onClick={() => setOpenFeedback((p) => !p)}
+                    className={`cursor-pointer `}
+                  >
+                    <ExpandMoreIcon
+                      sx={
+                        openFeedback ? { rotate: "180deg" } : { rotate: "0deg" }
+                      }
+                    />
+                  </span>
+                )}
+              </div>
+              {/* feedback body */}
+              <div
+                className={`${
+                  openFeedback
+                    ? "absolute -bottom-11 px-2  right-0 bg-colorOne rounded-xl leading-5 font-light block "
+                    : "hidden"
+                }`}
+              >
+                {item?.feedback}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
       <Link
         to={

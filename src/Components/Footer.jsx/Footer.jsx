@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <div className="px-2 lg:px-[6rem] pt-7 text-colorTwo  mt-4 bg-[#f3f2ef]  ">
+    <div className="print:hidden px-2 lg:px-[6rem] pt-7 text-colorTwo  mt-4 bg-[#f3f2ef]  ">
       <div className="md:flex justify-between gap-12 my-2">
         <div className="md:w-1/3">
           <h2 className="text-[2.6rem] leading-4 font-bold text-colorOne ">

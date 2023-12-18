@@ -136,8 +136,9 @@ const AddRecipe = () => {
 
   // console.log(currentUser);
   // console.log(formState);
-  // console.log(public_id);
-  // console.log(files);
+  console.log(public_id);
+  console.log(files);
+
   // console.log(imageUploadLoading);
 
   // When user navigate to this page for edit the item it comes with item id and and item data floods the initialState
@@ -146,7 +147,7 @@ const AddRecipe = () => {
   const { id } = useParams();
 
   // using the add recipe form for editing recipe ..
-  const { isLoading, data, error, refetch } = useQuery(
+  const { isLoading, data, error } = useQuery(
     ["recipeDetail", id],
 
     async () => {
@@ -189,6 +190,7 @@ const AddRecipe = () => {
       }
     }
   }, [data, currentUser]);
+
   //  edit mode block ends -------------------------------
 
   // dispatching the creatorInfo when not in editmode
@@ -309,6 +311,14 @@ const AddRecipe = () => {
   //functions for files/images------------
   const filesHandler = (e) => {
     const imageObj = e.target.files;
+
+    console.log(imageObj);
+
+    Array.from(imageObj).map((image) => {
+      const imageBlobURL = URL.createObjectURL(image);
+      setFiles([...files, imageBlobURL]);
+    });
+
     // uploading to cloud
     const uploader = Array.from(imageObj).map(async (file) => {
       const formData = new FormData();
@@ -340,8 +350,6 @@ const AddRecipe = () => {
     Promise.all(uploader)
       .then((imageURLs) => {
         setImageUploadLoading(false);
-        console.log(imageURLs);
-        console.log(public_id);
 
         dispatch({
           type: "IMAGES",
@@ -350,11 +358,6 @@ const AddRecipe = () => {
         });
       })
       .catch((err) => console.log(err));
-
-    Array.from(imageObj).map((image) => {
-      const imageBlobURL = URL.createObjectURL(image);
-      setFiles([...files, imageBlobURL]);
-    });
   };
   const scrollToRight = () => {
     if (imgContainerRef.current) {
@@ -431,6 +434,8 @@ const AddRecipe = () => {
       })
       .catch((err) => console.log(err));
   };
+  // image functions ends
+
   const inputValidationHandler = (form) => {
     const newErrorObj = { ...errorsObj };
 
@@ -520,7 +525,7 @@ const AddRecipe = () => {
   const labelStyle = `block text-colorTwo text-2xl font-semibold `;
   return (
     <div className=" my-container text-colorTwo">
-      <div className="lg:w-4/5 md:w-11/12 mx-auto md:shadow-xl md:rounded-xl h-full  pb-10 lg:px-5 relative">
+      <div className="lg:w-4/5 md:w-11/12 mx-auto md:shadow md:rounded-xl h-full  pb-10 lg:px-5 relative">
         <div className="bg-bgColor py-2  z-20 flex justify-between items-center uppercase sticky top-0 left-0 right-0 shadow-sm ">
           <h1 className="md:text-3xl text-2xl font-bold text-colorOne">
             {editMode ? "Edit" : "Add"} Recipe
@@ -563,11 +568,13 @@ const AddRecipe = () => {
             <div className="space-y-3">
               {/* main preview section */}
               <div
-                className={`border-[1px] border-colorTwo rounded-xl w-full mx-auto h-60 md:h-80 flex items-center justify-center overflow-hidden select-none relative`}
+                className={`${
+                  files.length ? "" : "border-[1px] border-colorTwo"
+                } rounded-xl w-full mx-auto h-60 md:h-80 flex items-center justify-center overflow-hidden select-none relative`}
               >
                 <div className={`${files.length === 0 && "hidden"}`}>
                   <img
-                    className={`w-full h-full object-cover  `}
+                    className={`w-full h-full object-cover `}
                     src={files[imageToPreview]}
                     alt=""
                     draggable="false"
@@ -606,12 +613,12 @@ const AddRecipe = () => {
               <div className={`relative ${!files.length && "hidden"}`}>
                 <div
                   ref={imgContainerRef}
-                  className="img-container overflow-x-auto scroll-smooth"
+                  className="img-container overflow-x-auto scroll-smooth pt-1"
                 >
-                  {/* button for scroll */}
+                  {/* button for scroll (right)*/}
                   <p
                     onClick={scrollToLeft}
-                    className={`absolute top-12  -left-3 text-white bg-colorOne   rounded-lg py-1 ${
+                    className={`cursor-pointer  absolute top-12 -left-2 md:-left-3 text-white bg-colorOne   rounded-lg py-1 ${
                       showScrollBtn
                         ? scrollPosition.left > 0
                           ? "lg:flex items-center"
@@ -623,13 +630,21 @@ const AddRecipe = () => {
                   </p>
                   <div className={`  flex gap-2 w-max`}>
                     {/* add another photo div */}
-                    <div className="border-[1px] border-colorTwo md:h-32  md:w-32 w-28 h-28  grid place-items-center rounded-xl">
+                    <div className="cursor-pointer border-[1px] border-colorTwo md:h-32  md:w-32 w-28 h-28  grid place-items-center rounded-xl">
                       <label
                         className="h-full w-full  flex flex-col justify-center items-center leading-3 text-lg font-semibold mt-1"
-                        htmlFor="recipeImages"
+                        htmlFor="recipeImages2"
                       >
+                        <input
+                          onChange={filesHandler}
+                          className="hidden"
+                          id="recipeImages2"
+                          name="recipeImages"
+                          type="file"
+                          multiple
+                        />
                         <CameraAltOutlinedIcon />
-                        Add photos
+                        <span className="mt-1">Add photos</span>
                       </label>
                     </div>
                     {/* all added image preview  */}
@@ -652,10 +667,10 @@ const AddRecipe = () => {
                       </div>
                     ))}
                   </div>
-                  {/* button for scroll */}
+                  {/* button for scroll (left)*/}
                   <p
                     onClick={scrollToRight}
-                    className={`absolute top-12  -right-3 text-white bg-colorOne   rounded-lg py-1 ${
+                    className={`cursor-pointer  absolute top-12 -right-2 md:-right-3 text-white bg-colorOne   rounded-lg py-1 ${
                       showScrollBtn
                         ? scrollPosition.right > 0
                           ? "lg:flex items-center"

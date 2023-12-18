@@ -34,7 +34,6 @@ const RecipesAndBlogsProvider = ({ children }) => {
       return differenceInDays <= 7;
     });
 
-    console.log(recentRecipes);
     const sortedTrendingRecipes = recentRecipes?.sort(
       (a, b) => b.likedBy?.length - a.likedBy?.length
     );
@@ -55,6 +54,8 @@ const RecipesAndBlogsProvider = ({ children }) => {
     recipesLoading,
     blogsLoading,
   };
+
+  console.log(recipes);
 
   return (
     <RecipesAndBlogsDataContext.Provider value={recipesAndBlogsData}>

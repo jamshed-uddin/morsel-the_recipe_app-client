@@ -56,6 +56,7 @@ const BlogDetail = () => {
   // console.log(data);
 
   const {
+    isLoading: isLikedAndSavedLoading,
     data: isLikedAndSaved,
     error: errorMessage,
     refetch: reloadIslikedAndIsSaved,

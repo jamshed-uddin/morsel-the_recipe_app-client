@@ -52,8 +52,8 @@ const DetailSkeleton = ({ itemType }) => {
       )}
 
       {/* body */}
-      <div className="space-y-5 pt-6">
-        {[1, 2, 3, 4].map((el, index) => (
+      <div className="space-y-6 pt-6">
+        {[1, 2, 3, 4, 5, 6, 7].map((el, index) => (
           <p
             key={index}
             className="rounded h-4  w-full bg-slate-200 bg-opacity-50 animate-pulse "

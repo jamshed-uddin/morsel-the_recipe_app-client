@@ -6,14 +6,16 @@ import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
+import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 //------icons ends----
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ErrorElement from "../ErrorElement";
 import DetailSkeleton from "../../Components/Skeletons/DetailSkeleton";
-import { Avatar, Divider, Tooltip } from "@mui/material";
+import { Avatar, Tooltip } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
 import useSingleUser from "../../hooks/useSingleUser";
 import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
@@ -33,8 +35,8 @@ const RecipeDetail = () => {
   const [recipeDetail, setRecipeDetail] = useState({});
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
-
-  console.log(isSaved, isLiked);
+  const [recipeImageIndex, setRecipeImageIndex] = useState(0);
+  // console.log(recipeDetail?.recipeImages.at(0));
 
   const {
     isLoading,
@@ -56,11 +58,12 @@ const RecipeDetail = () => {
 
   // is liked and is saved
   const {
+    isLoading: isLikedAndSavedLoading,
     data: isLikedAndSaved,
     error: errorMessage,
     refetch: reloadIslikedAndIsSaved,
   } = useQuery(
-    "isSavedAndLiked",
+    ["isSavedAndLiked", currentUser],
     async () => {
       const result = await axios.get(
         `${import.meta.env.VITE_BASEURL}isLikedAndSaved?userEmail=${
@@ -70,11 +73,11 @@ const RecipeDetail = () => {
       setIsLiked(result?.data?.isLiked);
       setIsSaved(result?.data?.isSaved);
       return result;
-    },
-    { enabled: !!currentUser } // query enables when currentUser is available
+    }
+    // query enables when currentUser is available
   );
 
-  // saving on savedItems collection
+  // saving in savedItems collection
   const handleRecipeSave = async () => {
     setIsSaved((prevState) => !prevState);
 
@@ -206,12 +209,39 @@ const RecipeDetail = () => {
         "
         >
           {/* recipe images */}
-          <div className="print:hidden md:w-[45%] h-[65vh] overflow-hidden rounded-tl-xl  rounded-tr-xl md:rounded-xl select-none">
-            <img
-              className="object-cover"
-              src={recipeDetail?.recipeImages}
-              alt=""
-            />
+          <div className="print:hidden md:w-[45%] h-[65vh] md:h-[50vh] overflow-hidden rounded-tl-xl  rounded-tr-xl md:rounded-xl select-none relative ">
+            <span
+              onClick={() => {
+                setRecipeImageIndex((prev) => prev - 1);
+              }}
+              className={`${
+                recipeImageIndex === 0 ? "hidden" : ""
+              } absolute top-1/2 left-0 -translate-y-1/2 text-white cursor-pointer z-40`}
+            >
+              <ArrowBackIosOutlinedIcon />
+            </span>
+            {recipeDetail?.recipeImages?.map((image, index) => (
+              <img
+                key={index}
+                className={`object-cover absolute inset-0 transition-opacity duration-300 ease-linear ${
+                  recipeImageIndex === index ? "opacity-100" : "opacity-0"
+                }`}
+                src={image}
+                alt=""
+              />
+            ))}
+            <span
+              onClick={() => {
+                setRecipeImageIndex((prev) => prev + 1);
+              }}
+              className={`${
+                recipeImageIndex === recipeDetail?.recipeImages?.length - 1
+                  ? "hidden"
+                  : ""
+              } absolute top-1/2 right-0 -translate-y-1/2 text-white cursor-pointer z-40`}
+            >
+              <ArrowForwardIosOutlinedIcon />
+            </span>
           </div>
           {/* recipe & creator info */}
           <div className="md:mt-1 flex-grow text-center print:text-left bg-bgColor -mt-4 relative z-20 rounded-3xl ">
@@ -270,23 +300,33 @@ const RecipeDetail = () => {
             </div>
 
             {/* like button */}
-            <div className="print:hidden  mt-2">
-              <p className="flex-grow">
-                <button
-                  disabled={optionsLoading}
-                  onClick={handleReaction}
-                  className="cursor-pointer "
-                >
-                  {isLiked ? (
-                    <FavoriteOutlinedIcon sx={{ color: "red", fontSize: 28 }} />
-                  ) : (
-                    <FavoriteBorderOutlinedIcon
-                      sx={{ color: "#4B5365", fontSize: 28 }}
-                    />
-                  )}
-                </button>{" "}
-                {recipeDetail?.likedBy?.length}
-              </p>
+            <div className="print:hidden  mt-2 ">
+              {isLikedAndSavedLoading ? (
+                <p>
+                  <FavoriteBorderOutlinedIcon
+                    sx={{ opacity: "0.4", fontSize: 28 }}
+                  />
+                </p>
+              ) : (
+                <p className="flex-grow">
+                  <button
+                    disabled={optionsLoading}
+                    onClick={handleReaction}
+                    className="cursor-pointer "
+                  >
+                    {isLiked ? (
+                      <FavoriteOutlinedIcon
+                        sx={{ color: "red", fontSize: 28 }}
+                      />
+                    ) : (
+                      <FavoriteBorderOutlinedIcon
+                        sx={{ color: "#4B5365", fontSize: 28 }}
+                      />
+                    )}
+                  </button>{" "}
+                  {recipeDetail?.likedBy?.length}
+                </p>
+              )}
             </div>
             {/* description */}
             <div className="mt-1">
@@ -295,26 +335,34 @@ const RecipeDetail = () => {
             {/* save, print button */}
             <div className="print:hidden mt-6">
               <div className=" flex items-center justify-center gap-8 my-3 text-lg">
-                <button disabled={optionsLoading} onClick={handleRecipeSave}>
-                  {isSaved ? (
-                    <>
-                      <BookmarkOutlinedIcon
-                        sx={{ color: "#4B5365", fontSize: 28 }}
-                      />
-                      <span>Saved</span>
-                    </>
-                  ) : (
-                    <>
-                      <BookmarkBorderOutlinedIcon
-                        sx={{ color: "#4B5365", fontSize: 28 }}
-                      />
-                      <span>Save</span>
-                    </>
-                  )}
-                </button>
+                {isLikedAndSavedLoading ? (
+                  <div className="w-fit opacity-40">
+                    <BookmarkBorderOutlinedIcon
+                      sx={{ color: "#4B5365", fontSize: 28 }}
+                    />
+                    <span>Save</span>
+                  </div>
+                ) : (
+                  <button disabled={optionsLoading} onClick={handleRecipeSave}>
+                    {isSaved ? (
+                      <>
+                        <BookmarkOutlinedIcon
+                          sx={{ color: "#4B5365", fontSize: 28 }}
+                        />
+                        <span>Saved</span>
+                      </>
+                    ) : (
+                      <>
+                        <BookmarkBorderOutlinedIcon
+                          sx={{ color: "#4B5365", fontSize: 28 }}
+                        />
+                        <span>Save</span>
+                      </>
+                    )}
+                  </button>
+                )}
                 <button
                   onClick={() => {
-                    document.title = `${recipeDetail?.recipeName}_Morsel`;
                     window.print();
                   }}
                 >
