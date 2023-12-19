@@ -15,7 +15,7 @@ const Card = ({ itemType, item, placedIn }) => {
   console.log(item);
 
   return (
-    <div id="card">
+    <div id="card" className="">
       {/* showing the recipe/blog status(pending/approved/denied) in the tab section of account page for the creator  */}
       {placedIn === "account-tab" &&
         (item?.status !== "approved" || item?.feedback) && (

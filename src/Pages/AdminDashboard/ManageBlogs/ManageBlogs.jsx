@@ -45,6 +45,7 @@ const ManageBlogs = () => {
         renderCell: (params) => (
           <StatusChanger
             itemId={params.row._id}
+            creatorEmail={params.row?.creatorInfo?.email}
             status={params.row.status}
             actionFor="blog"
             actionFrom="table"

@@ -1,4 +1,3 @@
-import Footer from "../../Components/Footer.jsx/Footer";
 import Banner from "./Banner/Banner";
 import Blogs from "./Blogs/Blogs";
 import CreateARecipe from "./CreateARecipe/CreateARecipe";

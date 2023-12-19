@@ -1,10 +1,13 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
+import useAuthContext from "../hooks/useAuthContext";
 export const RecipesAndBlogsDataContext = createContext(null);
 const RecipesAndBlogsProvider = ({ children }) => {
   const [trendingRecipes, setTrendingRecipes] = useState([]);
   const [quickRecipes, setQuickRecipes] = useState([]);
+  const { user } = useAuthContext();
+  const [unreadAvailable, setUnreadAvailable] = useState();
 
   const { isLoading: recipesLoading, data: recipes } = useQuery(
     ["approvedRecipes"],
@@ -22,6 +25,16 @@ const RecipesAndBlogsProvider = ({ children }) => {
     async () => {
       const result = await axios.get(
         `${import.meta.env.VITE_BASEURL}allBlogs/approved`
+      );
+      return result.data;
+    }
+  );
+  // notifications
+  const { isLoading: notificationsLoading, data: notifications } = useQuery(
+    ["notification"],
+    async () => {
+      const result = await axios.get(
+        `${import.meta.env.VITE_BASEURL}myNotifications/jami87371@gmail.com`
       );
       return result.data;
     }
@@ -46,18 +59,31 @@ const RecipesAndBlogsProvider = ({ children }) => {
       return recipe.ingredients.length <= 7 || recipe.prepTime.minutes <= 20;
     });
     setQuickRecipes(filteredQuickRecipes?.slice(0, 6));
-  }, [recipes]);
+
+    notifications?.find((notifi) => {
+      if (notifi.read === false) {
+        return setUnreadAvailable(true);
+      } else {
+        setUnreadAvailable(false);
+      }
+    });
+  }, [recipes, notifications]);
+
+  console.log(unreadAvailable);
+  console.log(notifications);
 
   const recipesAndBlogsData = {
     recipes,
     blogs,
+    notifications,
     trendingRecipes,
     quickRecipes,
     recipesLoading,
     blogsLoading,
+    notificationsLoading,
+    unreadAvailable,
+    setUnreadAvailable,
   };
-
-  // console.log(recipes);
 
   return (
     <RecipesAndBlogsDataContext.Provider value={recipesAndBlogsData}>

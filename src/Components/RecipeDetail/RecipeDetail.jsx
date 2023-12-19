@@ -37,11 +37,6 @@ const RecipeDetail = () => {
   const [isLiked, setIsLiked] = useState(false);
   const [recipeImageIndex, setRecipeImageIndex] = useState(0);
 
-  // to prevent page scrolled all way down when renders
-  // useEffect(() => {
-  //   window.scrollTo(0, 0);
-  // }, []);
-
   const {
     isLoading,
     data,
@@ -189,6 +184,7 @@ const RecipeDetail = () => {
       {currentUser?.role === "admin" && (
         <StatusChanger
           itemId={recipeDetail?._id}
+          creatorEmail={recipeDetail?.creatorInfo?.email}
           status={recipeDetail?.status}
           actionFor="recipe"
           actionFrom="detailPage"

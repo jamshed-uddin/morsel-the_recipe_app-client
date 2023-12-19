@@ -10,6 +10,7 @@ import useDashboardContext from "../../hooks/useDashboardContext";
 
 const StatusChanger = ({
   status,
+  creatorEmail,
   itemId,
   adminEmail,
   actionFrom,
@@ -58,6 +59,7 @@ const StatusChanger = ({
         }/${adminEmail}`,
         {
           status: updatedStatus,
+          creatorEmail,
           ...(updatedStatus === "denied"
             ? { feedback: feedback }
             : { feedback: "" }),

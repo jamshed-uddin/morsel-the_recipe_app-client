@@ -184,6 +184,7 @@ const BlogDetail = () => {
       {currentUser?.role === "admin" && (
         <StatusChanger
           itemId={blogDetail?._id}
+          creatorEmail={blogDetail?.creatorInfo?.email}
           status={blogDetail?.status}
           actionFor="blog"
           actionFrom="detailPage"
@@ -210,45 +211,62 @@ const BlogDetail = () => {
         <div className="flex justify-between ">
           {/* like and save button */}
           <div className="flex gap-6 md:gap-14 items-center">
-            <p className="flex-grow">
-              <button
-                disabled={optionsLoading}
-                onClick={handleReaction}
-                className="cursor-pointer "
-              >
-                {isLiked ? (
-                  <FavoriteOutlinedIcon sx={{ color: "red", fontSize: 28 }} />
-                ) : (
+            <div className="flex-grow">
+              {isLikedAndSavedLoading ? (
+                <p>
                   <FavoriteBorderOutlinedIcon
-                    sx={{ color: "#4B5365", fontSize: 28 }}
+                    sx={{ opacity: "0.4", fontSize: 28 }}
                   />
-                )}
-              </button>{" "}
-              {blogDetail?.likedBy?.length}
-            </p>
-            <button
-              disabled={optionsLoading}
-              onClick={handleBlogSave}
-              className="cursor-pointer flex items-center"
-            >
-              {isSaved ? (
-                <>
-                  {" "}
-                  <BookmarkOutlinedIcon
-                    sx={{ color: "#4B5365", fontSize: 28 }}
-                  />
-                  <span> Saved</span>{" "}
-                </>
+                </p>
               ) : (
-                <>
-                  {" "}
+                <p className="flex-grow">
+                  <button
+                    disabled={optionsLoading}
+                    onClick={handleReaction}
+                    className="cursor-pointer "
+                  >
+                    {isLiked ? (
+                      <FavoriteOutlinedIcon
+                        sx={{ color: "red", fontSize: 28 }}
+                      />
+                    ) : (
+                      <FavoriteBorderOutlinedIcon
+                        sx={{ color: "#4B5365", fontSize: 28 }}
+                      />
+                    )}
+                  </button>{" "}
+                  {blogDetail?.likedBy?.length}
+                </p>
+              )}
+            </div>
+            <div>
+              {isLikedAndSavedLoading ? (
+                <div className="w-fit opacity-40">
                   <BookmarkBorderOutlinedIcon
                     sx={{ color: "#4B5365", fontSize: 28 }}
                   />
-                  <span> Save</span>{" "}
-                </>
+                  <span>Save</span>
+                </div>
+              ) : (
+                <button disabled={optionsLoading} onClick={handleBlogSave}>
+                  {isSaved ? (
+                    <>
+                      <BookmarkOutlinedIcon
+                        sx={{ color: "#4B5365", fontSize: 28 }}
+                      />
+                      <span>Saved</span>
+                    </>
+                  ) : (
+                    <>
+                      <BookmarkBorderOutlinedIcon
+                        sx={{ color: "#4B5365", fontSize: 28 }}
+                      />
+                      <span>Save</span>
+                    </>
+                  )}
+                </button>
               )}
-            </button>
+            </div>
           </div>
           {/* edit , share, options button */}
           <div className="flex gap-6 items-center">

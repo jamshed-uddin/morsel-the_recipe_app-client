@@ -1,17 +1,23 @@
-import { useEffect, useState } from "react";
+import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
 import { Avatar } from "@mui/material";
-import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
+
 import useAuthContext from "../../hooks/useAuthContext";
 import useSingleUser from "../../hooks/useSingleUser";
+import AlertDialog from "../AlertDialog/AlertDialog";
+import useRecipesBlogsData from "../../hooks/useRecipesBlogsData";
 
 const Navbar = () => {
   const [showNav, setShowNav] = useState(false);
   const [scrollingDown, setScrollingDown] = useState(false);
   const { user } = useAuthContext();
   const { currentUser } = useSingleUser();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const { unreadAvailable, setUnreadAvailable } = useRecipesBlogsData();
 
   useEffect(() => {
     if (showNav) {
@@ -41,6 +47,11 @@ const Navbar = () => {
     };
   }, [showNav]);
 
+  const openNotifications = () => {
+    setDialogOpen((p) => !p);
+    setUnreadAvailable(false);
+  };
+
   return (
     <div
       className={`print:hidden px-3 lg:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
@@ -64,6 +75,20 @@ const Navbar = () => {
             <div className={`link`}>
               <Link to={"/blogs"}>Blogs</Link>
             </div>
+
+            {/* notification icon */}
+            <div
+              onClick={openNotifications}
+              className="link relative w-fit cursor-pointer"
+            >
+              <NotificationsOutlinedIcon sx={{ fontSize: 28 }} />
+              {unreadAvailable && (
+                <div className="absolute top-1 right-0 pl-[1.5px] pt-[1.6px]   w-3 h-3 rounded-full bg-white">
+                  <p className="w-2 h-2 rounded-full bg-colorTwo"></p>
+                </div>
+              )}
+            </div>
+
             <div className={`${!user && "link"}`}>
               {user ? (
                 <Link
@@ -98,6 +123,20 @@ const Navbar = () => {
       {/* mobile nav */}
       <div className=" block lg:hidden ">
         {/* nav icon and it's transition classes */}
+
+        {/* notification icon */}
+        <div
+          onClick={openNotifications}
+          className="relative w-fit right-16 bottom-1 text-colorOne cursor-pointer"
+        >
+          <NotificationsOutlinedIcon sx={{ fontSize: 40 }} />
+          {unreadAvailable && (
+            <div className="absolute top-1 right-0 pl-[1.5px] pt-[1.6px]   w-3 h-3 rounded-full bg-white">
+              <p className="w-2 h-2 rounded-full bg-colorTwo"></p>
+            </div>
+          )}
+        </div>
+
         <div
           onClick={() => setShowNav(!showNav)}
           className={`  space-y-2  h-fit  flex flex-col   cursor-pointer z-50 select-none  absolute  right-3 top-4 pl-3 pb-2 `}
@@ -190,6 +229,11 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      <AlertDialog
+        open={dialogOpen}
+        setOpen={setDialogOpen}
+        dialogFor={"notifications"}
+      />
     </div>
   );
 };

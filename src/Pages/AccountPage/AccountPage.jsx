@@ -290,7 +290,7 @@ const AccountPage = () => {
               >
                 <DriveFileRenameOutlineOutlinedIcon /> Edit profile
               </button>
-              <button
+              {/* <button
                 onClick={() => {
                   setModalContent("account");
                   handleClickOpen();
@@ -298,7 +298,7 @@ const AccountPage = () => {
                 className="cursor-pointer"
               >
                 <PersonOutlineOutlinedIcon /> Account
-              </button>
+              </button> */}
 
               <button onClick={handleLogout} className="cursor-pointer">
                 <LogoutOutlinedIcon /> Sign out
@@ -472,7 +472,7 @@ const AccountPage = () => {
           )}
 
           {/* account deleting info */}
-          {modalContent === "account" && (
+          {/* {modalContent === "account" && (
             <div className=" w-[90%] mx-auto">
               <div className="">
                 <h1 className=" text-4xl ">Delete account</h1>
@@ -531,7 +531,7 @@ const AccountPage = () => {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
         </div>
       </Dialog>
     </div>
