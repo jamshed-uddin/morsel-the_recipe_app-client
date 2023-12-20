@@ -30,8 +30,12 @@ const RecipesAndBlogsProvider = ({ children }) => {
     }
   );
   // notifications
-  const { isLoading: notificationsLoading, data: notifications } = useQuery(
-    ["notification", user],
+  const {
+    isLoading: notificationsLoading,
+    refetch: notificationRefetch,
+    data: notifications,
+  } = useQuery(
+    ["notifications"],
     async () => {
       const result = await axios.get(
         `${import.meta.env.VITE_BASEURL}myNotifications/${user?.email}`
@@ -81,10 +85,8 @@ const RecipesAndBlogsProvider = ({ children }) => {
     notificationsLoading,
     unreadAvailable,
     setUnreadAvailable,
+    notificationRefetch,
   };
-
-  console.log(notifications);
-  console.log(user);
 
   return (
     <RecipesAndBlogsDataContext.Provider value={recipesAndBlogsData}>

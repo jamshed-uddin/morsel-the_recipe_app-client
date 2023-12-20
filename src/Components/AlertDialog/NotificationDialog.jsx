@@ -13,18 +13,11 @@ import { CircularProgress } from "@mui/material";
 const NotificationDialog = ({ handleClose }) => {
   const [pageIndex, setPageIndex] = useState(1);
   const [itemPerPage] = useState(5);
-  const { notifications } = useRecipesBlogsData();
+  const { notifications, notificationRefetch } = useRecipesBlogsData();
   const [deleteLoading, setDeleteLoading] = useState(false);
   const { user } = useAuthContext();
 
-  console.log(
-    pageIndex * itemPerPage - itemPerPage,
-    "---",
-    pageIndex * itemPerPage
-  );
-
   const clearNotifications = async () => {
-    console.log("hello");
     setDeleteLoading(true);
     await axios
       .delete(
@@ -32,10 +25,12 @@ const NotificationDialog = ({ handleClose }) => {
       )
       .then((res) => {
         console.log(res);
+        notificationRefetch();
         setDeleteLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        notificationRefetch();
         setDeleteLoading(false);
       });
   };
@@ -88,6 +83,7 @@ const NotificationDialog = ({ handleClose }) => {
                       <b>See {notification.notificationFor} detail</b>
                     </span>
                   </p>
+                  {/* <p>{Date(notification.time).toString()}</p> */}
                 </Link>
               </div>
             ))
@@ -95,7 +91,7 @@ const NotificationDialog = ({ handleClose }) => {
           <div className="py-4">
             <h1>Welcome to Notification.</h1>
             <p className="text-xl">
-              You have no activity yet.Try{" "}
+              You have no recent activity yet.Try{" "}
               <b>
                 <Link onClick={handleClose} to={"/addrecipe"}>
                   creating a recipe.

@@ -97,7 +97,7 @@ const AuthProvider = ({ children }) => {
     passwordResetHandler,
     // deleteUserHandler,
   };
-  console.log(user);
+
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
   );

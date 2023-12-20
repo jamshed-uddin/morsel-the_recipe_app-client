@@ -10,6 +10,7 @@ import useAuthContext from "../../hooks/useAuthContext";
 import useSingleUser from "../../hooks/useSingleUser";
 import AlertDialog from "../AlertDialog/AlertDialog";
 import useRecipesBlogsData from "../../hooks/useRecipesBlogsData";
+import axios from "axios";
 
 const Navbar = () => {
   const [showNav, setShowNav] = useState(false);
@@ -17,7 +18,8 @@ const Navbar = () => {
   const { user } = useAuthContext();
   const { currentUser } = useSingleUser();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { unreadAvailable, setUnreadAvailable } = useRecipesBlogsData();
+  const { unreadAvailable, setUnreadAvailable, notifications } =
+    useRecipesBlogsData();
 
   useEffect(() => {
     if (showNav) {
@@ -47,9 +49,16 @@ const Navbar = () => {
     };
   }, [showNav]);
 
-  const openNotifications = () => {
+  const openNotifications = async () => {
     setDialogOpen((p) => !p);
     setUnreadAvailable(false);
+
+    if (notifications && user) {
+      console.log("object");
+      await axios.put(
+        `${import.meta.env.VITE_BASEURL}notificationRead/${user?.email}`
+      );
+    }
   };
 
   return (
