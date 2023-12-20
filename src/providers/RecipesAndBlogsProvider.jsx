@@ -31,13 +31,14 @@ const RecipesAndBlogsProvider = ({ children }) => {
   );
   // notifications
   const { isLoading: notificationsLoading, data: notifications } = useQuery(
-    ["notification"],
+    ["notification", user],
     async () => {
       const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}myNotifications/jami87371@gmail.com`
+        `${import.meta.env.VITE_BASEURL}myNotifications/${user?.email}`
       );
       return result.data;
-    }
+    },
+    { enabled: !!user }
   );
 
   useEffect(() => {
@@ -69,9 +70,6 @@ const RecipesAndBlogsProvider = ({ children }) => {
     });
   }, [recipes, notifications]);
 
-  console.log(unreadAvailable);
-  console.log(notifications);
-
   const recipesAndBlogsData = {
     recipes,
     blogs,
@@ -84,6 +82,9 @@ const RecipesAndBlogsProvider = ({ children }) => {
     unreadAvailable,
     setUnreadAvailable,
   };
+
+  console.log(notifications);
+  console.log(user);
 
   return (
     <RecipesAndBlogsDataContext.Provider value={recipesAndBlogsData}>

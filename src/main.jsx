@@ -170,11 +170,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <RecipesAndBlogsProvider>
-          <AuthProvider>
+        <AuthProvider>
+          <RecipesAndBlogsProvider>
             <RouterProvider router={router}></RouterProvider>
-          </AuthProvider>
-        </RecipesAndBlogsProvider>
+          </RecipesAndBlogsProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </HelmetProvider>
   </React.StrictMode>

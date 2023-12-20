@@ -5,8 +5,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
 import CloseIcon from "@mui/icons-material/Close";
-import GppGoodOutlinedIcon from "@mui/icons-material/GppGoodOutlined";
-import GppMaybeOutlinedIcon from "@mui/icons-material/GppMaybeOutlined";
+
 import {
   EmailIcon,
   EmailShareButton,
@@ -23,8 +22,9 @@ import { useState } from "react";
 import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 import MyButton from "../Button/MyButton";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
-import useRecipesBlogsData from "../../hooks/useRecipesBlogsData";
+import { useNavigate } from "react-router-dom";
+
+import NotificationDialog from "./NotificationDialog";
 
 const AlertDialog = ({
   open,
@@ -39,7 +39,6 @@ const AlertDialog = ({
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const navigate = useNavigate();
-  const { notifications } = useRecipesBlogsData();
 
   const handleClose = () => {
     setOpen(false);
@@ -191,63 +190,7 @@ const AlertDialog = ({
 
         {/* dialog for notification */}
         {dialogFor === "notifications" && (
-          <div className="bg-bgColor text-colorTwo p-4 md:p-6  flex flex-col h-[60vh] md:h-[70vh] ">
-            <div className="flex justify-between items-center mb-2">
-              <div>
-                <h3 className="text-3xl font-semibold" id="alert-dialog-title">
-                  Notifications
-                </h3>
-              </div>
-              <div>
-                <button onClick={handleClose}>
-                  <CloseIcon sx={{ fontSize: 30 }} />
-                </button>
-              </div>
-            </div>
-            <div className="flex-grow text-xl md:text-2xl divide-y-[1px] space-y-7 my-2">
-              {notifications?.map((notification) => (
-                <div onClick={handleClose} key={notification._id}>
-                  <Link
-                    to={`/${notification.notificationFor}/detail/${notification.itemId}`}
-                  >
-                    <p className="flex gap-2 items-center">
-                      <span className="inline">
-                        {notification.text.includes("approved") ? (
-                          <GppGoodOutlinedIcon
-                            sx={{ color: "green", fontSize: 35 }}
-                          />
-                        ) : (
-                          <GppMaybeOutlinedIcon
-                            sx={{ color: "red", fontSize: 35 }}
-                          />
-                        )}
-                      </span>
-                      <span>
-                        {notification.text}
-                        <b>See {notification.notificationFor} detail</b>
-                      </span>
-                    </p>
-                  </Link>
-                </div>
-              ))}
-              <h1>hello</h1>
-              <h1>hello</h1>
-              <h1>hello</h1>
-              <h1>hello</h1>
-              <h1>hello</h1>
-              <h1>hello</h1>
-              <h1>hello</h1>
-              <h1>hello</h1>
-              <h1>hello</h1>
-            </div>
-            <div className="flex justify-between items-center py-4">
-              <div>Clear all</div>
-              <div className="space-x-3">
-                <button>Previous</button>
-                <button>Next</button>
-              </div>
-            </div>
-          </div>
+          <NotificationDialog handleClose={handleClose} />
         )}
       </Dialog>
     </>

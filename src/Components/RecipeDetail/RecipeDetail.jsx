@@ -22,6 +22,7 @@ import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 import AlertDialog from "../AlertDialog/AlertDialog";
 import StatusChanger from "../StatusChanger/StatusChanger";
 import ReactHelmet from "../ReactHelmet/ReactHelmet";
+import StatusAndFeedback from "../statusAndFeedback/statusAndFeedback";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -244,7 +245,7 @@ const RecipeDetail = () => {
             </span>
           </div>
           {/* recipe & creator info */}
-          <div className="md:mt-1 flex-grow text-center print:text-left bg-bgColor -mt-4 relative z-20 rounded-3xl ">
+          <div className=" md:mt-1 flex-grow text-center print:text-left bg-bgColor -mt-4 relative z-20 rounded-3xl ">
             {/* edit  delete share button (creator only action) */}
             <div className="print:hidden flex gap-5 items-center justify-end  pt-2 mr-4 md:mr-0 lg:mb-4">
               {user?.email === recipeDetail?.creatorInfo?.email && (
@@ -372,6 +373,13 @@ const RecipeDetail = () => {
                   Share
                 </button>
               </div>
+            </div>
+
+            <div className="absolute -top-6 left-3">
+              <StatusAndFeedback
+                status={recipeDetail?.status}
+                feedback={recipeDetail?.feedback}
+              />
             </div>
           </div>
         </div>

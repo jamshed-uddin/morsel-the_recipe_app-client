@@ -23,6 +23,7 @@ import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 
 import AlertDialog from "../AlertDialog/AlertDialog";
 import StatusChanger from "../StatusChanger/StatusChanger";
+import StatusAndFeedback from "../statusAndFeedback/statusAndFeedback";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -196,7 +197,13 @@ const BlogDetail = () => {
       )}
 
       {/* blog sections starts */}
-      <div className="space-y-5">
+      <div className="space-y-5 ">
+        <div className="w-fit">
+          <StatusAndFeedback
+            status={blogDetail?.status}
+            feedback={blogDetail?.feedback}
+          />
+        </div>
         <h1 className="text-4xl md:text-5xl font-bold">{blogDetail?.title}</h1>
         <div className="flex items-center gap-1">
           <Avatar

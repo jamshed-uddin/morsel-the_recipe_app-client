@@ -77,17 +77,19 @@ const Navbar = () => {
             </div>
 
             {/* notification icon */}
-            <div
-              onClick={openNotifications}
-              className="link relative w-fit cursor-pointer"
-            >
-              <NotificationsOutlinedIcon sx={{ fontSize: 28 }} />
-              {unreadAvailable && (
-                <div className="absolute top-1 right-0 pl-[1.5px] pt-[1.6px]   w-3 h-3 rounded-full bg-white">
-                  <p className="w-2 h-2 rounded-full bg-colorTwo"></p>
-                </div>
-              )}
-            </div>
+            {user ? (
+              <div
+                onClick={openNotifications}
+                className="link relative w-fit cursor-pointer"
+              >
+                <NotificationsOutlinedIcon sx={{ fontSize: 28 }} />
+                {unreadAvailable && (
+                  <div className="absolute top-1 right-0 pl-[1.5px] pt-[1.6px]   w-3 h-3 rounded-full bg-white">
+                    <p className="w-2 h-2 rounded-full bg-colorTwo"></p>
+                  </div>
+                )}
+              </div>
+            ) : null}
 
             <div className={`${!user && "link"}`}>
               {user ? (
@@ -125,17 +127,19 @@ const Navbar = () => {
         {/* nav icon and it's transition classes */}
 
         {/* notification icon */}
-        <div
-          onClick={openNotifications}
-          className="relative w-fit right-16 bottom-1 text-colorOne cursor-pointer"
-        >
-          <NotificationsOutlinedIcon sx={{ fontSize: 40 }} />
-          {unreadAvailable && (
-            <div className="absolute top-1 right-0 pl-[1.5px] pt-[1.6px]   w-3 h-3 rounded-full bg-white">
-              <p className="w-2 h-2 rounded-full bg-colorTwo"></p>
-            </div>
-          )}
-        </div>
+        {user ? (
+          <div
+            onClick={openNotifications}
+            className="relative w-fit right-16 bottom-1 text-colorOne cursor-pointer"
+          >
+            <NotificationsOutlinedIcon sx={{ fontSize: 40 }} />
+            {unreadAvailable && (
+              <div className="absolute top-1 right-0 pl-[1.5px] pt-[1.6px]   w-3 h-3 rounded-full bg-white">
+                <p className="w-2 h-2 rounded-full bg-colorTwo"></p>
+              </div>
+            )}
+          </div>
+        ) : null}
 
         <div
           onClick={() => setShowNav(!showNav)}
