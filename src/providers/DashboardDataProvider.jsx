@@ -1,11 +1,13 @@
 import axios from "axios";
 import { createContext, useState } from "react";
 import { useQuery } from "react-query";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 export const DashboardDataContext = createContext(null);
 const DashboardDataProvider = ({ children }) => {
   const [usersRefetch, setUsersRefetch] = useState(false);
   const [recipesRefetch, setRecipesRefetch] = useState(false);
   const [blogsRefetch, setBlogsRefetch] = useState(false);
+  const axiosSecure = useAxiosSecure();
 
   // users data
   const {
@@ -13,7 +15,7 @@ const DashboardDataProvider = ({ children }) => {
     data: userData,
     error: userFetchError,
   } = useQuery(["users", usersRefetch], async () => {
-    const result = await axios.get(`${import.meta.env.VITE_BASEURL}users`);
+    const result = await axiosSecure.get(`users`);
     return result.data;
   });
 
@@ -23,7 +25,9 @@ const DashboardDataProvider = ({ children }) => {
     data: recipesData,
     error: recipesFetchError,
   } = useQuery(["allRecipes", recipesRefetch], async () => {
-    const result = await axios.get(`${import.meta.env.VITE_BASEURL}allRecipes`);
+    const result = await axios.get(
+      `${import.meta.env.VITE_BASEURL}/allRecipes`
+    );
     return result.data;
   });
 
@@ -33,7 +37,7 @@ const DashboardDataProvider = ({ children }) => {
     data: blogsData,
     error: blogsFetchError,
   } = useQuery(["allBlogs", blogsRefetch], async () => {
-    const result = await axios.get(`${import.meta.env.VITE_BASEURL}allBlogs`);
+    const result = await axios.get(`${import.meta.env.VITE_BASEURL}/allBlogs`);
     return result.data;
   });
 

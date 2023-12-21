@@ -1,7 +1,5 @@
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
-import GoogleIcon from "@mui/icons-material/Google";
 import { useState } from "react";
 import "./Registration.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -9,14 +7,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuthContext from "../../hooks/useAuthContext";
 import axios from "axios";
 
+import registerPageImage from "../../assets/images/login.jpg";
+
 const Registration = () => {
-  const {
-    loading,
-    setLoading,
-    registerUser,
-    updateUserNamePhoto,
-    signInWithGoogle,
-  } = useAuthContext();
+  const { loading, setLoading, registerUser, updateUserNamePhoto } =
+    useAuthContext();
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -74,7 +69,7 @@ const Registration = () => {
           };
 
           axios
-            .post(`${import.meta.env.VITE_BASEURL}newUser`, body)
+            .post(`${import.meta.env.VITE_BASEURL}/newUser`, body)
             .then((res) => {
               if (res.data.message) {
                 setLoading((prev) => !prev);
@@ -95,19 +90,23 @@ const Registration = () => {
     setError("");
   };
 
-  const labelStyle = `block text-colorTwo text-lg font-semibold `;
+  const labelStyle = `block text-colorTwo text-lg font-semibold relative`;
 
   return (
     <div className="h-screen flex items-center justify-center ">
-      <div className="w-full lg:w-4/5 h-5/6  lg:mx-auto lg:flex   rounded-2xl overflow-hidden lg:shadow-lg">
-        <div className="w-1/2 h-full hidden lg:block">
+      <div className="w-11/12 md:w-4/5 lg:h-5/6  md:mx-auto lg:flex   rounded-2xl overflow-hidden lg:shadow-lg">
+        <div className="lg:w-1/2 h-full  lg:relative absolute inset-0">
           <img
-            className="object-cover w-full h-full"
-            src="https://i.ibb.co/dJb4HYw/top-view-delicious-food-table-still-life-2.jpg"
-            alt=""
+            className={`object-cover w-full h-full transition-all duration-700 ${
+              Object.values(formData).some((value) => value)
+                ? "blur-[2px] lg:blur-0"
+                : ""
+            }`}
+            src={registerPageImage}
+            alt="Register page image banner"
           />
         </div>
-        <div className="px-4 lg:px-0 lg:w-1/2 h-full pb-2  overflow-y-auto ">
+        <div className="relative z-40 px-4 lg:px-0 lg:w-1/2 h-full pb-2  overflow-y-auto bg-bgColor pt-2 lg:pt-0">
           {/* Title text not button */}
           <h1 className="text-colorOne text-5xl font-bold  tracking-tighter uppercase ">
             sign up
@@ -128,6 +127,7 @@ const Registration = () => {
                   onChange={handleInputChange}
                   placeholder="Your name"
                   id="name"
+                  autoComplete="off"
                 />
               </div>
               <div>
@@ -142,6 +142,7 @@ const Registration = () => {
                   onChange={handleInputChange}
                   placeholder="Your email"
                   id="email"
+                  autoComplete="off"
                 />
               </div>
               <div className="relative">
@@ -156,6 +157,7 @@ const Registration = () => {
                   onChange={handleInputChange}
                   placeholder="Password"
                   id="password"
+                  autoComplete="off"
                 />
                 <div
                   onClick={() => {
@@ -182,6 +184,7 @@ const Registration = () => {
                   onChange={handleInputChange}
                   placeholder="Confirm Password"
                   id="ConfirmPassword"
+                  autoComplete="off"
                 />
                 <div
                   onClick={() => {

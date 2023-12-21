@@ -72,7 +72,7 @@ const BlogPublishModal = ({
     setLoading(true);
     if (!editMode) {
       await axios
-        .post(`${import.meta.env.VITE_BASEURL}createBlog`, state)
+        .post(`${import.meta.env.VITE_BASEURL}/createBlog`, state)
         .then((result) => {
           setLoading(false);
           navigate(`/blog/detail/${result.data.id}`);
@@ -84,7 +84,7 @@ const BlogPublishModal = ({
     } else {
       await axios
         .put(
-          `${import.meta.env.VITE_BASEURL}updateBlog/${currentUser?.email}`,
+          `${import.meta.env.VITE_BASEURL}/updateBlog/${currentUser?.email}`,
           state
         )
         .then((result) => {

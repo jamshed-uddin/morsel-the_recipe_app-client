@@ -13,6 +13,7 @@ import {
   reauthenticateWithCredential,
 } from "firebase/auth";
 import app from "./../firebase/firebase.config";
+import axios from "axios";
 
 export const AuthContext = createContext(null);
 const auth = getAuth(app);
@@ -77,7 +78,20 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setLoading(false);
+
+      if (currentUser) {
+        axios
+          .post(`${import.meta.env.VITE_BASEURL}/jwt`, {
+            email: currentUser?.email,
+          })
+          .then((res) => {
+            localStorage.setItem("access-token", res.data.token);
+            setLoading(false);
+          });
+      } else {
+        localStorage.removeItem("access-token");
+        setLoading(false);
+      }
     });
 
     return () => {
@@ -97,6 +111,8 @@ const AuthProvider = ({ children }) => {
     passwordResetHandler,
     // deleteUserHandler,
   };
+
+  console.log(loading);
 
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>

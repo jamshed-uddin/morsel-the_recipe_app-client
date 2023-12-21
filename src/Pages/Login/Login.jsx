@@ -7,6 +7,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuthContext from "../../hooks/useAuthContext";
 import axios from "axios";
 
+import loginPageImage from "../../assets/images/register.jpg";
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -51,7 +53,7 @@ const Login = () => {
           };
 
           axios
-            .post(`${import.meta.env.VITE_BASEURL}newUser`, body)
+            .post(`${import.meta.env.VITE_BASEURL}/newUser`, body)
             .then(() => {});
         }
       })
@@ -93,15 +95,19 @@ const Login = () => {
 
   return (
     <div className="h-screen flex items-center justify-center ">
-      <div className=" w-full lg:w-4/5 h-4/5  lg:mx-auto lg:flex   rounded-2xl overflow-hidden lg:shadow-lg">
-        <div className="w-1/2 h-full hidden lg:block">
+      <div className="  w-11/12 md:w-4/5 lg:h-5/6  md:mx-auto lg:flex   rounded-2xl overflow-hidden lg:shadow-lg">
+        <div className="lg:w-1/2 h-full lg:relative absolute inset-0 ">
           <img
-            className="object-cover w-full h-full"
-            src="https://i.ibb.co/688mrnZ/top-view-delicious-food-table-still-life-3.jpg"
-            alt=""
+            className={`object-cover w-full h-full transition-all duration-700 ${
+              Object.values(formData).some((value) => value)
+                ? "blur-[2px] lg:blur-0"
+                : ""
+            }`}
+            src={loginPageImage}
+            alt="Login page image banner"
           />
         </div>
-        <div className="px-4 lg:px-0 lg:w-1/2 h-full ">
+        <div className="px-4 lg:px-0  lg:w-1/2 h-full relative z-40 bg-bgColor py-2 lg:py-0">
           <h1 className="text-colorOne text-5xl font-bold  tracking-tighter uppercase">
             sign in
           </h1>
@@ -121,6 +127,7 @@ const Login = () => {
                   onChange={handleInputChange}
                   placeholder="Your email"
                   id="email"
+                  autoComplete="off"
                 />
               </div>
               <div className="relative">
@@ -135,6 +142,7 @@ const Login = () => {
                   onChange={handleInputChange}
                   placeholder="Password"
                   id="password"
+                  autoComplete="off"
                 />
                 <div
                   onClick={() => {

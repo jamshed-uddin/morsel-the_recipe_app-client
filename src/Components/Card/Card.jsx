@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import forkSpoon from "../../../src/assets/images/forkSpoon.png";
 import "./Card.css";
+import cardThumb from "../../assets/images/spoon3.jpg";
 
 const Card = ({ itemType, item, placedIn }) => {
   /*
@@ -28,12 +28,12 @@ const Card = ({ itemType, item, placedIn }) => {
           <img
             className={`w-full h-full object-cover  object-center ${
               itemType?.toLowerCase() === "blog" ? "" : "rounded-2xl"
-            }`}
+            } `}
             src={
               (itemType?.toLowerCase() === "blog" &&
-                (item?.previewImage || forkSpoon)) ||
+                (item?.previewImage || cardThumb)) ||
               (itemType?.toLowerCase() === "recipe" &&
-                (item?.recipeImages?.at(0) || forkSpoon))
+                (item?.recipeImages?.at(0) || cardThumb))
             }
             alt=""
           />

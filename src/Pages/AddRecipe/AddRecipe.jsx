@@ -152,7 +152,7 @@ const AddRecipe = () => {
 
     async () => {
       const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}singleRecipe/${id}`
+        `${import.meta.env.VITE_BASEURL}/singleRecipe/${id}`
       );
       return result.data;
     },
@@ -481,7 +481,7 @@ const AddRecipe = () => {
 
     if (!editMode) {
       await axios
-        .post(`${import.meta.env.VITE_BASEURL}createRecipe`, formState)
+        .post(`${import.meta.env.VITE_BASEURL}/createRecipe`, formState)
         .then((result) => {
           setLoading(false);
           navigate(`/recipe/detail/${result.data.id}`);
@@ -493,7 +493,7 @@ const AddRecipe = () => {
     } else {
       await axios
         .put(
-          `${import.meta.env.VITE_BASEURL}updateRecipe/${currentUser?.email}`,
+          `${import.meta.env.VITE_BASEURL}/updateRecipe/${currentUser?.email}`,
           formState
         )
         .then((result) => {

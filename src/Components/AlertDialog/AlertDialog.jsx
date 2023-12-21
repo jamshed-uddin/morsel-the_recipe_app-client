@@ -58,7 +58,7 @@ const AlertDialog = ({
     try {
       setDeleteLoading(true);
       await axios.delete(
-        `${import.meta.env.VITE_BASEURL}${
+        `${import.meta.env.VITE_BASEURL}/${
           itemType === "recipe" ? "deleteRecipe" : "deleteBlog"
         }?userEmail=${userEmail}&itemId=${itemId}`
       );

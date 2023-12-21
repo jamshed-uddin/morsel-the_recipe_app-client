@@ -13,7 +13,7 @@ const RecipesAndBlogsProvider = ({ children }) => {
     ["approvedRecipes"],
     async () => {
       const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}allRecipes/approved`
+        `${import.meta.env.VITE_BASEURL}/allRecipes/approved`
       );
       return result.data;
     }
@@ -24,7 +24,7 @@ const RecipesAndBlogsProvider = ({ children }) => {
     ["approvedBlogs"],
     async () => {
       const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}allBlogs/approved`
+        `${import.meta.env.VITE_BASEURL}/allBlogs/approved`
       );
       return result.data;
     }
@@ -38,7 +38,7 @@ const RecipesAndBlogsProvider = ({ children }) => {
     ["notifications"],
     async () => {
       const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}myNotifications/${user?.email}`
+        `${import.meta.env.VITE_BASEURL}/myNotifications/${user?.email}`
       );
       return result.data;
     },

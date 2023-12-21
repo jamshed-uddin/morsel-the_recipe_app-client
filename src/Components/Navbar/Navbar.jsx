@@ -55,7 +55,7 @@ const Navbar = () => {
 
     if (notifications && user && unreadAvailable) {
       await axios
-        .put(`${import.meta.env.VITE_BASEURL}notificationRead/${user?.email}`)
+        .put(`${import.meta.env.VITE_BASEURL}/notificationRead/${user?.email}`)
         .then(() => {});
     }
   };

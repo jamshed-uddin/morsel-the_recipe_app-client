@@ -88,7 +88,7 @@ const AddBlog = () => {
 
     async () => {
       const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}singleBlog/${id}`
+        `${import.meta.env.VITE_BASEURL}/singleBlog/${id}`
       );
       return result.data;
     },
@@ -109,7 +109,7 @@ const AddBlog = () => {
   const toolbarOptions = [
     [{ header: [1, 2, 3, 4, false] }],
     ["bold", "italic", "underline"],
-    [{ list: "ordered" }, { list: "bullet" }],
+    [{ list: "bullet" }],
 
     ["link"],
   ];
@@ -234,7 +234,7 @@ const AddBlog = () => {
 
   return (
     <div className="my-container mb-10">
-      <div className=" text-colorTwo  lg:w-4/5 md:w-11/12 mx-auto md:shadow-xl md:rounded-xl h-full lg:px-5 relative">
+      <div className=" text-colorTwo  lg:w-4/5 md:w-11/12 mx-auto md:shadow md:rounded-xl h-full lg:px-5 relative">
         <div className="flex justify-between items-center sticky top-0 bg-bgColor z-20 mb-2 py-2 px-1">
           <h4 className="md:text-3xl text-2xl font-bold text-colorOne">
             Add Blog

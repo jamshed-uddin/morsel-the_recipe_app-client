@@ -16,7 +16,7 @@ const useSingleUser = () => {
     ["singleUser", user],
     async () => {
       const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}singleUser/${user?.email}`
+        `${import.meta.env.VITE_BASEURL}/singleUser/${user?.email}`
       );
       return result.data;
     },

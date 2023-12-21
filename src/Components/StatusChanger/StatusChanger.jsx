@@ -53,7 +53,7 @@ const StatusChanger = ({
     setLoading(true);
     try {
       await axios.patch(
-        `${import.meta.env.VITE_BASEURL}${
+        `${import.meta.env.VITE_BASEURL}/${
           actionFor === "blog" ? "updateBlogStatus" : "updateRecipeStatus"
         }/${adminEmail}`,
         {
@@ -105,7 +105,7 @@ const StatusChanger = ({
 
   return (
     <div
-      className={`no-print text-colorTwo ${
+      className={`print:hidden text-colorTwo ${
         actionFrom === "table"
           ? ""
           : "py-2 shadow-lg mt-1 mb-4 rounded-xl px-4 flex justify-center"

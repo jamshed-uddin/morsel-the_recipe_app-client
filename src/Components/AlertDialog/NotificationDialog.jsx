@@ -21,7 +21,7 @@ const NotificationDialog = ({ handleClose }) => {
     setDeleteLoading(true);
     await axios
       .delete(
-        `${import.meta.env.VITE_BASEURL}deleteMyNotification/${user?.email}`
+        `${import.meta.env.VITE_BASEURL}/deleteMyNotification/${user?.email}`
       )
       .then(() => {
         notificationRefetch();
@@ -95,7 +95,7 @@ const NotificationDialog = ({ handleClose }) => {
           <div className="py-4">
             <h1>Welcome to Notification.</h1>
             <p className="text-xl">
-              You have no recent activity yet.Try{" "}
+              You have no recent activity.Try{" "}
               <b>
                 <Link onClick={handleClose} to={"/addrecipe"}>
                   creating a recipe.

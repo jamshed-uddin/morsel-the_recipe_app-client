@@ -16,7 +16,7 @@ const UserActions = ({ params, rowId, setRowId, snackbarHandler }) => {
 
     try {
       await axios.patch(
-        `${import.meta.env.VITE_BASEURL}updateRole/${currentUser?.email}`,
+        `${import.meta.env.VITE_BASEURL}/updateRole/${currentUser?.email}`,
         { role: params.row.role, userEmail: params.row.email }
       );
 

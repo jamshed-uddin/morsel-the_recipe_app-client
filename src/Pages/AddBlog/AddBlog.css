@@ -36,7 +36,8 @@
 
 .ql-snow.ql-toolbar button {
   height: 25px;
-  margin-right: 10px;
+
+  margin-right: 15px;
 }
 
 .ql-editor.ql-blank::before {

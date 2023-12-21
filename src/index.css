@@ -22,7 +22,7 @@ textarea {
   margin-bottom: 0.25rem;
   padding: 0.5rem 0.25rem;
   font-size: 1.125rem;
-  line-height: 1.75rem;
+  /* line-height: 1.75rem; */
   border: 1px solid #4b5365;
   border-radius: 0.5rem;
   outline: 2px solid transparent;

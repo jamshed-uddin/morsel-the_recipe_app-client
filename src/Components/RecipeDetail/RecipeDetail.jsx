@@ -15,7 +15,7 @@ import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
 import ErrorElement from "../ErrorElement";
 import DetailSkeleton from "../../Components/Skeletons/DetailSkeleton";
-import { Avatar, Tooltip } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
 import useSingleUser from "../../hooks/useSingleUser";
 import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
@@ -45,7 +45,7 @@ const RecipeDetail = () => {
     refetch: recipeDetailRefetch,
   } = useQuery("recipeDetail", async () => {
     const result = await axios.get(
-      `${import.meta.env.VITE_BASEURL}singleRecipe/${id}`
+      `${import.meta.env.VITE_BASEURL}/singleRecipe/${id}`
     );
     return result.data;
   });
@@ -66,13 +66,16 @@ const RecipeDetail = () => {
     ["isSavedAndLiked", currentUser],
     async () => {
       const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}isLikedAndSaved?userEmail=${
+        `${import.meta.env.VITE_BASEURL}/isLikedAndSaved?userEmail=${
           currentUser?.email
         }&itemId=${recipeDetail?._id}&itemType=recipe`
       );
       setIsLiked(result?.data?.isLiked);
       setIsSaved(result?.data?.isSaved);
       return result;
+    },
+    {
+      enabled: !!currentUser,
     }
     // query enables when currentUser is available
   );
@@ -92,7 +95,7 @@ const RecipeDetail = () => {
 
       await axios
         .delete(
-          `${import.meta.env.VITE_BASEURL}deleteSavedItem?itemId=${
+          `${import.meta.env.VITE_BASEURL}/deleteSavedItem?itemId=${
             recipeDetail?._id
           }&userEmail=${currentUser?.email}`
         )
@@ -113,7 +116,7 @@ const RecipeDetail = () => {
 
     await axios
       .post(
-        `${import.meta.env.VITE_BASEURL}saveNewItem/${recipeDetail?._id}`,
+        `${import.meta.env.VITE_BASEURL}/saveNewItem/${recipeDetail?._id}`,
         body
       )
       .then(() => {
@@ -130,7 +133,6 @@ const RecipeDetail = () => {
 
   const handleReaction = async () => {
     setIsLiked((prevState) => !prevState);
-
     // if item already liked calls dislike action
     if (isLiked) {
       const body = {
@@ -140,7 +142,7 @@ const RecipeDetail = () => {
       };
       await axios
         .patch(
-          `${import.meta.env.VITE_BASEURL}changeReaction/${recipeDetail?._id}`,
+          `${import.meta.env.VITE_BASEURL}/changeReaction/${recipeDetail?._id}`,
           body
         )
         .then(() => {
@@ -160,7 +162,7 @@ const RecipeDetail = () => {
     };
     await axios
       .patch(
-        `${import.meta.env.VITE_BASEURL}changeReaction/${recipeDetail?._id}`,
+        `${import.meta.env.VITE_BASEURL}/changeReaction/${recipeDetail?._id}`,
         body
       )
       .then(() => {

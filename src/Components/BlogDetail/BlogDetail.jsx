@@ -44,7 +44,9 @@ const BlogDetail = () => {
     error,
     refetch: blogDetailRefetch,
   } = useQuery("blogDetail", async () => {
-    const result = axios.get(`${import.meta.env.VITE_BASEURL}singleBlog/${id}`);
+    const result = axios.get(
+      `${import.meta.env.VITE_BASEURL}/singleBlog/${id}`
+    );
     return result;
   });
 
@@ -65,7 +67,7 @@ const BlogDetail = () => {
     "isSavedAndLiked",
     async () => {
       const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}isLikedAndSaved?userEmail=${
+        `${import.meta.env.VITE_BASEURL}/isLikedAndSaved?userEmail=${
           currentUser?.email
         }&itemId=${blogDetail?._id}&itemType=blog`
       );
@@ -91,7 +93,7 @@ const BlogDetail = () => {
 
       await axios
         .delete(
-          `${import.meta.env.VITE_BASEURL}deleteSavedItem?itemId=${
+          `${import.meta.env.VITE_BASEURL}/deleteSavedItem?itemId=${
             blogDetail?._id
           }&userEmail=${currentUser?.email}`
         )
@@ -112,7 +114,7 @@ const BlogDetail = () => {
 
     await axios
       .post(
-        `${import.meta.env.VITE_BASEURL}saveNewItem/${blogDetail?._id}`,
+        `${import.meta.env.VITE_BASEURL}/saveNewItem/${blogDetail?._id}`,
         body
       )
       .then(() => {
@@ -139,7 +141,7 @@ const BlogDetail = () => {
       };
       await axios
         .patch(
-          `${import.meta.env.VITE_BASEURL}changeReaction/${blogDetail?._id}`,
+          `${import.meta.env.VITE_BASEURL}/changeReaction/${blogDetail?._id}`,
           body
         )
         .then(() => {
@@ -159,7 +161,7 @@ const BlogDetail = () => {
     };
     await axios
       .patch(
-        `${import.meta.env.VITE_BASEURL}changeReaction/${blogDetail?._id}`,
+        `${import.meta.env.VITE_BASEURL}/changeReaction/${blogDetail?._id}`,
         body
       )
       .then(() => {

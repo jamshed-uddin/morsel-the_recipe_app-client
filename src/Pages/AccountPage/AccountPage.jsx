@@ -123,7 +123,7 @@ const AccountPage = () => {
     async () => {
       if (activeTab === "savedItems") {
         const result = await axios.get(
-          `${import.meta.env.VITE_BASEURL}${activeTab}?userId=${
+          `${import.meta.env.VITE_BASEURL}/${activeTab}?userId=${
             currentUser?._id
           }&itemType=All`
         );
@@ -133,7 +133,7 @@ const AccountPage = () => {
 
       if (activeTab !== "savedItems") {
         const result = await axios.get(
-          `${import.meta.env.VITE_BASEURL}${activeTab}?userId=${
+          `${import.meta.env.VITE_BASEURL}/${activeTab}?userId=${
             currentUser?._id
           }`
         );
@@ -169,7 +169,7 @@ const AccountPage = () => {
       setProfileUpdateLoading(true);
       await axios
         .put(
-          `${import.meta.env.VITE_BASEURL}updateUser/${user?.email}`,
+          `${import.meta.env.VITE_BASEURL}/updateUser/${user?.email}`,
           updatedProfile
         )
         .then(() => {
@@ -196,7 +196,7 @@ const AccountPage = () => {
 
   //     await axios
   //       .delete(
-  //         `${import.meta.env.VITE_BASEURL}deleteUser?userEmail=${
+  //         `${import.meta.env.VITE_BASEURL}/deleteUser?userEmail=${
   //           user?.email
   //         }&userId=${currentUser?._id}`
   //       )
