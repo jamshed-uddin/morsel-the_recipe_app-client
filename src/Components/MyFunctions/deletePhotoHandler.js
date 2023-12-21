@@ -34,7 +34,7 @@ const deleteFromCloudHandler = async (public_id) => {
         );
         console.log(response);
       } catch (error) {
-        console.log();
+        console.log(error);
         return null;
       }
     })

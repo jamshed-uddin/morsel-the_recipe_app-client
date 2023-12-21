@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import forkSpoon from "../../../src/assets/images/forkSpoon.png";
 import "./Card.css";
-import { useState } from "react";
 
 const Card = ({ itemType, item, placedIn }) => {
   /*
@@ -11,7 +10,7 @@ const Card = ({ itemType, item, placedIn }) => {
    */
 
   return (
-    <div id="card" className="">
+    <div id="card">
       <Link
         to={
           itemType?.toLowerCase() === "recipe"

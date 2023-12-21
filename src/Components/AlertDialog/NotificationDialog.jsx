@@ -23,20 +23,18 @@ const NotificationDialog = ({ handleClose }) => {
       .delete(
         `${import.meta.env.VITE_BASEURL}deleteMyNotification/${user?.email}`
       )
-      .then((res) => {
-        console.log(res);
+      .then(() => {
         notificationRefetch();
         setDeleteLoading(false);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         notificationRefetch();
         setDeleteLoading(false);
       });
   };
 
   return (
-    <div className=" text-colorTwo p-4 md:p-6  flex flex-col h-[60vh] md:h-[70vh] relative">
+    <div className=" text-colorTwo p-4 md:p-6  flex flex-col h-[50vh] md:h-[70vh] relative">
       {deleteLoading ? (
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <CircularProgress size={80} color="warning" />
@@ -54,7 +52,7 @@ const NotificationDialog = ({ handleClose }) => {
           </button>
         </div>
       </div>
-      <div className="flex-grow text-xl md:text-2xl divide-y-[1px] space-y-7 my-2">
+      <div className="flex-grow text-xl md:text-2xl divide-y-[1px] space-y-3 my-2">
         {notifications?.length ? (
           notifications
             ?.slice(
@@ -83,7 +81,13 @@ const NotificationDialog = ({ handleClose }) => {
                       <b>See {notification.notificationFor} detail</b>
                     </span>
                   </p>
-                  {/* <p>{Date(notification.time).toString()}</p> */}
+                  <p className="font-light text-base ml-11">
+                    {new Date(notification?.time)
+                      .toDateString()
+                      .split(" ")
+                      .slice(1, 4)
+                      .join(" ")}
+                  </p>
                 </Link>
               </div>
             ))

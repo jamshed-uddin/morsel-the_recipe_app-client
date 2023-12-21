@@ -102,9 +102,9 @@ const BlogDetail = () => {
           setOpen((prev) => !prev);
           setMessage("Blog unsaved");
         })
-        .catch((err) => {
+        .catch(() => {
           setOptionsLoading(false);
-          console.log(err);
+          reloadIslikedAndIsSaved();
         });
       return;
     }
@@ -121,9 +121,9 @@ const BlogDetail = () => {
         setOpen((prev) => !prev);
         setMessage("Blog saved");
       })
-      .catch((err) => {
+      .catch(() => {
         setOptionsLoading(false);
-        console.log(err);
+        reloadIslikedAndIsSaved();
       });
   };
 
@@ -142,11 +142,12 @@ const BlogDetail = () => {
           `${import.meta.env.VITE_BASEURL}changeReaction/${blogDetail?._id}`,
           body
         )
-        .then((result) => {
-          console.log(result);
+        .then(() => {
           blogDetailRefetch();
         })
-        .catch((err) => console.log(err));
+        .catch(() => {
+          blogDetailRefetch();
+        });
       return;
     }
 
@@ -161,12 +162,12 @@ const BlogDetail = () => {
         `${import.meta.env.VITE_BASEURL}changeReaction/${blogDetail?._id}`,
         body
       )
-      .then((result) => {
-        console.log(result);
-
+      .then(() => {
         blogDetailRefetch();
       })
-      .catch((err) => console.log(err));
+      .catch(() => {
+        blogDetailRefetch();
+      });
   };
 
   if (error) {
@@ -197,25 +198,38 @@ const BlogDetail = () => {
       )}
 
       {/* blog sections starts */}
-      <div className="space-y-5 ">
+      <div className=" ">
         <div className="w-fit">
           <StatusAndFeedback
             status={blogDetail?.status}
             feedback={blogDetail?.feedback}
           />
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold">{blogDetail?.title}</h1>
-        <div className="flex items-center gap-1">
-          <Avatar
-            sx={{ width: 40, height: 40 }}
-            src={
-              blogDetail?.creatorInfo?.photoURL ||
-              "https://i.ibb.co/Twp960D/default-profile-400x400.png"
-            }
-          />
-          <h3 className="text-[1.40rem] ">{blogDetail?.creatorInfo?.name}</h3>
+        <h1 className="text-4xl md:text-5xl font-bold mt-5">
+          {blogDetail?.title}
+        </h1>
+        <div className="flex items-center gap-2 mt-2">
+          <div>
+            <Avatar
+              sx={{ width: 30, height: 30, mb: 1 }}
+              src={
+                blogDetail?.creatorInfo?.photoURL ||
+                "https://i.ibb.co/Twp960D/default-profile-400x400.png"
+              }
+            />
+          </div>
+          <div className="leading-6">
+            <h3 className="text-[1.2rem] ">{blogDetail?.creatorInfo?.name}</h3>
+            <p className="font-light">
+              {new Date(blogDetail?.createdAt)
+                .toDateString()
+                .split(" ")
+                .slice(1, 4)
+                .join(" ")}
+            </p>
+          </div>
         </div>
-        <div className="flex justify-between ">
+        <div className="flex justify-between mt-5">
           {/* like and save button */}
           <div className="flex gap-6 md:gap-14 items-center">
             <div className="flex-grow">

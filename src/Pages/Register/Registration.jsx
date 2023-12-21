@@ -77,7 +77,6 @@ const Registration = () => {
             .post(`${import.meta.env.VITE_BASEURL}newUser`, body)
             .then((res) => {
               if (res.data.message) {
-                console.log(res.data);
                 setLoading((prev) => !prev);
                 navigate(from, { replace: true });
               }
@@ -86,7 +85,6 @@ const Registration = () => {
       })
       .catch((error) => {
         setLoading((prev) => !prev);
-        console.log(error.message);
 
         if (error.message === "Firebase: Error (auth/email-already-in-use).") {
           setError("User with this email already exist!");

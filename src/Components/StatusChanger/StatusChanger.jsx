@@ -37,7 +37,6 @@ const StatusChanger = ({
 
   const handleChange = (event) => {
     setUpdatedStatus(event.target.value);
-    console.log(event.target.value);
   };
 
   const [dialogOpen, setDialogOpen] = useState(false);

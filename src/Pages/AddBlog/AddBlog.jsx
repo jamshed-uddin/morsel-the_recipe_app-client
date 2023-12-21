@@ -98,7 +98,7 @@ const AddBlog = () => {
   useEffect(() => {
     if (data) {
       setEditMode(true);
-      console.log(data);
+      // console.log(data);
 
       // setting entire recipe data for edit to initial state
       dispatch({ type: "BLOG_DATA_FOR_EDIT", blogDataForEdit: data });
@@ -165,7 +165,7 @@ const AddBlog = () => {
 
       reader.onload = async (e) => {
         const imageUrl = e.target.result;
-        console.log(imageUrl);
+        // console.log(imageUrl);
         editor.insertEmbed(cursorIndex, "image", imageUrl);
         editor.insertText(cursorIndex + 1, "\n", "user");
 

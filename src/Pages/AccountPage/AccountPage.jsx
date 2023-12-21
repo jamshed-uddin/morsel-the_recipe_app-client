@@ -31,15 +31,13 @@ const AccountPage = () => {
     useAuthContext();
   const { currentUser, currentUserLoading } = useSingleUser();
   const [profilePhotoURL, setProfilePhotoURL] = useState(user?.photoURL);
-  const [checked, setChecked] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  // const [checked, setChecked] = useState(false);
+  // const [deleteLoading, setDeleteLoading] = useState(false);
 
-  console.log(myItems);
-
-  // console.log(user);
-  const handleCheckBoxChange = (event) => {
-    setChecked(event.target.checked);
-  };
+  // // console.log(user);
+  // const handleCheckBoxChange = (event) => {
+  //   setChecked(event.target.checked);
+  // };
 
   const navigate = useNavigate();
 
@@ -51,7 +49,7 @@ const AccountPage = () => {
   // setting modal close
   const handleClose = () => {
     setOpen(false);
-    setChecked(false);
+    // setChecked(false);
   };
 
   // user logout funciton(firebase)
@@ -165,7 +163,7 @@ const AccountPage = () => {
       photoURL: profilePhotoURL || "",
       ...(e.target.bio.value && { bio: e.target.bio.value }),
     };
-    console.log(updatedProfile);
+    // console.log(updatedProfile);
 
     try {
       setProfileUpdateLoading(true);
@@ -178,8 +176,7 @@ const AccountPage = () => {
           updateUserNamePhoto(
             updatedProfile.name,
             updatedProfile.photoURL
-          ).then((res) => {
-            console.log(res);
+          ).then(() => {
             setProfileUpdateLoading(false);
             handleClose();
           });

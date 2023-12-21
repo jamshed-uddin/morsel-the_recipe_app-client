@@ -53,11 +53,10 @@ const Navbar = () => {
     setDialogOpen((p) => !p);
     setUnreadAvailable(false);
 
-    if (notifications && user) {
-      console.log("object");
-      await axios.put(
-        `${import.meta.env.VITE_BASEURL}notificationRead/${user?.email}`
-      );
+    if (notifications && user && unreadAvailable) {
+      await axios
+        .put(`${import.meta.env.VITE_BASEURL}notificationRead/${user?.email}`)
+        .then(() => {});
     }
   };
 

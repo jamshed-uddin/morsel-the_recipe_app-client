@@ -17,7 +17,7 @@ const PasswordReset = () => {
         setShowSendAlert((prev) => !prev);
         setLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch(() => {});
   };
 
   return (

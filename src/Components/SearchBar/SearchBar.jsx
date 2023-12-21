@@ -6,7 +6,7 @@ const SearchBar = ({ data, searchFor, setIsSearching, setSearchResult }) => {
 
   const searchInputChangeHandler = (e) => {
     const searchbarValue = e.target.value;
-    console.log(searchbarValue);
+
     setSearchQuery(searchbarValue);
     if (!searchbarValue) {
       setIsSearching(false);
@@ -26,7 +26,6 @@ const SearchBar = ({ data, searchFor, setIsSearching, setSearchResult }) => {
 
   const searchFunction = () => {
     if (!searchQuery) return;
-    console.log("searching");
     setIsSearching(true);
     const result = filterDataHandler();
     setSearchResult(result);

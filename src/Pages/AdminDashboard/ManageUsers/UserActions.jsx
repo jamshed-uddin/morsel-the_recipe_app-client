@@ -26,10 +26,7 @@ const UserActions = ({ params, rowId, setRowId, snackbarHandler }) => {
       setRowId(null);
       setUsersRefetch((prev) => !prev);
     } catch (error) {
-      console.log(error);
-
       snackbarHandler(error?.response?.data?.error);
-
       setLoading(false);
       setRowId(null);
       setUsersRefetch((prev) => !prev);

@@ -52,7 +52,6 @@ const BlogPublishModal = ({
 
   // functions for tags
   const addTagsHandler = () => {
-    console.log("cliked");
     const newTags = tagInputValue.split(",").map((tag) => tag.trim());
     const filteredTags = newTags.filter((tag) => tag !== "");
 
@@ -75,13 +74,11 @@ const BlogPublishModal = ({
       await axios
         .post(`${import.meta.env.VITE_BASEURL}createBlog`, state)
         .then((result) => {
-          console.log(result);
           setLoading(false);
           navigate(`/blog/detail/${result.data.id}`);
           //id here is coming from created blog.and using it to navigate to detail page after creating
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
           setLoading(false);
         });
     } else {
@@ -91,13 +88,11 @@ const BlogPublishModal = ({
           state
         )
         .then((result) => {
-          console.log(result);
           setLoading(false);
           navigate(`/blog/detail/${result.data.id}`);
           //id here is coming from created recipe.and using it to navigate to detail page after updating
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
           setLoading(false);
         });
     }
@@ -252,54 +247,3 @@ const BlogPublishModal = ({
 };
 
 export default BlogPublishModal;
-
-/*
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-
-const MyEditor = () => {
-  const modules = {
-    // configure modules as needed
-    // ...
-  };
-
-  const formats = [
-    // configure formats as needed
-    // ...
-  ];
-
-  // State to store the editor content
-  const [editorContent, setEditorContent] = React.useState('');
-
-  // Function to handle changes in the editor content
-  const handleEditorChange = (content) => {
-    setEditorContent(content);
-  };
-
-  // Function to extract img tags from HTML content
-  const extractImages = () => {
-    const doc = new DOMParser().parseFromString(editorContent, 'text/html');
-    const images = doc.querySelectorAll('img');
-
-    // Do something with the img elements
-    images.forEach((img) => {
-      console.log(img.src);
-    });
-  };
-
-  return (
-    <div>
-      <ReactQuill
-        value={editorContent}
-        onChange={handleEditorChange}
-        modules={modules}
-        formats={formats}
-      />
-      <button onClick={extractImages}>Extract Images</button>
-    </div>
-  );
-};
-
-export default MyEditor;
-
-*/

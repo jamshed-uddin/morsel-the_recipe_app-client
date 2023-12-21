@@ -11,7 +11,6 @@ import useSingleUser from "../../../hooks/useSingleUser";
 const ManageRecipes = () => {
   const { recipesData, recipesFetchLoading } = useDashboardContext();
 
-  console.log(recipesData);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const { currentUser } = useSingleUser();

@@ -5,8 +5,6 @@ const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuthContext();
   const location = useLocation();
 
-  console.log(loading, !!user);
-
   if (loading) {
     return <div className="h-screen bg-bgColor"></div>;
   }

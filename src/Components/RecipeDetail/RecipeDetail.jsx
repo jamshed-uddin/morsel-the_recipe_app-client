@@ -89,7 +89,7 @@ const RecipeDetail = () => {
     // if item already saved call delete action
     if (isSaved) {
       setOptionsLoading(true);
-      console.log("delte action");
+
       await axios
         .delete(
           `${import.meta.env.VITE_BASEURL}deleteSavedItem?itemId=${
@@ -103,9 +103,9 @@ const RecipeDetail = () => {
           setSnackbarOpen((prev) => !prev);
           setMessage("Recipe unsaved");
         })
-        .catch((err) => {
+        .catch(() => {
           setOptionsLoading(false);
-          console.log(err);
+          reloadIslikedAndIsSaved();
         });
       return;
     }
@@ -122,9 +122,9 @@ const RecipeDetail = () => {
         setSnackbarOpen((prev) => !prev);
         setMessage("Recipe saved");
       })
-      .catch((err) => {
+      .catch(() => {
         setOptionsLoading(false);
-        console.log(err);
+        reloadIslikedAndIsSaved();
       });
   };
 
@@ -143,11 +143,12 @@ const RecipeDetail = () => {
           `${import.meta.env.VITE_BASEURL}changeReaction/${recipeDetail?._id}`,
           body
         )
-        .then((result) => {
-          console.log(result);
+        .then(() => {
           recipeDetailRefetch();
         })
-        .catch((err) => console.log(err));
+        .catch(() => {
+          recipeDetailRefetch();
+        });
       return;
     }
 
@@ -162,12 +163,12 @@ const RecipeDetail = () => {
         `${import.meta.env.VITE_BASEURL}changeReaction/${recipeDetail?._id}`,
         body
       )
-      .then((result) => {
-        console.log(result);
-
+      .then(() => {
         recipeDetailRefetch();
       })
-      .catch((err) => console.log(err));
+      .catch(() => {
+        recipeDetailRefetch();
+      });
   };
 
   if (error) {
@@ -385,12 +386,12 @@ const RecipeDetail = () => {
         </div>
 
         {/* recipe body */}
-        <div className="mt-8 space-y-5">
+        <div className="mt-10 space-y-4">
           {/* cooktime preptime servings */}
-          <div className=" flex items-center lg:gap-32 print:gap-12 justify-between lg:justify-normal print:justify-normal">
-            <div className=" text-center">
-              <p className="text-lg font-semibold">Prep time</p>
-              <p className="space-x-3">
+          <div className="md:w-3/4 lg:w-1/2  flex print:gap-5 items-center  justify-between print:justify-normal">
+            <div className=" flex items-center">
+              <p className="text-lg font-semibold">Prep time :</p>
+              <p className="space-x-2">
                 <span>
                   {recipeDetail?.prepTime?.hours
                     ? `${recipeDetail?.prepTime?.hours} hours`
@@ -403,9 +404,9 @@ const RecipeDetail = () => {
                 </span>
               </p>
             </div>
-            <div className=" text-center">
-              <p className="text-lg font-semibold">Cook time</p>
-              <p className="space-x-3">
+            <div className="flex items-center">
+              <p className="text-lg font-semibold">Cook time :</p>
+              <p className="space-x-2">
                 <span>
                   {recipeDetail?.cookTime?.hours
                     ? `${recipeDetail?.cookTime?.hours} hours`
@@ -418,15 +419,17 @@ const RecipeDetail = () => {
                 </span>
               </p>
             </div>
-
-            <div className=" text-center">
-              <p className="text-lg font-semibold">Serves</p>
-              <p>{recipeDetail?.serving}</p>
-            </div>
           </div>
+
           {/* ingredients */}
           <div>
-            <h1 className="text-3xl">Ingredients</h1>
+            <div className="md:w-4/5 lg:w-1/2 flex   items-center gap-32 justify-between  print:justify-normal">
+              <h1 className="text-3xl ">Ingredients</h1>
+              <div className=" flex gap-2 items-center  ">
+                <p className="text-lg font-semibold">Serves</p>
+                <p>{recipeDetail?.serving}</p>
+              </div>
+            </div>
 
             {recipeDetail?.ingredients?.map((ingredient, index) => (
               <p key={index} className="text-xl">
@@ -436,7 +439,10 @@ const RecipeDetail = () => {
           </div>
           {/* instructions */}
           <div className="">
-            <h1 className="text-3xl">Instructions</h1>
+            <div className="">
+              <h1 className="text-3xl">Instructions</h1>
+            </div>
+
             {recipeDetail?.instructions?.map((instruction, index) => (
               <div key={index} className="text-xl mb-5">
                 <h3 className="font-semibold">

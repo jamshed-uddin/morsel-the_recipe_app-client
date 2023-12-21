@@ -55,7 +55,7 @@ const Login = () => {
             .then(() => {});
         }
       })
-      .catch((err) => console.log(err));
+      .catch(() => {});
   };
 
   const handleLoginData = (e) => {
@@ -70,8 +70,6 @@ const Login = () => {
       return;
     }
 
-    console.log(formData.email, formData.password);
-
     userLogin(formData.email, formData.password)
       .then((data) => {
         if (data.user) {
@@ -80,8 +78,6 @@ const Login = () => {
         }
       })
       .catch((error) => {
-        console.log(error.message);
-
         if (
           error.message === "Firebase: Error (auth/invalid-login-credentials)."
         ) {

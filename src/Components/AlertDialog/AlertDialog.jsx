@@ -49,9 +49,8 @@ const AlertDialog = ({
       await navigator.clipboard.writeText(shareURL);
       setSnackbarOpen(true);
       setSnackbarMessage("Linked copied to clipboard");
-      console.log("text copied ");
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      return null;
     }
   };
 
@@ -70,7 +69,6 @@ const AlertDialog = ({
       setSnackbarOpen(true);
       setSnackbarMessage("Something went wrong");
       setDeleteLoading(false);
-      console.log(error);
     }
   };
 

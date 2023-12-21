@@ -32,7 +32,7 @@ const Recipes = () => {
       </div>
       <div
         id="recipesContainer"
-        className=" grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6  gap-y-4 md:gap-y-5  "
+        className=" grid  md:grid-cols-2 lg:grid-cols-3 gap-x-4 md:gap-x-6  gap-y-4 md:gap-y-5  "
       >
         {quickRecipes?.slice(0, 6).map((item, index) => (
           <Card

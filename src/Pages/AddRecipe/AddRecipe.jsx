@@ -136,8 +136,8 @@ const AddRecipe = () => {
 
   // console.log(currentUser);
   // console.log(formState);
-  console.log(public_id);
-  console.log(files);
+  // console.log(public_id);
+  // console.log(files);
 
   // console.log(imageUploadLoading);
 
@@ -162,7 +162,6 @@ const AddRecipe = () => {
   useEffect(() => {
     if (data) {
       setEditMode(true);
-      console.log(data);
 
       // setting entire recipe data for edit to initial state
       dispatch({ type: "RECIPE_DATA_FOR_EDIT", recipeDataForEdit: data });
@@ -332,13 +331,12 @@ const AddRecipe = () => {
             headers: { "X-Requested-With": "XMLHttpRequest" },
           }
         );
-        console.log(response);
+        // console.log(response);
         const imgurl = response?.data.secure_url;
         // setting image public_id.it requires for deleting from cloud
         setPublic_id((prevState) => [...prevState, response?.data.public_id]);
         return imgurl;
       } catch (error) {
-        console.log(error);
         return null;
       }
     });
@@ -354,7 +352,7 @@ const AddRecipe = () => {
           value: [...formState["recipeImages"], ...imageURLs],
         });
       })
-      .catch((err) => console.log(err));
+      .catch(() => {});
   };
   const scrollToRight = () => {
     if (imgContainerRef.current) {
@@ -415,7 +413,7 @@ const AddRecipe = () => {
               },
             }
           );
-          console.log(response);
+          // console.log(response);
           const public_idToModify = [...public_id];
           public_idToModify.splice(imageIndex, 1);
           setPublic_id(public_idToModify);
@@ -423,13 +421,10 @@ const AddRecipe = () => {
           const public_idToModify = [...public_id];
           public_idToModify.splice(imageIndex, 1);
           setPublic_id(public_idToModify);
-          console.log(error);
           return null;
         }
-
-        console.log(hash);
       })
-      .catch((err) => console.log(err));
+      .catch(() => {});
   };
   // image functions ends
 
@@ -488,13 +483,11 @@ const AddRecipe = () => {
       await axios
         .post(`${import.meta.env.VITE_BASEURL}createRecipe`, formState)
         .then((result) => {
-          console.log(result);
           setLoading(false);
           navigate(`/recipe/detail/${result.data.id}`);
           //id here is coming from created recipe.and using it to navigate to detail page after creating
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
           setLoading(false);
         });
     } else {
@@ -504,18 +497,16 @@ const AddRecipe = () => {
           formState
         )
         .then((result) => {
-          console.log(result);
           setLoading(false);
           navigate(`/recipe/detail/${result.data.id}`);
           //id here is coming from created recipe.and using it to navigate to detail page after updating
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
           setLoading(false);
         });
     }
 
-    console.log(formState);
+    // console.log(formState);
   };
 
   // styles for input label
