@@ -30,6 +30,8 @@ import AdminRoute from "./PrivateRoutes/AdminRoute.jsx";
 import RecipesAndBlogsProvider from "./providers/recipesAndBlogsProvider.jsx";
 import ScrollTop from "./ScrollTop.jsx";
 
+import ErrorPage from "./Pages/ErrorPage.jsx";
+
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
   {
@@ -41,6 +43,7 @@ const router = createBrowserRouter([
         <App></App>
       </>
     ),
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/",
@@ -117,9 +120,9 @@ const router = createBrowserRouter([
   {
     path: "dashboard",
     element: (
-      <AdminRoute>
+      <PrivateRoute>
         <AdminDashboard></AdminDashboard>
-      </AdminRoute>
+      </PrivateRoute>
     ),
     children: [
       {

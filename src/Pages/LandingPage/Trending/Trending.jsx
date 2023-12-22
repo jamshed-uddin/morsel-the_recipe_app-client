@@ -60,7 +60,7 @@ const Trending = () => {
         className=" md:grid 
         md:grid-cols-2 lg:grid-cols-3 gap-x-6  gap-y-4 md:gap-y-5  space-y-2 md:space-y-0"
       >
-        {trendingRecipes?.map((item, index) => (
+        {trendingRecipes?.slice(0, 3).map((item, index) => (
           <Card
             placedIn="homepage"
             itemType="recipe"

@@ -32,6 +32,7 @@ const SearchBar = ({ data, searchFor, setIsSearching, setSearchResult }) => {
   };
 
   const searchByEnterHandler = (e) => {
+    if (!searchQuery) return;
     if (e.key === "Enter") {
       setIsSearching(true);
       const result = filterDataHandler();

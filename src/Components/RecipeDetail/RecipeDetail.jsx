@@ -183,7 +183,10 @@ const RecipeDetail = () => {
     </div>
   ) : (
     <div className="my-container lg:px-20 print:mx-12    text-colorTwo print:bg-bgColor">
-      <ReactHelmet title={`${recipeDetail?.recipeName}_Morsel`}></ReactHelmet>
+      <ReactHelmet
+        title={`${recipeDetail?.recipeName}_Morsel`}
+        descriptionContent={recipeDetail?.description}
+      ></ReactHelmet>
       {/* status changer for admin only */}
       {currentUser?.role === "admin" && (
         <StatusChanger

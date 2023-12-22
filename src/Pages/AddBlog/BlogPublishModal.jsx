@@ -193,6 +193,7 @@ const BlogPublishModal = ({
 
                       {/* remove tag btn */}
                       <button
+                        type="button"
                         onClick={() =>
                           dispatch({
                             type: "REMOVE_FIELD",

@@ -24,6 +24,7 @@ import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 import AlertDialog from "../AlertDialog/AlertDialog";
 import StatusChanger from "../StatusChanger/StatusChanger";
 import StatusAndFeedback from "../statusAndFeedback/statusAndFeedback";
+import ReactHelmet from "../ReactHelmet/ReactHelmet";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -182,6 +183,7 @@ const BlogDetail = () => {
     </div>
   ) : (
     <div className="my-container lg:px-20   text-colorTwo">
+      <ReactHelmet title={`${blogDetail?.title}_Morsel`}></ReactHelmet>
       {/* blog & creator info */}
 
       {/* status changer for admin only */}

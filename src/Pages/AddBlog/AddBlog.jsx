@@ -9,6 +9,7 @@ import useSingleUser from "../../hooks/useSingleUser";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import MyButton from "../../Components/Button/MyButton";
+import ReactHelmet from "../../Components/ReactHelmet/ReactHelmet";
 
 const initialState = {
   title: "",

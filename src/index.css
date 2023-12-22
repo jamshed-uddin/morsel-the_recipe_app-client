@@ -26,8 +26,17 @@ textarea {
   border: 1px solid #4b5365;
   border-radius: 0.5rem;
   outline: 2px solid transparent;
-  outline-offset: 2px;
+
   background-color: transparent;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  border: 1px solid #4b5365;
+  outline: 1px solid #4b5365;
 }
 
 textarea {
@@ -61,3 +70,6 @@ button:active {
 .css-d9ml5t-MuiDrawer-docked .MuiDrawer-paper {
   background: #fdfbf8;
 }
+
+/* 
+ */

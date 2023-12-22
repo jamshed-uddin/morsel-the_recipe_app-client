@@ -13,7 +13,7 @@ const useSingleUser = () => {
     isError,
     error,
   } = useQuery(
-    ["singleUser", user],
+    ["singleUser"],
     async () => {
       const result = await axios.get(
         `${import.meta.env.VITE_BASEURL}/singleUser/${user?.email}`

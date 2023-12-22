@@ -4,6 +4,7 @@ import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutl
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import "./AddRecipe.css";
 
 import axios from "axios";
@@ -12,6 +13,8 @@ import useSingleUser from "../../hooks/useSingleUser";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import MyButton from "../../Components/Button/MyButton";
+
+import ReactSelect from "react-select";
 
 const initialState = {
   recipeName: "",
@@ -30,6 +33,7 @@ const initialState = {
     minutes: "",
   },
   tags: [],
+  categories: [],
   status: "pending",
   feedback: "",
   likedBy: [],
@@ -124,6 +128,18 @@ const AddRecipe = () => {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const imgContainerRef = useRef(null); //used this to make a image slider
   //state for showing specific error message
+  const [categories] = useState([
+    "bread",
+    "soup",
+    "healthy",
+    "breakfast",
+    "cake",
+    "chicken",
+    "salad",
+    "salmon",
+    "keto",
+    "other",
+  ]);
   const { currentUser } = useSingleUser();
   const [errorsObj, setErrorsObj] = useState({
     recipeName: "",
@@ -135,11 +151,9 @@ const AddRecipe = () => {
   const navigate = useNavigate();
 
   // console.log(currentUser);
-  // console.log(formState);
+  console.log(formState);
   // console.log(public_id);
   // console.log(files);
-
-  // console.log(imageUploadLoading);
 
   // When user navigate to this page for edit the item it comes with item id and and item data floods the initialState
   //for edit mode------------ starts
@@ -304,7 +318,29 @@ const AddRecipe = () => {
     if (filteredTags.length > 0) {
       dispatch({ type: "TAGS", name: "tags", value: filteredTags });
       setTagInputValue("");
+
+      const filteredCategories = filteredTags.filter((tag) =>
+        categories.includes(tag)
+      );
+
+      dispatch({
+        type: "IMAGES",
+        name: "categories",
+        value: [...formState["categories"], ...filteredCategories],
+      });
     }
+  };
+  const removeTagHandler = (index, tag) => {
+    dispatch({ type: "REMOVE_FIELD", name: "tags", index });
+
+    const existingCategories = [...formState.categories];
+    const reducedCategories = existingCategories.filter((cate) => cate !== tag);
+    dispatch({
+      type: "IMAGES",
+      name: "categories",
+      value: reducedCategories,
+    });
+    console.log("reduce", reducedCategories);
   };
 
   //functions for files/images------------
@@ -934,26 +970,26 @@ const AddRecipe = () => {
               <h4 className={labelStyle}>
                 Add tags <span className="text-base">(optional)</span>
               </h4>
+
               <div className="flex flex-wrap gap-2">
                 {formState.tags.map((tag, index) => (
                   <div
-                    className="flex gap-1 border-[1.3px]  border-colorTwo mb-1 pl-2 py-1 rounded-xl"
+                    className="flex items-center gap-1 border-[1.3px]  border-colorTwo mb-1 pl-2  rounded-lg"
                     key={index}
                   >
-                    <p className="">{tag}</p>
+                    <p className="text-lg">{tag}</p>
 
                     {/* remove tag btn */}
                     <p
-                      onClick={() =>
-                        dispatch({ type: "REMOVE_FIELD", name: "tags", index })
-                      }
+                      className="cursor-pointer"
+                      onClick={() => removeTagHandler(index, tag)}
                     >
-                      <CloseOutlinedIcon />
+                      <CloseOutlinedIcon sx={{ fontSize: 18 }} />
                     </p>
                   </div>
                 ))}
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <input
                   className=""
                   type="text"
@@ -963,16 +999,22 @@ const AddRecipe = () => {
                   id="tags"
                   onChange={(e) => setTagInputValue(e.target.value)}
                 />
-                <div>
-                  <MyButton type={"button"} clickFunction={addTags}>
-                    Add tags
-                  </MyButton>
+                <div className="absolute bottom-2 right-1 rounded-xl pl-3 bg-bgColor">
+                  <button type="button" onClick={addTags}>
+                    <AddOutlinedIcon sx={{ fontSize: 35 }} />
+                  </button>
                 </div>
+              </div>
+              <div className="h-fit overflow-hidden ">
+                <h4 className="lg:pb-1 text-lg font-light ">
+                  Add or change tags for more recognition and to categorize your
+                  recipe.
+                </h4>
               </div>
             </div>
 
             {/* submit button ------------*/}
-            <div className="text-end">
+            <div className="text-end pt-6">
               <MyButton type={"submit"} loading={loading}>
                 {editMode ? "Update" : "Submit"} recipe
               </MyButton>
