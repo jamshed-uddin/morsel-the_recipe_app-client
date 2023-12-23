@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import EastOutlinedIcon from "@mui/icons-material/EastOutlined";
 import "./CreateARecipe.css";
+import useSingleUser from "../../../hooks/useSingleUser";
 
 const CreateARecipe = () => {
+  const { currentUser } = useSingleUser();
   return (
     <div className="text-colorOne py-16 md:py-28 rounded-3xl overflow-hidden grid place-items-center">
       <div className="">
@@ -10,7 +12,7 @@ const CreateARecipe = () => {
           Share your cooking carisma
         </h1>
         <p className="ml-1 text-2xl">
-          <Link to={"/recipes"}>
+          <Link to={currentUser?.role === "admin" ? "" : "/addrecipe"}>
             <button>
               Create a recipe{" "}
               <span className="transition-all duration-500">

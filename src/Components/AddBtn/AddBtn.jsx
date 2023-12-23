@@ -3,9 +3,11 @@ import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
 import LoupeOutlinedIcon from "@mui/icons-material/LoupeOutlined";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import useSingleUser from "../../hooks/useSingleUser";
 
 const AddBtn = () => {
   const [showOptions, setShowOptions] = useState(false);
+  const { currentUser, currentUserLoading } = useSingleUser();
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -23,6 +25,8 @@ const AddBtn = () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [showOptions]);
+
+  if (!currentUserLoading && currentUser?.role === "admin") return null;
 
   return (
     <div

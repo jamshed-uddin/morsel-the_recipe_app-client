@@ -15,6 +15,7 @@
     "@heroicons/react": "^2.0.18",
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.11",
+    "@mui/x-charts": "^6.18.4",
     "@mui/x-data-grid": "^6.18.2",
     "axios": "^1.5.1",
     "cloudinary": "^1.41.0",
