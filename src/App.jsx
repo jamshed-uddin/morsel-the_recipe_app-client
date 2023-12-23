@@ -1,7 +1,9 @@
 import { Outlet, useLocation } from "react-router-dom";
 import "./App.css";
 import Navbar from "./Components/Navbar/Navbar";
-import Footer from "./Components/Footer/Footer";
+import { lazy } from "react";
+// import Footer from "./Components/Footer/Footer";
+const Footer = lazy(() => import("./Components/Footer/Footer"));
 
 // import { useState } from "react";
 

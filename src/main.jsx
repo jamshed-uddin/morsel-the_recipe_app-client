@@ -171,14 +171,14 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <HelmetProvider>
+    <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
+        <HelmetProvider>
           <RecipesAndBlogsProvider>
             <RouterProvider router={router}></RouterProvider>
           </RecipesAndBlogsProvider>
-        </AuthProvider>
+        </HelmetProvider>
       </QueryClientProvider>
-    </HelmetProvider>
+    </AuthProvider>
   </React.StrictMode>
 );

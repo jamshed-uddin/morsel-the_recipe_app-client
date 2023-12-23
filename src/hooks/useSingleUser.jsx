@@ -1,23 +1,22 @@
-import { useEffect, useState } from "react";
 import useAuthContext from "./useAuthContext";
 import { useQuery } from "react-query";
 import axios from "axios";
 
 const useSingleUser = () => {
   const { user } = useAuthContext();
-  const [currentUser, setCurrentUser] = useState();
 
   const {
     isLoading: currentUserLoading,
-    data,
+    data: currentUser,
     isError,
     error,
   } = useQuery(
-    ["singleUser"],
+    ["singleUser", user],
     async () => {
       const result = await axios.get(
         `${import.meta.env.VITE_BASEURL}/singleUser/${user?.email}`
       );
+
       return result.data;
     },
     {
@@ -25,11 +24,7 @@ const useSingleUser = () => {
     }
   );
 
-  useEffect(() => {
-    if (data) {
-      setCurrentUser(data);
-    }
-  }, [data]);
+  console.log("single", currentUser);
 
   return { currentUser, currentUserLoading };
 };

@@ -14,8 +14,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import MyButton from "../../Components/Button/MyButton";
 
-import ReactSelect from "react-select";
-
 const initialState = {
   recipeName: "",
   creatorInfo: "",

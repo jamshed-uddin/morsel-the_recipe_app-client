@@ -31,13 +31,6 @@ const AccountPage = () => {
     useAuthContext();
   const { currentUser, currentUserLoading } = useSingleUser();
   const [profilePhotoURL, setProfilePhotoURL] = useState(user?.photoURL);
-  // const [checked, setChecked] = useState(false);
-  // const [deleteLoading, setDeleteLoading] = useState(false);
-
-  // // console.log(user);
-  // const handleCheckBoxChange = (event) => {
-  //   setChecked(event.target.checked);
-  // };
 
   const navigate = useNavigate();
 

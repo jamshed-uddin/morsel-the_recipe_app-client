@@ -78,7 +78,7 @@ const RecipesAndBlogsProvider = ({ children }) => {
     recipes,
     blogs,
     notifications,
-    trendingRecipes: trendingRecipes || recipes,
+    trendingRecipes: trendingRecipes?.length ? trendingRecipes : recipes,
     quickRecipes,
     recipesLoading,
     blogsLoading,

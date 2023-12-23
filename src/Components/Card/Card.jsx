@@ -35,7 +35,12 @@ const Card = ({ itemType, item, placedIn }) => {
               (itemType?.toLowerCase() === "recipe" &&
                 (item?.recipeImages?.at(0) || cardThumb))
             }
-            alt=""
+            alt={
+              itemType?.toLowerCase() === "blog"
+                ? item?.title
+                : item?.recipeName
+            }
+            loading="lazy"
           />
 
           {/* in the cook something quick section showed the easy or quick based on the number of ingredients and preptime */}
