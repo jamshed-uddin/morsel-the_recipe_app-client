@@ -232,7 +232,7 @@ const BlogPublishModal = ({
               <MyButton
                 loading={loading}
                 clickFunction={createBlogHandler}
-                disabledForOthers={!state.blogBody || !state.titel}
+                disabledForOthers={!state.blogBody || !state.title}
               >
                 {editMode ? "Update" : "Create"}
               </MyButton>

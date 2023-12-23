@@ -9,14 +9,12 @@ import useSingleUser from "../../hooks/useSingleUser";
 import { useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import MyButton from "../../Components/Button/MyButton";
-import ReactHelmet from "../../Components/ReactHelmet/ReactHelmet";
 
 const initialState = {
   title: "",
   previewImage: "",
   creatorInfo: "",
   blogBody: "",
-  status: "pending",
   feedback: "",
   likedBy: [],
   tags: [],
@@ -68,13 +66,6 @@ const AddBlog = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [modalOpen, setModalOpen] = useState(false);
   const { currentUser } = useSingleUser();
-
-  // console.log(currentUser);
-  // console.log(value);
-  // console.log(state);
-  // const editor = editorRef.current?.getEditor();
-  // const delta = editor.getContents();
-  // console.log(delta);
 
   // When user navigate to this page for edit the item it comes with item id and and item data floods the initialState
   //for edit mode------------ starts

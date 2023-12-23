@@ -32,7 +32,6 @@ const initialState = {
   },
   tags: [],
   categories: [],
-  status: "pending",
   feedback: "",
   likedBy: [],
   createdAt: new Date().toString(),

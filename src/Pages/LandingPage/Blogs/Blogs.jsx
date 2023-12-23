@@ -29,9 +29,9 @@ const Blogs = () => {
       </div>
       <div
         id="outer-container"
-        className="overflow-auto md:overflow-hidden py-6 md:py-0"
+        className=" overflow-x-auto lg:overflow-hidden pb-7 md:py-0"
       >
-        <div className="w-max flex flex-nowrap md:grid  md:grid-cols-2 lg:grid-cols-3 gap-x-6  md:gap-y-6  ">
+        <div className="w-max flex flex-nowrap lg:grid   lg:grid-cols-3 gap-x-6  md:gap-y-6  ">
           {blogs?.slice(0, 4).map((item, index) => (
             <Card index={index} itemType="blog" item={item} key={index}></Card>
           ))}
