@@ -24,8 +24,6 @@ const useSingleUser = () => {
     }
   );
 
-  console.log("single", currentUser);
-
   return { currentUser, currentUserLoading };
 };
 

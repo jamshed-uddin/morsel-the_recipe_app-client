@@ -61,6 +61,23 @@ const reducer = (state, action) => {
         ...state,
         [action.name]: [...state[action.name], ""],
       };
+
+    case "ADD_HEADER":
+      if (
+        state[action.name].at(0).header ||
+        state[action.name].at(0).header === ""
+      ) {
+        return {
+          ...state,
+          [action.name]: [...state[action.name], { header: "" }],
+        };
+      } else {
+        return {
+          ...state,
+          [action.name]: [{ header: "" }, ...state[action.name]],
+        };
+      }
+
     // REMOVE_FIELD  used for removing both tag and ingredient/instrunction field
     case "REMOVE_FIELD":
       return {
@@ -70,11 +87,22 @@ const reducer = (state, action) => {
         ),
       };
     // for updating ingredient/instruction field
+    // case "UPDATE_FIELD":
+    //   return {
+    //     ...state,
+    //     [action.name]: state[action.name].map((value, index) =>
+    //       index === action.index ? action.value : value
+    //     ),
+    //   };
     case "UPDATE_FIELD":
       return {
         ...state,
         [action.name]: state[action.name].map((value, index) =>
-          index === action.index ? action.value : value
+          index === action.index
+            ? typeof value === "object"
+              ? { ...value, header: action.value }
+              : action.value
+            : value
         ),
       };
     // serving case
@@ -338,6 +366,15 @@ const AddRecipe = () => {
       value: reducedCategories,
     });
     console.log("reduce", reducedCategories);
+  };
+
+  const addHeaderHandler = (field) => {
+    if (
+      (field[0].header || field[0].header === "") &&
+      (field[field.length - 1].header || field[field.length - 1].header === "")
+    )
+      return;
+    dispatch({ type: "ADD_HEADER", name: field });
   };
 
   //functions for files/images------------
@@ -745,10 +782,18 @@ const AddRecipe = () => {
                         handleInputValue(e.target.name, e.target.value, index)
                       }
                       type="text"
-                      value={ingredient}
+                      value={
+                        typeof ingredient === "object"
+                          ? ingredient.header
+                          : ingredient
+                      }
                       name="ingredients"
                       placeholder={
-                        index === 0
+                        typeof ingredient === "object"
+                          ? "Add a header, e.g, For the gravy"
+                          : index === 0
+                          ? "e.g. 2 tablespoons butter, softened"
+                          : index === 1
                           ? "e.g. 2 cups flour, sifted"
                           : "Add another ingredient"
                       }
@@ -782,6 +827,12 @@ const AddRecipe = () => {
               >
                 Add ingredients
               </MyButton>
+              <MyButton
+                type={"button"}
+                clickFunction={() => addHeaderHandler("ingredients")}
+              >
+                Add header
+              </MyButton>
             </div>
 
             {/* Instructions field ----------------*/}
@@ -803,11 +854,19 @@ const AddRecipe = () => {
                       }
                       type="text"
                       placeholder={
-                        index === 0
-                          ? "e.g. Preheat oven to 350 degrees F..."
+                        typeof instruction === "object"
+                          ? "Add a header, e.g, For the gravy"
+                          : index === 0
+                          ? "e.g. Pre heat the oven to 350 degrees F"
+                          : index === 1
+                          ? "e.g. Pour into  grease trays and bake for 15-20 minutes"
                           : "Add another instruction"
                       }
-                      value={instruction}
+                      value={
+                        typeof instruction === "object"
+                          ? instruction.header
+                          : instruction
+                      }
                       name="instructions"
                       key={`instruction-${index}`}
                     />
@@ -837,6 +896,12 @@ const AddRecipe = () => {
                 }
               >
                 Add instruction
+              </MyButton>
+              <MyButton
+                type={"button"}
+                clickFunction={() => addHeaderHandler("instructions")}
+              >
+                Add header
               </MyButton>
             </div>
 
