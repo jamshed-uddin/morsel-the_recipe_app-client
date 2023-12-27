@@ -3,20 +3,18 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import HomeMain from "./Pages/HomeMain/HomeMain.jsx";
-import Login from "./Pages/Login/Login.jsx";
+import { QueryClient, QueryClientProvider } from "react-query";
 
+import Login from "./Pages/Login/Login.jsx";
 import RecipesPage from "./Pages/RecipesPage/RecipesPage.jsx";
 import BlogsPage from "./Pages/BlogsPage/BlogsPage.jsx";
 import AccountPage from "./Pages/AccountPage/AccountPage.jsx";
 import Registration from "./Pages/Register/Registration.jsx";
 import AddRecipe from "./Pages/AddRecipe/AddRecipe.jsx";
 import AddBlog from "./Pages/AddBlog/AddBlog.jsx";
-
 import AuthProvider from "./providers/AuthProvider.jsx";
 import RecipeDetail from "./Components/RecipeDetail/RecipeDetail.jsx";
 import BlogDetail from "./Components/BlogDetail/BlogDetail.jsx";
-import { QueryClient, QueryClientProvider } from "react-query";
 import PasswordReset from "./Pages/Login/PasswordReset.jsx";
 import Overview from "./Pages/AdminDashboard/Overview/Overview.jsx";
 import ManageUsers from "./Pages/AdminDashboard/ManageUsers/ManageUsers.jsx";
@@ -31,6 +29,7 @@ import RecipesAndBlogsProvider from "./providers/recipesAndBlogsProvider.jsx";
 import ScrollTop from "./ScrollTop.jsx";
 
 import ErrorPage from "./Pages/ErrorPage.jsx";
+import LandingPage from "./Pages/LandingPage/LandingPage.jsx";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -47,7 +46,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <HomeMain></HomeMain>,
+        element: <LandingPage></LandingPage>,
       },
 
       {

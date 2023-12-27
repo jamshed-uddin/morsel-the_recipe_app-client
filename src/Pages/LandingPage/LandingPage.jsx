@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import { Suspense, lazy } from "react";
 import Banner from "./Banner/Banner";
 // import Blogs from "./Blogs/Blogs";
 // import CreateARecipe from "./CreateARecipe/CreateARecipe";
@@ -13,8 +13,10 @@ const LandingPage = () => {
       <Banner />
       <Trending />
       <Recipes />
-      <CreateARecipe />
-      <Blogs />
+      <Suspense fallback={<div className="bg-bgColor h-screen"></div>}>
+        <CreateARecipe />
+        <Blogs />
+      </Suspense>
     </div>
   );
 };

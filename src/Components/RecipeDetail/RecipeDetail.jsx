@@ -391,7 +391,7 @@ const RecipeDetail = () => {
         </div>
 
         {/* recipe body */}
-        <div className="mt-10 space-y-4">
+        <div className="mt-8 space-y-6">
           {/* cooktime preptime servings */}
           <div className="md:w-3/4 lg:w-1/2  flex print:gap-5 items-center  justify-between print:justify-normal">
             <div className=" flex items-center">
@@ -438,22 +438,36 @@ const RecipeDetail = () => {
 
             {recipeDetail?.ingredients?.map((ingredient, index) => (
               <p key={index} className="text-xl">
-                {ingredient}
+                {ingredient.header ? (
+                  <span className="text-xl font-semibold ">
+                    {ingredient.header}
+                  </span>
+                ) : (
+                  ingredient
+                )}
               </p>
             ))}
           </div>
           {/* instructions */}
-          <div className="">
+          <div>
             <div className="">
               <h1 className="text-3xl">Instructions</h1>
             </div>
 
             {recipeDetail?.instructions?.map((instruction, index) => (
               <div key={index} className="text-xl mb-5">
-                <h3 className="font-semibold">
-                  {instruction && `Step ${index + 1}`}
-                </h3>
-                <p> {instruction && instruction}</p>
+                {instruction.header ? (
+                  <span className="text-xl font-semibold ">
+                    {instruction.header}
+                  </span>
+                ) : (
+                  <>
+                    <h3 className="font-semibold">
+                      {instruction && `Step ${index + 1}`}
+                    </h3>
+                    <p> {instruction && instruction}</p>
+                  </>
+                )}
               </div>
             ))}
           </div>

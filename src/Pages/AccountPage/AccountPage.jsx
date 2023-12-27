@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import InsertPhotoOutlinedIcon from "@mui/icons-material/InsertPhotoOutlined";
+
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import Checkbox from "@mui/material/Checkbox";
 import AddBtn from "../../Components/AddBtn/AddBtn";
+import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import { Avatar, CircularProgress, Dialog } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +16,9 @@ import { useQuery } from "react-query";
 import MyItems from "./MyItems";
 import AccountPageSkeleton from "../../Components/Skeletons/AccountPageSkeleton";
 import MyButton from "../../Components/Button/MyButton";
+import deletePhotoFromCloud from "../../Components/MyFunctions/deletePhotoFromCloud";
+import uploadPhotoToCloud from "../../Components/MyFunctions/uploadPhotoToCloud";
+import useUpdateProfile from "../../hooks/useUpdateProfile";
 
 const AccountPage = () => {
   const [activeTab, setActiveTab] = useState("myRecipes");
@@ -25,79 +28,35 @@ const AccountPage = () => {
   const [open, setOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
-  const [profileUpdateLoading, setProfileUpdateLoading] = useState(false);
+  const [photoUploadLoading, setPhotoUploadLoading] = useState(false);
+
   const [modalContent, setModalContent] = useState("");
   const { user, userLogout, updateUserNamePhoto, deleteUserHandler } =
     useAuthContext();
   const { currentUser, currentUserLoading } = useSingleUser();
-  const [profilePhotoURL, setProfilePhotoURL] = useState(user?.photoURL);
+  const { updateProfile } = useUpdateProfile();
+  const [profilePhotoURL, setProfilePhotoURL] = useState(user && user.photoURL);
 
   const navigate = useNavigate();
 
-  // setting modal open
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  // console.log(updateProfile);
 
-  // setting modal close
-  const handleClose = () => {
-    setOpen(false);
-    // setChecked(false);
-  };
-
-  // user logout funciton(firebase)
-  const handleLogout = () => {
-    userLogout().then(navigate("/"));
-  };
-
-  // uploading changed profile photo to cloudinary
-  const handleProfilePhotoChange = async (e) => {
-    const file = e.target.files[0];
-
-    const previewUrl = URL.createObjectURL(file);
-    setProfilePhotoURL(previewUrl);
-
-    if (file) {
-      const imageData = new FormData();
-      imageData.append("file", file);
-      imageData.append("upload_preset", import.meta.env.VITE_UPLOAD_PRESET);
-      setLoading(true);
-      setShowImgTooltip((prev) => !prev);
-      await axios
-        .post(
-          `https://api.cloudinary.com/v1_1/${
-            import.meta.env.VITE_CLOUD_NAME
-          }/image/upload`,
-          imageData
-        )
-        .then((response) => {
-          if (response) {
-            const cloudImageUrl = response.data.secure_url;
-
-            setProfilePhotoURL(cloudImageUrl);
-          }
-
-          setLoading(false);
-        })
-        .catch(() => {
-          setLoading(false);
-        });
-    }
-  };
+  // console.log(user);
+  // console.log(currentUser);
 
   // for the setting button and image select button to close when clicked outside
   useEffect(() => {
     const handleOutsideClick = (e) => {
       if (
         showSettings &&
-        !document.querySelector("#settings").contains(e.target)
+        !document.querySelector("#settings")?.contains(e.target)
       ) {
         setShowSettings((prev) => !prev);
       }
 
       if (
         showImgTooltip &&
-        !document.querySelector("#imgTooltip").contains(e.target)
+        !document.querySelector("#imgTooltip")?.contains(e.target)
       ) {
         setShowImgTooltip((prev) => !prev);
       }
@@ -145,39 +104,94 @@ const AccountPage = () => {
     }
   }, [data]);
 
-  // console.log(myItems);
+  // setting modal open
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  // setting modal close
+  const handleClose = () => {
+    setOpen(false);
+    // setChecked(false);
+  };
+
+  // user logout funciton(firebase)
+  const handleLogout = () => {
+    userLogout().then(navigate("/"));
+  };
+
+  // uploading changed profile photo to cloudinary
+  const handleProfilePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    const previewURL = URL.createObjectURL(file);
+    setProfilePhotoURL(previewURL);
+
+    setShowImgTooltip(false);
+    if (file) {
+      try {
+        setPhotoUploadLoading(true);
+        await uploadPhotoToCloud(file).then(async (res) => {
+          const cloudImageUrl = res.data.secure_url;
+          setPhotoUploadLoading(false);
+          setProfilePhotoURL(cloudImageUrl);
+
+          const response = await updateProfile(
+            user?.displayName,
+            cloudImageUrl,
+            currentUser?.bio
+          );
+          console.log(response);
+        });
+      } catch (error) {
+        setPhotoUploadLoading(false);
+      }
+    }
+  };
 
   // profile info updating function for both firebase and DB
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
 
     const updatedProfile = {
-      ...(e.target.name.value && { name: e.target.name.value }),
-      photoURL: profilePhotoURL || "",
-      ...(e.target.bio.value && { bio: e.target.bio.value }),
+      name: e.target.name.value,
+      bio: e.target.bio.value,
     };
     // console.log(updatedProfile);
 
     try {
-      setProfileUpdateLoading(true);
-      await axios
-        .put(
-          `${import.meta.env.VITE_BASEURL}/updateUser/${user?.email}`,
-          updatedProfile
-        )
-        .then(() => {
-          updateUserNamePhoto(
-            updatedProfile.name,
-            updatedProfile.photoURL
-          ).then(() => {
-            setProfileUpdateLoading(false);
-            handleClose();
-          });
-        });
+      setLoading(true);
+
+      const response = await updateProfile(
+        updatedProfile.name,
+        user?.photoURL,
+        updatedProfile.bio
+      );
+
+      console.log(response);
+
+      setLoading(false);
+      handleClose();
     } catch (error) {
-      setProfileUpdateLoading(false);
+      setLoading(false);
       return null;
     }
+  };
+
+  const removeProfilePhoto = async () => {
+    setProfilePhotoURL("");
+    setShowImgTooltip(false);
+    const response = await deletePhotoFromCloud(
+      profilePhotoURL || user?.photoURL
+    );
+    console.log(response);
+
+    const dbAndFirebaseResponse = await updateProfile(
+      user?.displayName,
+      "",
+      currentUser?.bio
+    );
+
+    console.log(dbAndFirebaseResponse);
   };
 
   // delete account handler
@@ -226,14 +240,54 @@ const AccountPage = () => {
         <div className="flex flex-col md:flex-row items-start justify-between space-y-6 px-2 md:px-2 lg:px-0">
           {/* user info */}
           <div className="lg:flex items-center gap-5 md:w-4/5 space-y-3">
-            <div>
-              <Avatar
-                sx={{ width: 135, height: 135 }}
-                src={
-                  user?.photoURL ||
-                  `https://i.ibb.co/Twp960D/default-profile-400x400.png`
-                }
-              />
+            <div className="flex justify-center  select-none">
+              <div id="imgTooltip" className="relative ">
+                <Avatar
+                  sx={{ width: 135, height: 135 }}
+                  className="w-32 rounded-full object-cover"
+                  src={profilePhotoURL}
+                  alt={`${user?.displayName}'s photo`}
+                />
+
+                {/* tooltip opener button */}
+                <button
+                  onClick={() => setShowImgTooltip((prev) => !prev)}
+                  className="w-fit rounded bg-white absolute right-2 bottom-2 cursor-pointer active:scale-95 shadow"
+                >
+                  <DriveFileRenameOutlineOutlinedIcon />
+                </button>
+                {/* image tooltip */}
+                <div
+                  className={`bg-white flex gap-2 md:gap-5 rounded-lg px-1 md:px-3 shadow-lg absolute bottom-2 -right-20 md:-right-28 ${
+                    !showImgTooltip && "hidden"
+                  }`}
+                >
+                  <div className="bg-slate-50 p-1  rounded-lg text-lg cursor-pointer">
+                    <label className="cursor-pointer" htmlFor="profilePhoto">
+                      <AddPhotoAlternateOutlinedIcon />
+                    </label>
+                    <input
+                      onChange={handleProfilePhotoChange}
+                      type="file"
+                      name="profilePhoto"
+                      id="profilePhoto"
+                      className="hidden"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={removeProfilePhoto}
+                    className="bg-slate-50 p-1  rounded-lg text-lg cursor-pointer"
+                  >
+                    <DeleteOutlinedIcon />
+                  </button>
+                </div>
+                {photoUploadLoading ? (
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <CircularProgress size={50} sx={{ color: "white" }} />
+                  </div>
+                ) : null}
+              </div>
             </div>
 
             <div>
@@ -354,75 +408,17 @@ const AccountPage = () => {
         <div className="h-[70vh] md:h-[90vh] pt-10 bg-bgColor text-colorTwo">
           {/* update profile info  */}
           {modalContent === "editProfile" && (
-            <div className="w-[90%] mx-auto ">
-              {/* image div */}
-              <div className="flex justify-center  select-none">
-                <div id="imgTooltip" className="relative ">
-                  <Avatar
-                    sx={{ width: 135, height: 135 }}
-                    className="w-32 rounded-full object-cover"
-                    src={
-                      profilePhotoURL ||
-                      `https://i.ibb.co/Twp960D/default-profile-400x400.png`
-                    }
-                    alt={`${user?.displayName}'s photo`}
-                  />
-
-                  {/* tooltip opener button */}
-                  <button
-                    onClick={() => setShowImgTooltip((prev) => !prev)}
-                    className="w-fit rounded bg-white absolute right-2 bottom-2 cursor-pointer active:scale-95 shadow"
-                  >
-                    <DriveFileRenameOutlineOutlinedIcon />
-                  </button>
-                  {/* image tooltip */}
-                  <div
-                    className={`bg-white  rounded-lg p-2 shadow-lg space-y-2 absolute bottom-10 md:bottom-3 -right-20 md:-right-44 ${
-                      !showImgTooltip && "hidden"
-                    }`}
-                  >
-                    <div className="bg-slate-50 p-1  rounded-lg text-lg cursor-pointer">
-                      <label className="cursor-pointer" htmlFor="profilePhoto">
-                        <InsertPhotoOutlinedIcon /> Choose photo
-                      </label>
-                      <input
-                        onChange={handleProfilePhotoChange}
-                        type="file"
-                        name="profilePhoto"
-                        id="profilePhoto"
-                        className="hidden"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setProfilePhotoURL("")}
-                      className="bg-slate-50 p-1  rounded-lg text-lg cursor-pointer"
-                    >
-                      <DeleteOutlinedIcon /> Remove photo
-                    </button>
-                  </div>
-
-                  {/* progress for photo while changing */}
-                  <CircularProgress
-                    variant="indeterminate"
-                    sx={{
-                      display: loading ? "block" : "none",
-                      color: "#F31559",
-                      position: "absolute",
-                      top: "35%",
-                      bottom: "50%",
-                      left: "35%",
-                      right: "50%",
-                    }}
-                  />
-                </div>
+            <div className="w-[90%] mx-auto space-y-4">
+              <div>
+                <h1 className="text-4xl font-semibold">Edit profile</h1>
               </div>
-
               {/* update form div */}
               <div className="space-y-2">
-                <form onSubmit={handleUpdateProfile}>
+                <form onSubmit={handleUpdateProfile} className="space-y-2">
                   <div>
-                    <label htmlFor="name">Name</label>
+                    <label className="text-xl font-semibold" htmlFor="name">
+                      Name
+                    </label>
                     <input
                       id="name"
                       name="name"
@@ -432,7 +428,9 @@ const AccountPage = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="bio">Bio</label>
+                    <label className="text-xl font-semibold" htmlFor="bio">
+                      Bio
+                    </label>
                     <textarea
                       id="bio"
                       name="bio"
@@ -440,11 +438,7 @@ const AccountPage = () => {
                     ></textarea>
                   </div>
                   <div>
-                    <MyButton
-                      disabledForOthers={loading}
-                      loading={profileUpdateLoading}
-                      type={"submit"}
-                    >
+                    <MyButton loading={loading} type={"submit"}>
                       Save
                     </MyButton>
 

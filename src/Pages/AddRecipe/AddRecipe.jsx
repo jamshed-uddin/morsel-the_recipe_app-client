@@ -272,9 +272,8 @@ const AddRecipe = () => {
   // function for showing alert before user reload or goes back while changes made in form.
   useEffect(() => {
     if (
-      formState.instructions.length === 1 &&
-      formState.ingredients.length === 1 &&
-      !formState.ingredients[0]
+      formState.instructions.length <= 1 &&
+      formState.ingredients.length <= 1
     ) {
       return;
     }
@@ -285,27 +284,11 @@ const AddRecipe = () => {
       e.returnValue = confirmationMessage;
       return confirmationMessage;
     };
-    //TODO: prevent route change
-    // const handleRouteChange = (currentLocation) => {
-    //   const confirmationMessage = "Are you sure you want to leave this page?";
-
-    //   if (!window.confirm(confirmationMessage)) {
-    //     window.history.pushState(null, currentLocation);
-    //   }
-    // };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
-    // window.addEventListener(
-    //   "popstate",
-    //   handleRouteChange(window.location.href)
-    // );
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      // window.removeEventListener(
-      //   "popstate",
-      //   handleRouteChange(window.location.href)
-      // );
     };
   }, [formState.ingredients, formState.instructions]);
 
@@ -321,12 +304,16 @@ const AddRecipe = () => {
     //for better user experience creating another input field when user types in initial input field.
     //now user can manually add field or just type in current field and new input field will appear.
     const field = formState[name]; //got the ingredients/instructions array..
-    if (field[index + 1] === undefined) {
+    if (
+      field[index + 1] === undefined &&
+      (typeof field[index] !== "object" ||
+        field.indexOf(field[index]) === field.length - 1)
+    ) {
       dispatch({ type: "ADD_FIELD", name: name });
     }
 
     //following condition to remove newly created field when user emptys the current field
-    if (value === "") {
+    if (value === "" && typeof field[index] !== "object") {
       dispatch({
         type: "REMOVE_FIELD",
         name: name,
@@ -370,10 +357,12 @@ const AddRecipe = () => {
 
   const addHeaderHandler = (field) => {
     if (
-      (field[0].header || field[0].header === "") &&
-      (field[field.length - 1].header || field[field.length - 1].header === "")
-    )
+      typeof formState[field][0] === "object" &&
+      typeof formState[field][formState[field].length - 1] === "object"
+    ) {
       return;
+    }
+
     dispatch({ type: "ADD_HEADER", name: field });
   };
 
@@ -506,12 +495,12 @@ const AddRecipe = () => {
     } else {
       newErrorObj.recipeName = "";
     }
-    if (form.ingredients.every((ingredient) => !ingredient.trim())) {
+    if (form.ingredients.every((ingredient) => !ingredient)) {
       newErrorObj.ingredients = "Ingredients is required";
     } else {
       newErrorObj.ingredients = "";
     }
-    if (form.instructions.every((instruction) => !instruction.trim())) {
+    if (form.instructions.every((instruction) => !instruction)) {
       newErrorObj.instructions = "Instructions is required";
     } else {
       newErrorObj.instructions = "";
@@ -567,6 +556,7 @@ const AddRecipe = () => {
           formState
         )
         .then((result) => {
+          console.log("updatedRecipe", result);
           setLoading(false);
           navigate(`/recipe/detail/${result.data.id}`);
           //id here is coming from created recipe.and using it to navigate to detail page after updating
@@ -776,7 +766,12 @@ const AddRecipe = () => {
               </div>
               <div>
                 {formState.ingredients.map((ingredient, index) => (
-                  <div key={index} className="relative mb-2">
+                  <div
+                    key={index}
+                    className={`relative mb-2 ${
+                      typeof ingredient === "object" ? "font-semibold" : ""
+                    }`}
+                  >
                     <input
                       onChange={(e) =>
                         handleInputValue(e.target.name, e.target.value, index)
@@ -847,7 +842,12 @@ const AddRecipe = () => {
               </div>
               <div>
                 {formState.instructions.map((instruction, index) => (
-                  <div key={index} className="relative ">
+                  <div
+                    key={index}
+                    className={`relative  ${
+                      typeof instruction === "object" ? "font-semibold" : ""
+                    }`}
+                  >
                     <textarea
                       onChange={(e) =>
                         handleInputValue(e.target.name, e.target.value, index)

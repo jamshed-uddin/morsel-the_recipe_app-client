@@ -11,6 +11,7 @@ import useSingleUser from "../../hooks/useSingleUser";
 import AlertDialog from "../AlertDialog/AlertDialog";
 import useRecipesBlogsData from "../../hooks/useRecipesBlogsData";
 import axios from "axios";
+import NotificationIcon from "./NotificationIcon";
 
 const Navbar = () => {
   const [showNav, setShowNav] = useState(false);
@@ -86,17 +87,10 @@ const Navbar = () => {
 
             {/* notification icon */}
             {user ? (
-              <div
-                onClick={openNotifications}
-                className="link relative w-fit cursor-pointer"
-              >
-                <NotificationsOutlinedIcon sx={{ fontSize: 28 }} />
-                {unreadAvailable && (
-                  <div className="absolute top-1 right-0 pl-[1.5px] pt-[1.6px]   w-3 h-3 rounded-full bg-white">
-                    <p className="w-2 h-2 rounded-full bg-colorTwo"></p>
-                  </div>
-                )}
-              </div>
+              <NotificationIcon
+                clickFunction={openNotifications}
+                unreadAvailable={unreadAvailable}
+              />
             ) : null}
 
             <div className={`${!user && "link"}`}>
@@ -110,10 +104,7 @@ const Navbar = () => {
                 >
                   <div className="flex items-center  rounded-3xl cursor-pointer">
                     <Avatar
-                      src={
-                        user.photoURL ||
-                        "https://i.ibb.co/Twp960D/default-profile-400x400.png"
-                      }
+                      src={user?.photoURL}
                       sx={{ width: "35px", height: "35px" }}
                     ></Avatar>
 
@@ -136,16 +127,11 @@ const Navbar = () => {
 
         {/* notification icon */}
         {user ? (
-          <div
-            onClick={openNotifications}
-            className="relative w-fit right-16 bottom-1 text-colorOne cursor-pointer"
-          >
-            <NotificationsOutlinedIcon sx={{ fontSize: 40 }} />
-            {unreadAvailable && (
-              <div className="absolute top-1 right-0 pl-[1.5px] pt-[1.6px]   w-3 h-3 rounded-full bg-white">
-                <p className="w-2 h-2 rounded-full bg-colorTwo"></p>
-              </div>
-            )}
+          <div className="relative w-fit right-16 bottom-1 text-colorOne cursor-pointer">
+            <NotificationIcon
+              clickFunction={openNotifications}
+              unreadAvailable={unreadAvailable}
+            />
           </div>
         ) : null}
 

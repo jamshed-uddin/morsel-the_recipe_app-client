@@ -7,7 +7,7 @@ const MyItems = ({ isLoading, myItems, activeTab }) => {
   if (isLoading) {
     return (
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 ">
-        {[1, 2, 3].map((index, el) => (
+        {[1, 2, 3].map((_, index) => (
           <CardSkeleton key={index} />
         ))}
       </div>
@@ -36,7 +36,7 @@ const MyItems = ({ isLoading, myItems, activeTab }) => {
             No blog created!
           </p>
           <p className="text-xl text-colorOne text-center ">
-            <Link to={"/addrecipe"}>Create a blog +</Link>
+            <Link to={"/addblog"}>Create a blog +</Link>
           </p>
         </div>
       </div>
