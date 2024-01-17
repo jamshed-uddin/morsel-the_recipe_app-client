@@ -6,14 +6,16 @@ import Trending from "./Trending/Trending";
 
 const LandingPage = () => {
   return (
-    <div className="my-container">
+    <>
       <Banner />
-      <Trending />
-      <Recipes />
+      <div className="my-container">
+        <Trending />
+        <Recipes />
 
-      <CreateARecipe />
-      <Blogs />
-    </div>
+        <CreateARecipe />
+        <Blogs />
+      </div>
+    </>
   );
 };
 

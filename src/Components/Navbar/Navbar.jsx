@@ -64,7 +64,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`print:hidden px-3 lg:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor select-none
+      className={`print:hidden px-3 lg:px-24 fixed top-0 right-0 left-0 z-50 h-14 flex items-center transition-all duration-500 bg-bgColor select-none 
     ${scrollingDown ? "-translate-y-16" : "-translate-0"}`}
     >
       {/* desktop nav */}
@@ -75,12 +75,12 @@ const Navbar = () => {
           </h2>
         </div>
         <div className="hidden lg:block">
-          <div className="link-container flex items-center gap-10 text-colorOne font-medium text-2xl  ">
+          <div className="link-container flex items-center gap-10 text-colorOne font-medium text-xl  ">
             {pathname !== "/search" && (
               <div>
                 <Link to={"/search"}>
-                  <p className="border-2 border-colorOne pl-14 pr-1 rounded-2xl">
-                    <SearchOutlinedIcon sx={{ fontSize: 28 }} />
+                  <p className="border-[1.5px] border-colorOne pl-14 pr-1 rounded-2xl">
+                    <SearchOutlinedIcon sx={{ fontSize: 25 }} />
                   </p>
                 </Link>
               </div>
@@ -143,7 +143,7 @@ const Navbar = () => {
             {pathname !== "/search" && (
               <div>
                 <Link to={"/search"}>
-                  <p className="border-2 border-colorOne pl-14 pr-1 rounded-2xl">
+                  <p className="border-[1.5px] border-colorOne pl-14 pr-1 rounded-2xl">
                     <SearchOutlinedIcon sx={{ fontSize: 28 }} />
                   </p>
                 </Link>

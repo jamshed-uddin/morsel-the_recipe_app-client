@@ -47,7 +47,7 @@ const Trending = () => {
   }
 
   return (
-    <div className="mt-8">
+    <div className="-mt-8">
       <div className={`overflow-hidden  mb-2`}>
         <div
           className={` transition-all duration-700 ${
