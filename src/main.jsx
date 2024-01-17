@@ -30,6 +30,7 @@ import ScrollTop from "./ScrollTop.jsx";
 
 import ErrorPage from "./Pages/ErrorPage.jsx";
 import LandingPage from "./Pages/LandingPage/LandingPage.jsx";
+import SearchPage from "./Pages/SearchPage/SearchPage.jsx";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -61,6 +62,11 @@ const router = createBrowserRouter([
         path: "blogs",
         element: <BlogsPage></BlogsPage>,
       },
+      {
+        path: "search",
+        element: <SearchPage></SearchPage>,
+      },
+
       {
         path: "blog/detail/:id",
         element: <BlogDetail></BlogDetail>,

@@ -28,7 +28,7 @@ const MyButton = ({
         {children}
       </button>
       {loading ? (
-        <p className="absolute top-[72%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 ">
+        <p className="absolute top-[60%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-fit">
           <CircularProgress size={37} sx={{ color: "white" }} />
         </p>
       ) : null}

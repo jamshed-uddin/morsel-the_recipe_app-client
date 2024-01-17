@@ -4,11 +4,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import CardSkeleton from "../../../Components/Skeletons/CardSkeleton";
 import useRecipesBlogsData from "../../../hooks/useRecipesBlogsData";
+import Title from "../../../Components/Title";
 
 const Trending = () => {
   const [recipes, setRecipes] = useState([]);
   const [showTitle, setShowTitle] = useState(false);
-  const { trendingRecipes, recipesLoading } = useRecipesBlogsData();
+  const { trendingRecipes, trendingQuickVoicesLoading } = useRecipesBlogsData();
 
   useEffect(() => {
     let prevScrollY = window.scrollY;
@@ -33,7 +34,7 @@ const Trending = () => {
     };
   }, [showTitle]);
 
-  if (recipesLoading) {
+  if (trendingQuickVoicesLoading) {
     return (
       <div className="mt-12">
         <div className=" md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
@@ -48,13 +49,13 @@ const Trending = () => {
   return (
     <div className="mt-8">
       <div className={`overflow-hidden  mb-2`}>
-        <h1
-          className={`text-3xl md:text-4xl  text-colorOne transition-all duration-700  ${
+        <div
+          className={` transition-all duration-700 ${
             showTitle ? "translate-y-0 " : "translate-y-14 opacity-0"
           }`}
         >
-          Trending this week
-        </h1>
+          <Title> Trending this week</Title>
+        </div>
       </div>
       <div
         className=" md:grid 

@@ -2,11 +2,12 @@ import Card from "../../../Components/Card/Card";
 import CardSkeleton from "../../../Components/Skeletons/CardSkeleton";
 import "./Recipes.css";
 import useRecipesBlogsData from "../../../hooks/useRecipesBlogsData";
+import Title from "../../../Components/Title";
 
 const Recipes = () => {
-  const { quickRecipes, recipesLoading } = useRecipesBlogsData();
+  const { quickRecipes, trendingQuickVoicesLoading } = useRecipesBlogsData();
 
-  if (recipesLoading) {
+  if (trendingQuickVoicesLoading) {
     return (
       <div className="mt-12">
         <div className={`  mb-1`}>
@@ -26,9 +27,7 @@ const Recipes = () => {
   return (
     <div className="mt-4 md:mt-12">
       <div className={`  mb-1`}>
-        <h1 className={`text-3xl md:text-5xl text-colorOne`}>
-          Cook something quick
-        </h1>
+        <Title> Cook something quick</Title>
       </div>
       <div
         id="recipesContainer"

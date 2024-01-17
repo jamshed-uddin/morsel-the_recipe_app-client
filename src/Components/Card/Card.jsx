@@ -21,7 +21,7 @@ const Card = ({ itemType, item, placedIn }) => {
         {/* images */}
         <div
           id="image-container"
-          className={`w-full select-none h-[20rem] md:h-[23rem] ${
+          className={`w-full select-none h-[19rem] md:h-[23rem] ${
             itemType?.toLowerCase() === "blog" ? "rounded-none " : "rounded-2xl"
           }  relative overflow-hidden`}
         >
@@ -29,17 +29,18 @@ const Card = ({ itemType, item, placedIn }) => {
             className={`w-full h-full object-cover  object-center ${
               itemType?.toLowerCase() === "blog" ? "" : "rounded-2xl"
             } `}
+            draggable="false"
             src={
               (itemType?.toLowerCase() === "blog" &&
                 (item?.previewImage || cardThumb)) ||
               (itemType?.toLowerCase() === "recipe" &&
                 (item?.recipeImages?.at(0) || cardThumb))
             }
-            alt={
+            alt={`Image of ${
               itemType?.toLowerCase() === "blog"
                 ? item?.title
                 : item?.recipeName
-            }
+            }`}
             loading="lazy"
           />
 
@@ -61,16 +62,16 @@ const Card = ({ itemType, item, placedIn }) => {
         </div>
 
         {/* other info */}
-        <div className="">
-          <div className="text-colorTwo mt-3 pl-1">
-            {itemType?.toLowerCase() === "recipe" ? (
-              <h2 className="text-2xl leading-5 font-medium">
-                {item?.recipeName}
-              </h2>
-            ) : (
-              <h2 className="text-2xl leading-5 font-medium">{item?.title}</h2>
-            )}
-            <>
+        <div>
+          <div className="text-colorTwo mt-3 pl-1 ">
+            <div className="text-xl md:text-2xl font-medium tracking-tight">
+              {itemType?.toLowerCase() === "recipe" ? (
+                <h2 className="leading-5 ">{item?.recipeName}</h2>
+              ) : (
+                <h2 className="leading-5 ">{item?.title}</h2>
+              )}
+            </div>
+            <div>
               {itemType?.toLowerCase() === "recipe" && (
                 <div
                   className={` text-sm md:text-lg mt-1 flex items-center gap-2 md:gap-4 leading-5 md:leading-normal`}
@@ -83,7 +84,7 @@ const Card = ({ itemType, item, placedIn }) => {
                   </p>
                 </div>
               )}
-            </>
+            </div>
           </div>
         </div>
       </Link>

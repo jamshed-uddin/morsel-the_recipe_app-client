@@ -1,8 +1,8 @@
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
-import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./Navbar.css";
 import { Avatar } from "@mui/material";
 
@@ -21,6 +21,7 @@ const Navbar = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const { unreadAvailable, setUnreadAvailable, notifications } =
     useRecipesBlogsData();
+  const { pathname } = useLocation();
 
   useEffect(() => {
     if (showNav) {
@@ -63,7 +64,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`print:hidden px-3 lg:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor 
+      className={`print:hidden px-3 lg:px-24 fixed top-0 right-0 left-0 z-50 h-16 flex items-center transition-all duration-500 bg-bgColor select-none
     ${scrollingDown ? "-translate-y-16" : "-translate-0"}`}
     >
       {/* desktop nav */}
@@ -74,7 +75,16 @@ const Navbar = () => {
           </h2>
         </div>
         <div className="hidden lg:block">
-          <div className="link-container flex items-center gap-16 text-colorOne font-medium text-xl  ">
+          <div className="link-container flex items-center gap-10 text-colorOne font-medium text-2xl  ">
+            {pathname !== "/search" && (
+              <div>
+                <Link to={"/search"}>
+                  <p className="border-2 border-colorOne pl-14 pr-1 rounded-2xl">
+                    <SearchOutlinedIcon sx={{ fontSize: 28 }} />
+                  </p>
+                </Link>
+              </div>
+            )}
             <div className={`link`}>
               <Link to={"/"}>Home</Link>
             </div>
@@ -86,7 +96,8 @@ const Navbar = () => {
             </div>
 
             {/* notification icon */}
-            {user ? (
+
+            {user && currentUser?.role !== "admin" ? (
               <NotificationIcon
                 clickFunction={openNotifications}
                 unreadAvailable={unreadAvailable}
@@ -126,14 +137,26 @@ const Navbar = () => {
         {/* nav icon and it's transition classes */}
 
         {/* notification icon */}
-        {user ? (
-          <div className="relative w-fit right-16 bottom-1 text-colorOne cursor-pointer">
-            <NotificationIcon
-              clickFunction={openNotifications}
-              unreadAvailable={unreadAvailable}
-            />
+
+        <div className="relative w-fit right-14 bottom-1 text-colorOne cursor-pointer">
+          <div className="flex items-center gap-3">
+            {pathname !== "/search" && (
+              <div>
+                <Link to={"/search"}>
+                  <p className="border-2 border-colorOne pl-14 pr-1 rounded-2xl">
+                    <SearchOutlinedIcon sx={{ fontSize: 28 }} />
+                  </p>
+                </Link>
+              </div>
+            )}
+            {user && currentUser?.role !== "admin" ? (
+              <NotificationIcon
+                clickFunction={openNotifications}
+                unreadAvailable={unreadAvailable}
+              />
+            ) : null}
           </div>
-        ) : null}
+        </div>
 
         <div
           onClick={() => setShowNav(!showNav)}

@@ -2,13 +2,14 @@
 import Card from "../../../Components/Card/Card";
 
 import CardSkeleton from "../../../Components/Skeletons/CardSkeleton";
+import Title from "../../../Components/Title";
 
 import useRecipesBlogsData from "../../../hooks/useRecipesBlogsData";
 
 const Blogs = () => {
-  const { blogs, blogsLoading } = useRecipesBlogsData();
+  const { morselVoices, trendingQuickVoicesLoading } = useRecipesBlogsData();
 
-  if (blogsLoading) {
+  if (trendingQuickVoicesLoading) {
     return (
       <div className="mt-12">
         <div className=" md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
@@ -22,17 +23,15 @@ const Blogs = () => {
 
   return (
     <div className="mt-4 md:mt-12">
-      <div className={`overflow-hidden  mb-1`}>
-        <h1 className={`text-3xl md:text-5xl text-colorOne  `}>
-          Morsel voices
-        </h1>
+      <div className={`  mb-1`}>
+        <Title>Morsel voices</Title>
       </div>
       <div
         id="outer-container"
         className=" overflow-x-auto lg:overflow-hidden pb-7 md:py-0"
       >
         <div className="w-max flex flex-nowrap lg:grid   lg:grid-cols-3 gap-x-6  md:gap-y-6  ">
-          {blogs?.slice(0, 4).map((item, index) => (
+          {morselVoices?.map((item, index) => (
             <Card index={index} itemType="blog" item={item} key={index}></Card>
           ))}
         </div>

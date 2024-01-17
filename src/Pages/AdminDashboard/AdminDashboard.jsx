@@ -188,7 +188,7 @@ const AdminDashboard = (props) => {
           sx={{
             minHeight: "100vh",
             flexGrow: 1,
-            p: 3,
+            p: 2,
             width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
         >

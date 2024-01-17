@@ -40,16 +40,28 @@ const DashboardDataProvider = ({ children }) => {
     const result = await axios.get(`${import.meta.env.VITE_BASEURL}/allBlogs`);
     return result.data;
   });
+  const {
+    isLoading: isOverviewStateLoading,
+    data: overviewStates,
+    error: overviewStateFetchError,
+  } = useQuery(["overviewState"], async () => {
+    const result = await axios.get(
+      `${import.meta.env.VITE_BASEURL}/overviewStates`
+    );
+    return result.data;
+  });
 
-  // console.log(userData);
+  console.log(isOverviewStateLoading);
 
   const dashboardData = {
     userFetchLoading,
     recipesFetchLoading,
     blogsFetchLoading,
+    isOverviewStateLoading,
     userData,
     recipesData,
     blogsData,
+    overviewStates,
     setUsersRefetch,
     setRecipesRefetch,
     setBlogsRefetch,

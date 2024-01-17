@@ -1,20 +1,35 @@
-import { useState } from "react";
-import Card from "../../Components/Card/Card";
-import SearchBar from "../../Components/SearchBar/SearchBar";
 import CardSkeleton from "../../Components/Skeletons/CardSkeleton";
-import useRecipesBlogsData from "../../hooks/useRecipesBlogsData";
 import AddBtn from "../../Components/AddBtn/AddBtn";
+import MyButton from "../../Components/Button/MyButton";
+import useInfiniteData from "../../hooks/useInfiniteData";
+import ItemsComp from "./ItemsComp";
+import Title from "../../Components/Title";
+import useIntersect from "../../hooks/useIntersect";
+import { CircularProgress } from "@mui/material";
 
 const BlogsPage = () => {
-  const { blogs, blogsLoading } = useRecipesBlogsData();
-  const [searchResult, setSearchResult] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const {
+    data: blogs,
+    isLoading: blogsLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteData("/allBlogs/approved");
+
+  const fetchNextBlogsPageHandler = (isIntersecting) => {
+    if (isIntersecting && hasNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const loadMoreBlogsRef = useIntersect(fetchNextBlogsPageHandler);
+  console.log(loadMoreBlogsRef);
 
   if (blogsLoading) {
     return (
       <div className="my-container mt-20">
         <div>
-          <h1 className="uppercase text-5xl font-bold text-colorOne">Blogs</h1>
+          <Title>Blogs</Title>
         </div>
         <div className=" grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
           {[1, 2, 3].map((item, index) => (
@@ -27,32 +42,21 @@ const BlogsPage = () => {
 
   return (
     <div className="my-container mb-10 relative">
-      <div className="sticky top-0 left-0 right-0 z-40 pt-2 bg-bgColor flex">
-        <h1 className="uppercase text-5xl font-bold text-colorOne w-2/3">
-          Blogs
-        </h1>
-        <div className="flex-grow">
-          <SearchBar
-            data={blogs}
-            searchFor={"blog"}
-            setIsSearching={setIsSearching}
-            setSearchResult={setSearchResult}
-          />
-        </div>
+      <div className="sticky top-0 left-0 right-0 z-40 pt-2 bg-bgColor">
+        <Title>Blogs</Title>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 mt-8">
-        {isSearching ? (
-          searchResult.length ? (
-            searchResult.map((searchItem, index) => (
-              <Card itemType="blog" item={searchItem} key={index}></Card>
-            ))
-          ) : (
-            <div className="text-2xl ml-1 text-colorTwo">No blog found!</div>
-          )
-        ) : (
-          blogs?.map((item, index) => (
-            <Card itemType="blog" item={item} key={index}></Card>
-          ))
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 mt-5">
+        {blogs?.pages.map((blog, index) => (
+          <ItemsComp itemsType={"blogs"} key={index} items={blog} />
+        ))}
+      </div>
+      <div ref={loadMoreBlogsRef} className="flex justify-center mt-6 ">
+        {hasNextPage && (
+          <div className=" h-fit w-fit">
+            {isFetchingNextPage && (
+              <CircularProgress sx={{ color: "#F31559" }} />
+            )}
+          </div>
         )}
       </div>
       <AddBtn />

@@ -1,6 +1,5 @@
-import { Box, Tooltip } from "@mui/material";
+import { Box } from "@mui/material";
 import {
-  BarChart,
   BarPlot,
   ChartsAxisHighlight,
   ChartsTooltip,

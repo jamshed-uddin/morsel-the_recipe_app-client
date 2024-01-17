@@ -1,15 +1,18 @@
-const propsItems = ["Users", "Recipes", "Blogs"];
-const Totals = (props) => {
+import PieChartComp from "./PieChartComp";
+
+const propsItems = ["Recipes", "Blogs", "Users"];
+const Totals = ({ overviewStates }) => {
   return (
-    <div className="flex justify-center lg:justify-start mb-4">
-      <div className="md:flex gap-2 w-full md:w-fit">
-        {Object.keys(props).map((item, index) => (
-          <div
-            key={index}
-            className="text-2xl text-center py-8 px-14 shadow rounded-lg "
-          >
-            <div>
-              <p>{propsItems[index]} </p> <p>{props[item]?.length}</p>
+    <div className="flex  mb-4 ">
+      <div className="md:flex gap-1 w-full">
+        {Object.entries(overviewStates || {})?.map((arr, index) => (
+          <div key={index} className="shadow-md rounded-lg p-2 ">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg">{propsItems.at(index)}</h3>{" "}
+              <h3>Total: {arr.at(1).total}</h3>
+            </div>
+            <div className="flex justify-center">
+              <PieChartComp stateData={arr.at(1)} />
             </div>
           </div>
         ))}

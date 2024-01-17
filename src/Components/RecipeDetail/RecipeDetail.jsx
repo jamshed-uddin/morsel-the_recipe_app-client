@@ -33,29 +33,22 @@ const RecipeDetail = () => {
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [dialogFor, setDialogFor] = useState("delete");
   const [optionsLoading, setOptionsLoading] = useState(false);
-  const [recipeDetail, setRecipeDetail] = useState({});
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [recipeImageIndex, setRecipeImageIndex] = useState(0);
 
   const {
     isLoading,
-    data,
+    data: recipeDetail,
     error,
     refetch: recipeDetailRefetch,
-  } = useQuery("recipeDetail", async () => {
+  } = useQuery(["recipeDetail", id], async () => {
     const result = await axios.get(
       `${import.meta.env.VITE_BASEURL}/singleRecipe/${id}`
     );
     return result.data;
   });
-
-  useEffect(() => {
-    if (data) {
-      setRecipeDetail(data);
-    }
-  }, [data]);
-
+  console.log(recipeDetail);
   // is liked and is saved
   const {
     isLoading: isLikedAndSavedLoading,
@@ -182,7 +175,7 @@ const RecipeDetail = () => {
       <DetailSkeleton itemType={"Recipe"} />
     </div>
   ) : (
-    <div className="my-container lg:px-20 print:mx-12    text-colorTwo print:bg-bgColor">
+    <div className="my-container lg:px-20 print:mx-12 text-colorTwo print:bg-bgColor tracking-tight">
       <ReactHelmet
         title={`${recipeDetail?.recipeName}_Morsel`}
         descriptionContent={recipeDetail?.description}
@@ -212,46 +205,59 @@ const RecipeDetail = () => {
       <div>
         {/* recipe info and creator info */}
         <div
-          className="md:flex items-center justify-between
+          className="md:flex gap-4 items-center 
         "
         >
           {/* recipe images */}
-          <div className="print:hidden md:w-[45%] h-[60vh] md:h-[50vh] overflow-hidden rounded-tl-xl  rounded-tr-xl md:rounded-xl select-none relative ">
-            <span
-              onClick={() => {
-                setRecipeImageIndex((prev) => prev - 1);
-              }}
-              className={`${
-                recipeImageIndex === 0 ? "hidden" : ""
-              } absolute top-1/2 left-0 -translate-y-1/2 text-white cursor-pointer z-40`}
-            >
-              <ArrowBackIosOutlinedIcon />
-            </span>
-            {recipeDetail?.recipeImages?.map((image, index) => (
-              <img
-                key={index}
-                className={`object-cover absolute inset-0 h-full w-full transition-opacity duration-300 ease-linear ${
-                  recipeImageIndex === index ? "opacity-100" : "opacity-0"
-                }`}
-                src={image}
-                alt=""
-              />
-            ))}
-            <span
-              onClick={() => {
-                setRecipeImageIndex((prev) => prev + 1);
-              }}
-              className={`${
-                recipeImageIndex === recipeDetail?.recipeImages?.length - 1
-                  ? "hidden"
-                  : ""
-              } absolute top-1/2 right-0 -translate-y-1/2 text-white cursor-pointer z-40`}
-            >
-              <ArrowForwardIosOutlinedIcon />
-            </span>
+          <div className="print:hidden flex-grow h-[60vh] md:h-[55vh]">
+            <div className="w-full h-full overflow-hidden rounded-tl-xl  rounded-tr-xl md:rounded-xl select-none relative ">
+              <span
+                onClick={() => {
+                  setRecipeImageIndex((prev) => prev - 1);
+                }}
+                className={`${
+                  recipeImageIndex === 0 ? "hidden" : ""
+                } absolute top-1/2 left-0 -translate-y-1/2 text-white cursor-pointer z-40`}
+              >
+                <ArrowBackIosOutlinedIcon />
+              </span>
+              {recipeDetail?.recipeImages &&
+              recipeDetail?.recipeImages.length ? (
+                recipeDetail?.recipeImages?.map((image, index) => (
+                  <img
+                    key={index}
+                    className={`object-cover absolute inset-0 h-full w-full transition-opacity duration-300 ease-linear ${
+                      recipeImageIndex === index ? "opacity-100" : "opacity-0"
+                    }`}
+                    src={image}
+                    alt={`Images of ${recipeDetail.recipeName}`}
+                  />
+                ))
+              ) : (
+                <img
+                  className={`object-cover  h-full w-full `}
+                  src={
+                    "https://res.cloudinary.com/dgrpadmpv/image/upload/v1705393896/img_files/mhb0nkouy6jydkk1yzgg.jpg"
+                  }
+                  alt={`Images of ${recipeDetail.recipeName}`}
+                />
+              )}
+              <span
+                onClick={() => {
+                  setRecipeImageIndex((prev) => prev + 1);
+                }}
+                className={`${
+                  recipeImageIndex === recipeDetail?.recipeImages?.length - 1
+                    ? "hidden"
+                    : ""
+                } absolute top-1/2 right-0 -translate-y-1/2 text-white cursor-pointer z-40`}
+              >
+                <ArrowForwardIosOutlinedIcon />
+              </span>
+            </div>
           </div>
           {/* recipe & creator info */}
-          <div className=" md:mt-1 flex-grow text-center print:text-left bg-bgColor -mt-4 relative z-20 rounded-3xl ">
+          <div className="md:w-[42vw] md:mt-1   text-center print:text-left bg-bgColor -mt-4 relative z-20 rounded-3xl ">
             {/* edit  delete share button (creator only action) */}
             <div className="print:hidden flex gap-5 items-center justify-end  pt-2 mr-4 md:mr-0 lg:mb-4">
               {user?.email === recipeDetail?.creatorInfo?.email && (
@@ -283,7 +289,7 @@ const RecipeDetail = () => {
               )}
             </div>
             {/* recipe name */}
-            <h1 className="text-3xl md:text-5xl font-bold ">
+            <h1 className="text-3xl md:text-5xl font-semibold ">
               {recipeDetail?.recipeName}
             </h1>
 
@@ -395,8 +401,8 @@ const RecipeDetail = () => {
           {/* cooktime preptime servings */}
           <div className="md:w-3/4 lg:w-1/2  flex print:gap-5 items-center  justify-between print:justify-normal">
             <div className=" flex items-center">
-              <p className="text-lg font-semibold">Prep time :</p>
-              <p className="space-x-2">
+              <p className="text-xl font-semibold">Prep time :</p>
+              <p className="space-x-2 text-lg">
                 <span>
                   {recipeDetail?.prepTime?.hours
                     ? `${recipeDetail?.prepTime?.hours} hours`
@@ -410,8 +416,8 @@ const RecipeDetail = () => {
               </p>
             </div>
             <div className="flex items-center">
-              <p className="text-lg font-semibold">Cook time :</p>
-              <p className="space-x-2">
+              <p className="text-xl font-semibold">Cook time :</p>
+              <p className="space-x-2 text-lg">
                 <span>
                   {recipeDetail?.cookTime?.hours
                     ? `${recipeDetail?.cookTime?.hours} hours`
@@ -428,7 +434,7 @@ const RecipeDetail = () => {
 
           {/* ingredients */}
           <div>
-            <div className="md:w-4/5 lg:w-1/2 flex   items-center gap-32 justify-between  print:justify-normal">
+            <div className="md:w-4/5 lg:w-1/2 flex   items-center gap-32 justify-between  print:justify-normal mb-2">
               <h1 className="text-3xl ">Ingredients</h1>
               <div className=" flex gap-2 items-center  ">
                 <p className="text-lg font-semibold">Serves</p>
@@ -436,40 +442,53 @@ const RecipeDetail = () => {
               </div>
             </div>
 
-            {recipeDetail?.ingredients?.map((ingredient, index) => (
-              <p key={index} className="text-xl">
-                {ingredient.header ? (
-                  <span className="text-xl font-semibold ">
-                    {ingredient.header}
-                  </span>
-                ) : (
-                  ingredient
-                )}
-              </p>
-            ))}
+            <div className="">
+              {recipeDetail?.ingredients?.map((ingredient, index) => (
+                <p
+                  key={index}
+                  className={`text-xl ${ingredient.header ? "" : "mb-3"}`}
+                >
+                  {ingredient.header ? (
+                    <span className="text-xl font-bold">
+                      {ingredient.header}
+                    </span>
+                  ) : (
+                    ingredient
+                  )}
+                </p>
+              ))}
+            </div>
           </div>
           {/* instructions */}
           <div>
-            <div className="">
+            <div className="mb-2">
               <h1 className="text-3xl">Instructions</h1>
             </div>
 
-            {recipeDetail?.instructions?.map((instruction, index) => (
-              <div key={index} className="text-xl mb-5">
-                {instruction.header ? (
-                  <span className="text-xl font-semibold ">
-                    {instruction.header}
-                  </span>
-                ) : (
-                  <>
-                    <h3 className="font-semibold">
-                      {instruction && `Step ${index + 1}`}
-                    </h3>
-                    <p> {instruction && instruction}</p>
-                  </>
-                )}
-              </div>
-            ))}
+            <div className="">
+              {recipeDetail?.instructions?.map((instruction, index, insArr) => {
+                return (
+                  <div
+                    key={index}
+                    className={`text-xl ${instruction.header ? "" : "mb-2"}`}
+                  >
+                    {instruction.header ? (
+                      <span className="text-xl font-bold ">
+                        {instruction.header}
+                      </span>
+                    ) : (
+                      <p>
+                        <h3 className="font-semibold">
+                          {instruction && `Step ${index + 1}`}
+                        </h3>
+
+                        <p className="pb-2"> {instruction && instruction}</p>
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>

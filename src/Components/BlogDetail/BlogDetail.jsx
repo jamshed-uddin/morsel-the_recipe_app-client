@@ -182,7 +182,7 @@ const BlogDetail = () => {
       <DetailSkeleton itemType={"Blog"} />
     </div>
   ) : (
-    <div className="my-container lg:px-20   text-colorTwo">
+    <div className="my-container lg:px-20   text-colorTwo tracking-tight">
       <ReactHelmet title={`${blogDetail?.title}_Morsel`}></ReactHelmet>
       {/* blog & creator info */}
 
@@ -209,7 +209,7 @@ const BlogDetail = () => {
             feedback={blogDetail?.feedback}
           />
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold mt-5">
+        <h1 className="text-3xl md:text-5xl font-semibold mt-5 leading-8">
           {blogDetail?.title}
         </h1>
         <div className="flex items-center gap-2 mt-2">

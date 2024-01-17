@@ -19,8 +19,6 @@ const NewUsers = ({ users }) => {
     setNewUsers(newUsers);
   }, [users]);
 
-  console.log(newUsers);
-
   return (
     <div>
       <h1 className="text-3xl ">New users</h1>

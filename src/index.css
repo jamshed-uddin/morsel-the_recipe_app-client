@@ -64,6 +64,7 @@ input[type="number"]::-webkit-inner-spin-button {
 
 button:active {
   scale: 0.98;
+  transform: translateY(1px);
 }
 
 /* background style for dashboard nav sidebar  */

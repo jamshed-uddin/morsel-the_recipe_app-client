@@ -9,7 +9,6 @@ const AdminRoute = ({ children }) => {
 
   const location = useLocation();
 
-  console.log("adRoute", currentUser);
   if (loading || currentUserLoading) {
     return <div className="h-screen bg-bgColor"></div>;
   }

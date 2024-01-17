@@ -163,6 +163,8 @@ const AddRecipe = () => {
     "salad",
     "salmon",
     "keto",
+    "quick",
+    "easy",
     "other",
   ]);
   const { currentUser } = useSingleUser();
@@ -176,7 +178,7 @@ const AddRecipe = () => {
   const navigate = useNavigate();
 
   // console.log(currentUser);
-  console.log(formState);
+  console.log(formState.recipeImages);
   // console.log(public_id);
   // console.log(files);
 
@@ -322,7 +324,7 @@ const AddRecipe = () => {
     }
   };
 
-  // functions for tags
+  // functions for tags categories
   const addTags = () => {
     const newTags = tagInputValue.split(",").map((tag) => tag.trim());
     const filteredTags = newTags.filter((tag) => tag !== "");
@@ -335,10 +337,14 @@ const AddRecipe = () => {
         categories.includes(tag)
       );
 
+      // using image adding dispatch
       dispatch({
         type: "IMAGES",
         name: "categories",
-        value: [...formState["categories"], ...filteredCategories],
+        value: [
+          ...formState["categories"],
+          ...(filteredCategories || "others"),
+        ],
       });
     }
   };
@@ -423,6 +429,7 @@ const AddRecipe = () => {
       imgContainerRef.current.scrollLeft -= 80;
     }
   };
+
   const removePreviwedImage = async (imageIndex) => {
     const filesToModify = [...files];
     const recipeImageToModify = [...formState.recipeImages];
@@ -661,7 +668,7 @@ const AddRecipe = () => {
               <div className={`relative ${!files.length && "hidden"}`}>
                 <div
                   ref={imgContainerRef}
-                  className="img-container overflow-x-auto scroll-smooth pt-1"
+                  className="img-container overflow-x-auto scroll-smooth py-1"
                 >
                   {/* button for scroll (right)*/}
                   <p

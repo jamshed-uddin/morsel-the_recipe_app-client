@@ -1,47 +1,25 @@
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { useState } from "react";
 
-const SearchBar = ({ data, searchFor, setIsSearching, setSearchResult }) => {
-  const [searchQuery, setSearchQuery] = useState("");
-
+const SearchBar = ({ searchQuery, setSearchQuery }) => {
   const searchInputChangeHandler = (e) => {
     const searchbarValue = e.target.value;
-
+    // console.log(searchbarValue);
     setSearchQuery(searchbarValue);
     if (!searchbarValue) {
-      setIsSearching(false);
+      console.log("searching");
     }
   };
 
   // returns searched data
-  const filterDataHandler = () => {
-    const filteredData = data.filter((singleData) => {
-      return singleData[searchFor === "recipe" ? "recipeName" : "title"]
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-    });
 
-    return filteredData;
-  };
-
-  const searchFunction = () => {
-    if (!searchQuery) return;
-    setIsSearching(true);
-    const result = filterDataHandler();
-    setSearchResult(result);
-  };
-
-  const searchByEnterHandler = (e) => {
-    if (!searchQuery) return;
-    if (e.key === "Enter") {
-      setIsSearching(true);
-      const result = filterDataHandler();
-      setSearchResult(result);
-    }
-  };
+  // const searchByEnterHandler = (e) => {
+  //   if (!searchQuery) return;
+  //   if (e.key === "Enter") {
+  //     console.log("searching");
+  //   }
+  // };
 
   const clearSearchbarHandler = () => {
-    setIsSearching(false);
     setSearchQuery("");
   };
 
@@ -50,23 +28,22 @@ const SearchBar = ({ data, searchFor, setIsSearching, setSearchResult }) => {
       <div className="w-full relative h-fit ">
         <input
           type="text"
-          placeholder={`Search with ${
-            searchFor === "recipe" ? "name" : "title"
-          }`}
+          placeholder={`Search with name
+          `}
           value={searchQuery}
           onChange={searchInputChangeHandler}
-          onKeyDown={searchByEnterHandler}
+          // onKeyDown={searchByEnterHandler}
         />
         {searchQuery ? (
-          <button
+          <p
             onClick={clearSearchbarHandler}
-            className="border-l-[1px] border-gray-500  bg-bgColor pr-2 pl-1 absolute top-6 right-1 -translate-y-1/2"
+            className="cursor-pointer border-l-[1px] border-gray-500  bg-bgColor pr-2 pl-1 absolute top-6 right-1 -translate-y-1/2"
           >
             Clear
-          </button>
+          </p>
         ) : null}
       </div>
-      <button onClick={searchFunction}>
+      <button>
         <SearchOutlinedIcon sx={{ fontSize: 40 }} />
       </button>
     </div>
