@@ -5,14 +5,23 @@ import PostedChart from "./PostedChart";
 import Totals from "./Totals";
 
 const Overview = () => {
-  const { userData, recipesData, blogsData, overviewStates } =
-    useDashboardContext();
+  const {
+    userData,
+    recipesData,
+    blogsData,
+    overviewStates,
+    isOverviewStateLoading,
+  } = useDashboardContext();
+  console.log("overview is loading", isOverviewStateLoading);
 
   return (
     <div className="min-h-screen">
       {/* numbers of user, recipes ,blogs created */}
 
-      <Totals overviewStates={overviewStates} />
+      <Totals
+        overviewStatesLoading={isOverviewStateLoading}
+        overviewStates={overviewStates}
+      />
 
       <hr />
       {/* chart and new users*/}

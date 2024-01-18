@@ -129,6 +129,7 @@ const router = createBrowserRouter([
         <AdminDashboard></AdminDashboard>
       </PrivateRoute>
     ),
+    errorElement: <ErrorPage></ErrorPage>,
     children: [
       {
         path: "overview",
@@ -163,7 +164,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "adminAccount",
+        path: "adminAccount/:userId",
         element: (
           <AdminRoute>
             <AdminAccount></AdminAccount>

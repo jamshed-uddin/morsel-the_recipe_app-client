@@ -1,7 +1,7 @@
 import { WestOutlined } from "@mui/icons-material";
 import SearchBar from "../../Components/SearchBar/SearchBar";
 import useDebounce from "../../hooks/useDebounce";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import axios from "axios";
 import { CircularProgress } from "@mui/material";
@@ -11,16 +11,20 @@ import { useNavigate } from "react-router-dom";
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const searchBarRef = useRef(null);
+  console.log(searchBarRef);
+
+  useEffect(() => {
+    const searchBar = searchBarRef.current;
+
+    searchBar.focus();
+  }, []);
 
   const debouncedValue = useDebounce(searchQuery, 600);
-
-  console.log(debouncedValue);
-
   const {
     isLoading: searchResultLoading,
     data: searchResult,
     error: searchError,
-    status,
   } = useQuery(
     ["searchResult", debouncedValue],
     async () => {
@@ -32,9 +36,6 @@ const SearchPage = () => {
     { enabled: !!debouncedValue }
   );
 
-  console.log("status", searchError);
-  console.log(searchResultLoading);
-
   return (
     <div className="my-container text-colorTwo">
       {/* search bar */}
@@ -44,6 +45,7 @@ const SearchPage = () => {
             <WestOutlined sx={{ fontSize: 30, color: "#4B5365" }} />
           </span>
           <SearchBar
+            ref={searchBarRef}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
           />
@@ -54,7 +56,7 @@ const SearchPage = () => {
 
       {searchResultLoading && (
         <div className="text-center">
-          <CircularProgress sx={{ color: "#4B5365" }} />
+          <CircularProgress sx={{ color: "#F31559" }} />
         </div>
       )}
 

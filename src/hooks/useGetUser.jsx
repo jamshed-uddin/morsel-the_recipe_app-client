@@ -5,6 +5,7 @@ const useGetUser = (userId) => {
   const {
     isLoading: getUserLoading,
     data: userData,
+    refetch: userRefetch,
     isError,
     error,
   } = useQuery(
@@ -21,7 +22,7 @@ const useGetUser = (userId) => {
     }
   );
 
-  return { userData, getUserLoading };
+  return { userData, getUserLoading, userRefetch };
 };
 
 export default useGetUser;

@@ -39,7 +39,7 @@ const AccountPage = () => {
 
   const navigate = useNavigate();
 
-  const { userData, getUserLoading } = useGetUser(userId);
+  const { userData, getUserLoading, userRefetch } = useGetUser(userId);
   console.log(userData);
   // for the setting button and image select button to close when clicked outside
   useEffect(() => {
@@ -93,7 +93,7 @@ const AccountPage = () => {
       }
     },
     {
-      enabled: !!currentUser,
+      enabled: !!userData,
     }
   );
 
@@ -109,8 +109,8 @@ const AccountPage = () => {
   };
 
   // user logout funciton(firebase)
-  const handleLogout = () => {
-    userLogout().then(navigate("/"));
+  const handleLogout = async () => {
+    await userLogout().then(navigate("/"));
   };
 
   // uploading changed profile photo to cloudinary

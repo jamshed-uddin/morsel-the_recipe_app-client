@@ -1,6 +1,8 @@
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
+import React from "react";
 
-const SearchBar = ({ searchQuery, setSearchQuery }) => {
+const searchInputContent = ({ searchQuery, setSearchQuery }, ref) => {
   const searchInputChangeHandler = (e) => {
     const searchbarValue = e.target.value;
     // console.log(searchbarValue);
@@ -27,6 +29,7 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => {
     <div className="flex gap-1 items-center text-colorTwo w-full">
       <div className="w-full relative h-fit ">
         <input
+          ref={ref}
           type="text"
           placeholder={`Search with name
           `}
@@ -37,18 +40,20 @@ const SearchBar = ({ searchQuery, setSearchQuery }) => {
         {searchQuery ? (
           <p
             onClick={clearSearchbarHandler}
-            className="cursor-pointer border-l-[1px] border-gray-500  bg-bgColor pr-2 pl-1 absolute top-6 right-1 -translate-y-1/2"
+            className="cursor-pointer   bg-bgColor pr-1 pl-1 absolute top-1 right-1 "
           >
-            Clear
+            <ClearOutlinedIcon sx={{ fontSize: 35 }} />
           </p>
         ) : null}
       </div>
       <button>
-        <SearchOutlinedIcon sx={{ fontSize: 40 }} />
+        <SearchOutlinedIcon sx={{ fontSize: 38 }} />
       </button>
     </div>
   );
 };
+
+const SearchBar = React.forwardRef(searchInputContent);
 
 export default SearchBar;
 

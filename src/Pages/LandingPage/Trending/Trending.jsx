@@ -1,38 +1,10 @@
-import { useQuery } from "react-query";
 import Card from "../../../Components/Card/Card";
-import axios from "axios";
-import { useEffect, useState } from "react";
 import CardSkeleton from "../../../Components/Skeletons/CardSkeleton";
 import useRecipesBlogsData from "../../../hooks/useRecipesBlogsData";
 import Title from "../../../Components/Title";
 
 const Trending = () => {
-  const [recipes, setRecipes] = useState([]);
-  const [showTitle, setShowTitle] = useState(false);
   const { trendingRecipes, trendingQuickVoicesLoading } = useRecipesBlogsData();
-
-  useEffect(() => {
-    let prevScrollY = window.scrollY;
-
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      if (currentScrollY > prevScrollY) {
-        setShowTitle(true);
-      }
-
-      if (currentScrollY === 0) {
-        setShowTitle(false);
-      }
-
-      prevScrollY = currentScrollY;
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [showTitle]);
 
   if (trendingQuickVoicesLoading) {
     return (
@@ -49,11 +21,7 @@ const Trending = () => {
   return (
     <div className="-mt-8">
       <div className={`overflow-hidden  mb-2`}>
-        <div
-          className={` transition-all duration-700 ${
-            showTitle ? "translate-y-0 " : "translate-y-14 opacity-0"
-          }`}
-        >
+        <div>
           <Title> Trending this week</Title>
         </div>
       </div>

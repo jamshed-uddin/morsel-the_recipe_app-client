@@ -176,7 +176,7 @@ const RecipeDetail = () => {
       <DetailSkeleton itemType={"Recipe"} />
     </div>
   ) : (
-    <div className="my-container lg:px-20 print:mx-12 text-colorTwo print:bg-bgColor tracking-tight">
+    <div className="my-container lg:px-20 print:text-justify text-colorTwo print:bg-bgColor tracking-tight">
       <ReactHelmet
         title={`${recipeDetail?.recipeName}_Morsel`}
         descriptionContent={recipeDetail?.description}

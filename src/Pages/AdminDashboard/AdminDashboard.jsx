@@ -20,10 +20,12 @@ import Toolbar from "@mui/material/Toolbar";
 import { useEffect, useState } from "react";
 import DashboardDataProvider from "../../providers/DashboardDataProvider";
 import { HomeOutlined } from "@mui/icons-material";
+import useSingleUser from "../../hooks/useSingleUser";
 
 const drawerWidth = 240;
 
 const AdminDashboard = (props) => {
+  const { currentUser } = useSingleUser();
   const { window } = props;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [routes] = useState([
@@ -54,7 +56,7 @@ const AdminDashboard = (props) => {
     if (location.pathname === "/dashboard/manageBlogs") {
       return setTopBarText("Manage blogs");
     }
-    if (location.pathname === "/dashboard/adminAccount") {
+    if (location.pathname.includes("/dashboard/adminAccount")) {
       return setTopBarText("Account");
     }
   }, [location]);
@@ -93,7 +95,10 @@ const AdminDashboard = (props) => {
       <ul className="">
         <li className="my-4">
           <p onClick={handleDrawerToggle} className="text-xl ">
-            <NavLink className={navLinkStyle} to={`/dashboard/adminAccount`}>
+            <NavLink
+              className={navLinkStyle}
+              to={`/dashboard/adminAccount/${currentUser?._id}`}
+            >
               <span>
                 <PersonOutlineOutlinedIcon />
               </span>

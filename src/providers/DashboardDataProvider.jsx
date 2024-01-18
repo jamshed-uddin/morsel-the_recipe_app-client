@@ -51,8 +51,6 @@ const DashboardDataProvider = ({ children }) => {
     return result.data;
   });
 
-  console.log(isOverviewStateLoading);
-
   const dashboardData = {
     userFetchLoading,
     recipesFetchLoading,
