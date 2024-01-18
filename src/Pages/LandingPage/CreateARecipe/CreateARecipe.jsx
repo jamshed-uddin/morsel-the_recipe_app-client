@@ -16,12 +16,12 @@ const CreateARecipe = () => {
         />
       </div>
       <div className="md:w-1/2 absolute md:static bottom-1 left-2">
-        <h1 className="text-6xl md:text-8xl text-bgColor md:text-colorOnes">
+        <h1 className="text-6xl md:text-8xl text-bgColor md:text-colorOne">
           Share your cooking carisma
         </h1>
 
         <Link to={currentUser?.role === "admin" ? "" : "/addrecipe"}>
-          <p className="ml-1 text-bgColor md:text-colorOnes  text-xl md:text-2xl hover:space-x-3 transition-all duration-700">
+          <p className="ml-1 text-bgColor md:text-colorOne  text-xl md:text-2xl hover:space-x-3 transition-all duration-700">
             <span>Create a recipe</span>{" "}
             <span className="transition-all duration-500">
               <EastOutlinedIcon />

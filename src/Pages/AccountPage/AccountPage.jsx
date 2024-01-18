@@ -9,7 +9,7 @@ import AddBtn from "../../Components/AddBtn/AddBtn";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import { Avatar, CircularProgress, Dialog } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import useSingleUser from "../../hooks/useSingleUser";
 import { useQuery } from "react-query";
@@ -19,31 +19,28 @@ import MyButton from "../../Components/Button/MyButton";
 import deletePhotoFromCloud from "../../Components/MyFunctions/deletePhotoFromCloud";
 import uploadPhotoToCloud from "../../Components/MyFunctions/uploadPhotoToCloud";
 import useUpdateProfile from "../../hooks/useUpdateProfile";
+import useGetUser from "../../hooks/useGetUser";
 
 const AccountPage = () => {
   const [activeTab, setActiveTab] = useState("myRecipes");
   const [showSettings, setShowSettings] = useState(false);
   const [showImgTooltip, setShowImgTooltip] = useState(false);
-  const [myItems, setMyItems] = useState([]);
   const [open, setOpen] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [photoUploadLoading, setPhotoUploadLoading] = useState(false);
-
   const [modalContent, setModalContent] = useState("");
   const { user, userLogout, updateUserNamePhoto, deleteUserHandler } =
     useAuthContext();
-  const { currentUser, currentUserLoading } = useSingleUser();
+  const { currentUser } = useSingleUser();
   const { updateProfile } = useUpdateProfile();
   const [profilePhotoURL, setProfilePhotoURL] = useState(user && user.photoURL);
+  const { userId } = useParams();
+  console.log(typeof userId);
 
   const navigate = useNavigate();
 
-  // console.log(updateProfile);
-
-  // console.log(user);
-  // console.log(currentUser);
-
+  const { userData, getUserLoading } = useGetUser(userId);
+  console.log(userData);
   // for the setting button and image select button to close when clicked outside
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -70,39 +67,35 @@ const AccountPage = () => {
   }, [showSettings, showImgTooltip]);
 
   // query for fetching tab data(recipe/blog/saved item)
-  const { isLoading, data, error } = useQuery(
-    ["myItems", activeTab, currentUser],
+  const {
+    isLoading: myItemsLoading,
+    data: myItems,
+    error: myItemsError,
+  } = useQuery(
+    ["myItems", activeTab, userData],
     async () => {
       if (activeTab === "savedItems") {
         const result = await axios.get(
           `${import.meta.env.VITE_BASEURL}/${activeTab}?userId=${
-            currentUser?._id
+            userData?._id
           }&itemType=All`
         );
 
-        return result;
+        return result.data;
       }
 
       if (activeTab !== "savedItems") {
         const result = await axios.get(
-          `${import.meta.env.VITE_BASEURL}/${activeTab}?userId=${
-            currentUser?._id
-          }`
+          `${import.meta.env.VITE_BASEURL}/${activeTab}?userId=${userData?._id}`
         );
 
-        return result;
+        return result.data;
       }
     },
     {
       enabled: !!currentUser,
     }
   );
-  // setting the fetched tab data to state(myItems)
-  useEffect(() => {
-    if (data) {
-      setMyItems(data.data);
-    }
-  }, [data]);
 
   // setting modal open
   const handleClickOpen = () => {
@@ -218,7 +211,7 @@ const AccountPage = () => {
   //   }
   // };
 
-  if (currentUserLoading || !user || !currentUser) {
+  if (getUserLoading || !user || !userData) {
     return (
       <div className="my-container mt-24">
         <AccountPageSkeleton />
@@ -245,17 +238,19 @@ const AccountPage = () => {
                 <Avatar
                   sx={{ width: 135, height: 135 }}
                   className="w-32 rounded-full object-cover"
-                  src={profilePhotoURL}
-                  alt={`${user?.displayName}'s photo`}
+                  src={userData?.photoURL}
+                  alt={`${userData?.name}'s photo`}
                 />
 
                 {/* tooltip opener button */}
-                <button
-                  onClick={() => setShowImgTooltip((prev) => !prev)}
-                  className="w-fit rounded bg-white absolute right-2 bottom-2 cursor-pointer active:scale-95 shadow"
-                >
-                  <DriveFileRenameOutlineOutlinedIcon />
-                </button>
+                {currentUser?.email === userData?.email && (
+                  <button
+                    onClick={() => setShowImgTooltip((prev) => !prev)}
+                    className="w-fit rounded bg-white absolute right-2 bottom-2 cursor-pointer active:scale-95 shadow"
+                  >
+                    <DriveFileRenameOutlineOutlinedIcon />
+                  </button>
+                )}
                 {/* image tooltip */}
                 <div
                   className={`bg-white flex gap-2 md:gap-5 rounded-lg px-1 md:px-3 shadow-lg absolute bottom-2 -right-20 md:-right-28 ${
@@ -292,14 +287,14 @@ const AccountPage = () => {
 
             <div>
               <h1 className="text-4xl font-semibold mb-1">
-                {currentUser?.name}
-                {currentUser?.role === "admin" && (
+                {userData?.name}
+                {userData?.role === "admin" && (
                   <sup className="mb-2 font-light text-lg p-1 border-[1px] border-colorOne rounded-lg">
                     Admin
                   </sup>
                 )}
               </h1>
-              <p className="text-lg  leading-6">{currentUser?.bio}</p>
+              <p className="text-lg  leading-6">{userData?.bio}</p>
             </div>
           </div>
 
@@ -309,14 +304,16 @@ const AccountPage = () => {
             className=" order-first md:order-none relative  ml-auto -bottom-12 md:bottom-0 mr-3"
           >
             {/* setting button */}
-            <button
-              onClick={() => setShowSettings((prev) => !prev)}
-              className={`  rounded-full transition-all duration-500 ${
-                showSettings && "rotate-[30deg]"
-              }`}
-            >
-              <SettingsOutlinedIcon sx={{ fontSize: 35 }} />
-            </button>
+            {currentUser?.email === userData?.email && (
+              <button
+                onClick={() => setShowSettings((prev) => !prev)}
+                className={`  rounded-full transition-all duration-500 ${
+                  showSettings && "rotate-[30deg]"
+                }`}
+              >
+                <SettingsOutlinedIcon sx={{ fontSize: 35 }} />
+              </button>
+            )}
 
             {/* setting options dialog */}
             <div
@@ -376,22 +373,24 @@ const AccountPage = () => {
               >
                 Blogs
               </button>
-              <button
-                onClick={() => setActiveTab("savedItems")}
-                className={` pb-2 cursor-pointer  ${
-                  activeTab === "savedItems"
-                    ? "border-b-2  border-colorOne text-colorOne"
-                    : "text-colorTwo border-b-2 border-b-transparent"
-                }`}
-              >
-                Saved
-              </button>
+              {currentUser?.email === userData?.email && (
+                <button
+                  onClick={() => setActiveTab("savedItems")}
+                  className={` pb-2 cursor-pointer  ${
+                    activeTab === "savedItems"
+                      ? "border-b-2  border-colorOne text-colorOne"
+                      : "text-colorTwo border-b-2 border-b-transparent"
+                  }`}
+                >
+                  Saved
+                </button>
+              )}
             </div>
 
             {/*tab body */}
             <div className="pt-3 pb-6">
               <MyItems
-                isLoading={isLoading}
+                isLoading={myItemsLoading}
                 myItems={myItems}
                 activeTab={activeTab}
               />
@@ -401,7 +400,8 @@ const AccountPage = () => {
       </div>
 
       {/* button for adding recipe or blog */}
-      {currentUser?.role !== "admin" && <AddBtn />}
+      {currentUser?.role !== "admin" &&
+        currentUser?.email === userData?.email && <AddBtn />}
 
       {/* dialogue from setting button for updating/account/ sign out */}
       <Dialog fullWidth open={open} onClose={handleClose}>

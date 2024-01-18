@@ -29,7 +29,7 @@ import ReactHelmet from "../ReactHelmet/ReactHelmet";
 const BlogDetail = () => {
   const { id } = useParams();
   const { user } = useAuthContext();
-  const [blogDetail, setBlogDetail] = useState({});
+  // const [blogDetail, setBlogDetail] = useState({});
   const [open, setOpen] = useState(false);
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -41,23 +41,24 @@ const BlogDetail = () => {
 
   const {
     isLoading,
-    data,
+    data: blogDetail,
     error,
+    isError,
     refetch: blogDetailRefetch,
-  } = useQuery("blogDetail", async () => {
-    const result = axios.get(
+  } = useQuery(["blogDetail", id], async () => {
+    const result = await axios.get(
       `${import.meta.env.VITE_BASEURL}/singleBlog/${id}`
     );
-    return result;
+    if (!result.data) {
+      throw new Error();
+    }
+    console.log(result);
+    return result.data;
   });
 
-  useEffect(() => {
-    if (data) {
-      setBlogDetail(data.data);
-    }
-  }, [data]);
-
-  // console.log(data);
+  console.log(blogDetail);
+  console.log(isError);
+  console.log(error);
 
   const {
     isLoading: isLikedAndSavedLoading,
@@ -76,7 +77,7 @@ const BlogDetail = () => {
       setIsSaved(result?.data?.isSaved);
       return result;
     },
-    { enabled: !!currentUser } // query enables when currentUser is available
+    { enabled: !!currentUser && !!blogDetail } // query enables when currentUser is available
   );
 
   // saving on savedItems collection
@@ -174,7 +175,7 @@ const BlogDetail = () => {
   };
 
   if (error) {
-    return <ErrorElement blogDetailRefetch={blogDetailRefetch} />;
+    return <ErrorElement error={error} blogDetailRefetch={blogDetailRefetch} />;
   }
 
   return isLoading ? (
@@ -184,7 +185,6 @@ const BlogDetail = () => {
   ) : (
     <div className="my-container lg:px-20   text-colorTwo tracking-tight">
       <ReactHelmet title={`${blogDetail?.title}_Morsel`}></ReactHelmet>
-      {/* blog & creator info */}
 
       {/* status changer for admin only */}
       {currentUser?.role === "admin" && (
@@ -203,35 +203,45 @@ const BlogDetail = () => {
 
       {/* blog sections starts */}
       <div className=" ">
-        <div className="w-fit">
-          <StatusAndFeedback
-            status={blogDetail?.status}
-            feedback={blogDetail?.feedback}
-          />
-        </div>
+        {currentUser?.email === blogDetail?.creatorInfo?.email && (
+          <div className="w-fit">
+            <StatusAndFeedback
+              status={blogDetail?.status}
+              feedback={blogDetail?.feedback}
+            />
+          </div>
+        )}
+        {/* blog & creator info */}
         <h1 className="text-3xl md:text-5xl font-semibold mt-5 leading-8">
           {blogDetail?.title}
         </h1>
-        <div className="flex items-center gap-2 mt-2">
-          <div>
-            <Avatar
-              sx={{ width: 30, height: 30, mb: 1 }}
-              src={
-                blogDetail?.creatorInfo?.photoURL ||
-                "https://i.ibb.co/Twp960D/default-profile-400x400.png"
-              }
-            />
-          </div>
-          <div className="leading-6">
-            <h3 className="text-[1.2rem] ">{blogDetail?.creatorInfo?.name}</h3>
-            <p className="font-light">
-              {new Date(blogDetail?.createdAt)
-                .toDateString()
-                .split(" ")
-                .slice(1, 4)
-                .join(" ")}
-            </p>
-          </div>
+        <div className=" mt-2">
+          <Link to={`/account/${blogDetail?.creatorInfo?._id}`}>
+            <div className="flex items-center gap-2">
+              <div>
+                <Avatar
+                  sx={{ width: 30, height: 30, mb: 1 }}
+                  src={
+                    blogDetail?.creatorInfo?.photoURL ||
+                    "https://i.ibb.co/Twp960D/default-profile-400x400.png"
+                  }
+                />
+              </div>
+              <div className="leading-6">
+                <h3 className="text-[1.2rem] hover:underline">
+                  {blogDetail?.creatorInfo?.name}
+                </h3>
+              </div>
+            </div>
+          </Link>
+
+          <p className="font-light ml-10 ">
+            {new Date(blogDetail?.createdAt)
+              .toDateString()
+              .split(" ")
+              .slice(1, 4)
+              .join(" ")}
+          </p>
         </div>
         <div className="flex justify-between mt-5">
           {/* like and save button */}

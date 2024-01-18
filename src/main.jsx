@@ -72,7 +72,7 @@ const router = createBrowserRouter([
         element: <BlogDetail></BlogDetail>,
       },
       {
-        path: "account",
+        path: "account/:userId",
         element: <AccountPage></AccountPage>,
       },
       {

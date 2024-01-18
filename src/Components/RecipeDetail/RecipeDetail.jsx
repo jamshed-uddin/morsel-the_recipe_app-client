@@ -10,7 +10,7 @@ import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutl
 import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 //------icons ends----
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query";
 import { Link, useParams } from "react-router-dom";
 import ErrorElement from "../ErrorElement";
@@ -23,6 +23,7 @@ import AlertDialog from "../AlertDialog/AlertDialog";
 import StatusChanger from "../StatusChanger/StatusChanger";
 import ReactHelmet from "../ReactHelmet/ReactHelmet";
 import StatusAndFeedback from "../statusAndFeedback/statusAndFeedback";
+import RecipeInstructions from "./RecipeInstructions";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -56,7 +57,7 @@ const RecipeDetail = () => {
     error: errorMessage,
     refetch: reloadIslikedAndIsSaved,
   } = useQuery(
-    ["isSavedAndLiked", currentUser],
+    ["isSavedAndLiked"],
     async () => {
       const result = await axios.get(
         `${import.meta.env.VITE_BASEURL}/isLikedAndSaved?userEmail=${
@@ -68,7 +69,7 @@ const RecipeDetail = () => {
       return result;
     },
     {
-      enabled: !!currentUser,
+      enabled: !!currentUser && !!recipeDetail,
     }
     // query enables when currentUser is available
   );
@@ -294,10 +295,12 @@ const RecipeDetail = () => {
             </h1>
 
             <div className="flex items-center gap-1 justify-center print:justify-start ">
-              <h3 className="text-lg ">
-                By{" "}
-                <span className="text-base">
-                  {recipeDetail?.creatorInfo?.name || "Morsel creator"}
+              <h3 className=" ">
+                <span className="">By</span>{" "}
+                <span className="text-lg font-medium hover:underline">
+                  <Link to={`/account/${recipeDetail?.creatorInfo?._id}`}>
+                    {recipeDetail?.creatorInfo?.name || "Morsel creator"}
+                  </Link>
                 </span>
               </h3>
             </div>
@@ -387,12 +390,14 @@ const RecipeDetail = () => {
               </div>
             </div>
 
-            <div className="absolute -top-6 left-3">
-              <StatusAndFeedback
-                status={recipeDetail?.status}
-                feedback={recipeDetail?.feedback}
-              />
-            </div>
+            {currentUser?.email === recipeDetail?.creatorInfo?.email && (
+              <div className="absolute -top-6 left-3">
+                <StatusAndFeedback
+                  status={recipeDetail?.status}
+                  feedback={recipeDetail?.feedback}
+                />
+              </div>
+            )}
           </div>
         </div>
 
@@ -465,30 +470,7 @@ const RecipeDetail = () => {
               <h1 className="text-3xl">Instructions</h1>
             </div>
 
-            <div className="">
-              {recipeDetail?.instructions?.map((instruction, index, insArr) => {
-                return (
-                  <div
-                    key={index}
-                    className={`text-xl ${instruction.header ? "" : "mb-2"}`}
-                  >
-                    {instruction.header ? (
-                      <span className="text-xl font-bold ">
-                        {instruction.header}
-                      </span>
-                    ) : (
-                      <p>
-                        <h3 className="font-semibold">
-                          {instruction && `Step ${index + 1}`}
-                        </h3>
-
-                        <p className="pb-2"> {instruction && instruction}</p>
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+            <RecipeInstructions instructions={recipeDetail?.instructions} />
           </div>
         </div>
       </div>

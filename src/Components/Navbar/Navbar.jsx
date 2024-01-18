@@ -110,7 +110,7 @@ const Navbar = () => {
                   to={
                     currentUser?.role === "admin"
                       ? "/dashboard/overview"
-                      : "/account"
+                      : `/account/${currentUser?._id}`
                   }
                 >
                   <div className="flex items-center  rounded-3xl cursor-pointer">
@@ -223,7 +223,7 @@ const Navbar = () => {
                     to={
                       currentUser?.role === "admin"
                         ? "/dashboard/overview"
-                        : "/account"
+                        : `/account/${currentUser?._id}`
                     }
                   >
                     <div className="flex items-center rounded-3xl cursor-pointer">

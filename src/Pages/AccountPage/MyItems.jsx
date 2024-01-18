@@ -70,7 +70,7 @@ const MyItems = ({ isLoading, myItems, activeTab }) => {
 
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-6 ">
-      {myItems.map((singleItem) => (
+      {myItems?.map((singleItem) => (
         <Card
           item={singleItem}
           itemType={activeTab === "myRecipes" ? "recipe" : "blog"}
