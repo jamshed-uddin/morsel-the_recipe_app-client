@@ -5,6 +5,7 @@ import ArrowBackIosOutlinedIcon from "@mui/icons-material/ArrowBackIosOutlined";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import "./AddRecipe.css";
 
 import axios from "axios";
@@ -152,6 +153,7 @@ const AddRecipe = () => {
   const [scrollPosition, setScrollPosition] = useState({ left: 0, right: 7 });
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const imgContainerRef = useRef(null); //used this to make a image slider
+  const [showTagInfo, setShowTagInfo] = useState(false);
   //state for showing specific error message
   const [categories] = useState([
     "bread",
@@ -176,11 +178,6 @@ const AddRecipe = () => {
     prepTime: "",
   });
   const navigate = useNavigate();
-
-  // console.log(currentUser);
-  console.log(formState.recipeImages);
-  // console.log(public_id);
-  // console.log(files);
 
   // When user navigate to this page for edit the item it comes with item id and and item data floods the initialState
   //for edit mode------------ starts
@@ -1038,6 +1035,12 @@ const AddRecipe = () => {
             <div>
               <h4 className={labelStyle}>
                 Add tags <span className="text-base">(optional)</span>
+                <span
+                  onClick={() => setShowTagInfo((p) => !p)}
+                  className="ml-1 cursor-pointer"
+                >
+                  <HelpOutlineOutlinedIcon sx={{ fontSize: 18 }} />
+                </span>
               </h4>
 
               <div className="flex flex-wrap gap-2">
@@ -1074,8 +1077,12 @@ const AddRecipe = () => {
                   </button>
                 </div>
               </div>
-              <div className="h-fit overflow-hidden ">
-                <h4 className="lg:pb-1 text-lg font-light ">
+              <div className="h-fit overflow-hidden">
+                <h4
+                  className={`lg:pb-1 text-lg font-light transition-all duration-500 ${
+                    showTagInfo ? "translate-y-0" : "-translate-y-6"
+                  }`}
+                >
                   Add or change tags for more recognition and to categorize your
                   recipe.
                 </h4>
