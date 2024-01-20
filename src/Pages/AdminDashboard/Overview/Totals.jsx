@@ -1,22 +1,7 @@
 import PieChartComp from "./PieChartComp";
 
 const propsItems = ["Recipes", "Blogs", "Users"];
-const Totals = ({ overviewStates, overviewStatesLoading }) => {
-  if (overviewStatesLoading) {
-    return (
-      <div className="md:flex items-center gap-2 my-2 ">
-        {[1, 2, 3].map((_, index) => (
-          <div
-            key={index}
-            className={`h-44 flex-grow  bg-slate-200 rounded-xl animate-pulse mb-2 md:mb-0 ${
-              index === 2 ? "hidden md:block" : ""
-            }`}
-          ></div>
-        ))}
-      </div>
-    );
-  }
-
+const Totals = ({ overviewStates }) => {
   return (
     <div className="flex  mb-4 ">
       <div className="md:flex gap-1 w-full">

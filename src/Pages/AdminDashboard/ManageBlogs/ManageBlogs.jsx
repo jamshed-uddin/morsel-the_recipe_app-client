@@ -1,16 +1,19 @@
 import { useMemo, useState } from "react";
 import TableComponent from "../TableComponent";
-
 import TableSkeleton from "../../../Components/Skeletons/TableSkeleton";
-
-import useDashboardContext from "../../../hooks/useDashboardContext";
 import SimpleSnackbar from "../../../Components/Snackbar/SimpleSnackbar";
-
 import StatusChanger from "../../../Components/StatusChanger/StatusChanger";
 import useSingleUser from "../../../hooks/useSingleUser";
+import useDashboardData from "../../../hooks/useDashboardData";
+import ErrorElement from "../../../Components/ErrorElement";
 
 const ManageBlogs = () => {
-  const { blogsData, blogsFetchLoading } = useDashboardContext();
+  const {
+    data: blogsData,
+    refetch: blogsRefetch,
+    isLoading: blogsLoading,
+    error: blogsError,
+  } = useDashboardData("/allBlogs");
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -51,14 +54,19 @@ const ManageBlogs = () => {
             actionFrom="table"
             adminEmail={currentUser?.email}
             snackbarHandler={snackbarHandler}
+            refetch={blogsRefetch}
           />
         ),
       },
     ],
-    [currentUser]
+    [currentUser, blogsRefetch]
   );
 
-  if (blogsFetchLoading) {
+  if (blogsError) {
+    return <ErrorElement error={blogsError} refetch={blogsRefetch} />;
+  }
+
+  if (blogsLoading) {
     return <TableSkeleton />;
   }
 

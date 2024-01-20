@@ -1,11 +1,12 @@
 import CardSkeleton from "../../Components/Skeletons/CardSkeleton";
 import AddBtn from "../../Components/AddBtn/AddBtn";
-import MyButton from "../../Components/Button/MyButton";
+
 import useInfiniteData from "../../hooks/useInfiniteData";
 import ItemsComp from "./ItemsComp";
 import Title from "../../Components/Title";
 import useIntersect from "../../hooks/useIntersect";
 import { CircularProgress } from "@mui/material";
+import ErrorElement from "../../Components/ErrorElement";
 
 const BlogsPage = () => {
   const {
@@ -14,6 +15,9 @@ const BlogsPage = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    error,
+    status,
+    refetch,
   } = useInfiniteData("/allBlogs/approved");
 
   const fetchNextBlogsPageHandler = (isIntersecting) => {
@@ -23,21 +27,9 @@ const BlogsPage = () => {
   };
 
   const loadMoreBlogsRef = useIntersect(fetchNextBlogsPageHandler);
-  console.log(loadMoreBlogsRef);
 
-  if (blogsLoading) {
-    return (
-      <div className="my-container mt-20">
-        <div>
-          <Title>Blogs</Title>
-        </div>
-        <div className=" grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
-          {[1, 2, 3].map((item, index) => (
-            <CardSkeleton key={index} />
-          ))}
-        </div>
-      </div>
-    );
+  if (error || status === "error") {
+    return <ErrorElement error={error} refetch={refetch}></ErrorElement>;
   }
 
   return (
@@ -46,9 +38,11 @@ const BlogsPage = () => {
         <Title>Blogs</Title>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 mt-5">
-        {blogs?.pages.map((blog, index) => (
-          <ItemsComp itemsType={"blogs"} key={index} items={blog} />
-        ))}
+        {blogsLoading
+          ? [1, 2, 3].map((item, index) => <CardSkeleton key={index} />)
+          : blogs?.pages.map((blog, index) => (
+              <ItemsComp itemsType={"blogs"} key={index} items={blog} />
+            ))}
       </div>
       <div ref={loadMoreBlogsRef} className="flex justify-center mt-6 ">
         {hasNextPage && (

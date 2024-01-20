@@ -6,6 +6,7 @@ import ItemsComp from "../BlogsPage/ItemsComp";
 import Title from "../../Components/Title";
 import useIntersect from "../../hooks/useIntersect";
 import { CircularProgress } from "@mui/material";
+import ErrorElement from "../../Components/ErrorElement";
 
 const RecipesPage = () => {
   const {
@@ -14,8 +15,10 @@ const RecipesPage = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    status,
+    error,
+    refetch,
   } = useInfiniteData("/allRecipes/approved");
-  console.log(recipes);
 
   const fetchNextRecipePageHandler = (isIntersecting) => {
     if (isIntersecting && hasNextPage) {
@@ -24,21 +27,9 @@ const RecipesPage = () => {
   };
 
   const loadMoreRecipesRef = useIntersect(fetchNextRecipePageHandler);
-  console.log(loadMoreRecipesRef);
 
-  if (recipesLoading) {
-    return (
-      <div className="my-container mt-20">
-        <div>
-          <Title> Recipes</Title>
-        </div>
-        <div className=" grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 md:space-y-0 mt-5">
-          {[1, 2, 3].map((item, index) => (
-            <CardSkeleton key={index} />
-          ))}
-        </div>
-      </div>
-    );
+  if (error || status === "error") {
+    return <ErrorElement error={error} refetch={refetch}></ErrorElement>;
   }
 
   return (
@@ -47,9 +38,11 @@ const RecipesPage = () => {
         <Title> Recipes</Title>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 mt-5">
-        {recipes?.pages.map((recipe, index) => (
-          <ItemsComp itemsType={"recipes"} key={index} items={recipe} />
-        ))}
+        {recipesLoading
+          ? [1, 2, 3].map((item, index) => <CardSkeleton key={index} />)
+          : recipes?.pages.map((recipe, index) => (
+              <ItemsComp itemsType={"recipes"} key={index} items={recipe} />
+            ))}
       </div>
       <div ref={loadMoreRecipesRef} className="flex justify-center mt-6 ">
         {hasNextPage && (

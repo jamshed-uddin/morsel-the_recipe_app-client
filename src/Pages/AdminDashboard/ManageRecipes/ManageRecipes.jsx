@@ -3,13 +3,19 @@ import TableComponent from "../TableComponent";
 
 import TableSkeleton from "../../../Components/Skeletons/TableSkeleton";
 
-import useDashboardContext from "../../../hooks/useDashboardContext";
 import SimpleSnackbar from "../../../Components/Snackbar/SimpleSnackbar";
 import StatusChanger from "../../../Components/StatusChanger/StatusChanger";
 import useSingleUser from "../../../hooks/useSingleUser";
+import useDashboardData from "../../../hooks/useDashboardData";
+import ErrorElement from "../../../Components/ErrorElement";
 
 const ManageRecipes = () => {
-  const { recipesData, recipesFetchLoading } = useDashboardContext();
+  const {
+    data: recipesData,
+    refetch: recipesRefetch,
+    isLoading: recipesLoading,
+    error: recipesError,
+  } = useDashboardData("/allRecipes");
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -50,14 +56,24 @@ const ManageRecipes = () => {
             actionFrom="table"
             adminEmail={currentUser?.email}
             snackbarHandler={snackbarHandler}
+            refetch={recipesRefetch}
           />
         ),
       },
     ],
-    [currentUser]
+    [currentUser?.email, recipesRefetch]
   );
 
-  if (recipesFetchLoading) {
+  if (recipesError) {
+    return (
+      <ErrorElement
+        error={recipesError}
+        refetch={recipesRefetch}
+      ></ErrorElement>
+    );
+  }
+
+  if (recipesLoading) {
     return <TableSkeleton />;
   }
 

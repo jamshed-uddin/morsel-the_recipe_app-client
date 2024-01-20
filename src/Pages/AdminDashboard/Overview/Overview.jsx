@@ -1,27 +1,53 @@
-import { Suspense, lazy } from "react";
+import ErrorElement from "../../../Components/ErrorElement";
 import useDashboardContext from "../../../hooks/useDashboardContext";
+import useDashboardData from "../../../hooks/useDashboardData";
 import NewUsers from "./NewUsers";
 import PostedChart from "./PostedChart";
 import Totals from "./Totals";
 
 const Overview = () => {
+  const { userData } = useDashboardContext();
+
   const {
-    userData,
-    recipesData,
-    blogsData,
-    overviewStates,
-    isOverviewStateLoading,
-  } = useDashboardContext();
-  console.log("overview is loading", isOverviewStateLoading);
+    data: recipesData,
+    isLoading: recipesLoading,
+    error: recipesError,
+  } = useDashboardData("/allRecipes");
+  const {
+    data: blogsData,
+    isLoading: blogsLoading,
+    error: blogsError,
+  } = useDashboardData("/allBlogs");
+  const {
+    data: overviewStates,
+    isLoading: overviewStateLoading,
+    error: overviewStatesError,
+  } = useDashboardData("/overviewStates");
+
+  if (recipesError || blogsError || overviewStatesError) {
+    <ErrorElement />;
+  }
+
+  if (overviewStateLoading || blogsLoading || recipesLoading) {
+    return (
+      <div className="md:flex items-center gap-2 my-2 ">
+        {[1, 2, 3].map((_, index) => (
+          <div
+            key={index}
+            className={`h-44 flex-grow  bg-slate-200 rounded-xl animate-pulse mb-2 md:mb-0 ${
+              index === 2 ? "hidden md:block" : ""
+            }`}
+          ></div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
       {/* numbers of user, recipes ,blogs created */}
 
-      <Totals
-        overviewStatesLoading={isOverviewStateLoading}
-        overviewStates={overviewStates}
-      />
+      <Totals overviewStates={overviewStates} />
 
       <hr />
       {/* chart and new users*/}

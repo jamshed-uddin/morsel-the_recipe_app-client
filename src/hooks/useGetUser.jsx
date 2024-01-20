@@ -6,23 +6,27 @@ const useGetUser = (userId) => {
     isLoading: getUserLoading,
     data: userData,
     refetch: userRefetch,
-    isError,
-    error,
+
+    error: userError,
   } = useQuery(
     ["getUser", userId],
     async () => {
-      const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}/getUser?userId=${userId}`
-      );
+      try {
+        const result = await axios.get(
+          `${import.meta.env.VITE_BASEURL}/getUser?userId=${userId}`
+        );
 
-      return result.data;
+        return result.data;
+      } catch (error) {
+        throw new Error(error.message);
+      }
     },
     {
       enabled: !!userId,
     }
   );
 
-  return { userData, getUserLoading, userRefetch };
+  return { userData, getUserLoading, userRefetch, userError };
 };
 
 export default useGetUser;

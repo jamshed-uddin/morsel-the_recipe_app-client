@@ -11,7 +11,7 @@ import DOMPurify from "dompurify";
 import HTMLReactParser from "html-react-parser";
 import "./BlogDetail.css";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query";
 import { Avatar, Tooltip } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
@@ -29,7 +29,6 @@ import ReactHelmet from "../ReactHelmet/ReactHelmet";
 const BlogDetail = () => {
   const { id } = useParams();
   const { user } = useAuthContext();
-  // const [blogDetail, setBlogDetail] = useState({});
   const [open, setOpen] = useState(false);
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [message, setMessage] = useState("");
@@ -43,22 +42,18 @@ const BlogDetail = () => {
     isLoading,
     data: blogDetail,
     error,
-    isError,
     refetch: blogDetailRefetch,
   } = useQuery(["blogDetail", id], async () => {
-    const result = await axios.get(
-      `${import.meta.env.VITE_BASEURL}/singleBlog/${id}`
-    );
-    if (!result.data) {
-      throw new Error();
-    }
-    console.log(result);
-    return result.data;
-  });
+    try {
+      const result = await axios.get(
+        `${import.meta.env.VITE_BASEURL}/singleBlog/${id}`
+      );
 
-  console.log(blogDetail);
-  console.log(isError);
-  console.log(error);
+      return result.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  });
 
   const {
     isLoading: isLikedAndSavedLoading,
@@ -175,7 +170,7 @@ const BlogDetail = () => {
   };
 
   if (error) {
-    return <ErrorElement error={error} blogDetailRefetch={blogDetailRefetch} />;
+    return <ErrorElement error={error} refetch={blogDetailRefetch} />;
   }
 
   return isLoading ? (
@@ -197,7 +192,7 @@ const BlogDetail = () => {
           adminEmail={currentUser?.email}
           setOpen={setOpen}
           setMessage={setMessage}
-          blogDetailRefetch={blogDetailRefetch}
+          refetch={blogDetailRefetch}
         />
       )}
 

@@ -20,6 +20,7 @@ import deletePhotoFromCloud from "../../Components/MyFunctions/deletePhotoFromCl
 import uploadPhotoToCloud from "../../Components/MyFunctions/uploadPhotoToCloud";
 import useUpdateProfile from "../../hooks/useUpdateProfile";
 import useGetUser from "../../hooks/useGetUser";
+import ErrorElement from "../../Components/ErrorElement";
 
 const AccountPage = () => {
   const [activeTab, setActiveTab] = useState("myRecipes");
@@ -39,8 +40,9 @@ const AccountPage = () => {
 
   const navigate = useNavigate();
 
-  const { userData, getUserLoading, userRefetch } = useGetUser(userId);
-  console.log(userData);
+  const { userData, getUserLoading, userRefetch, userError } =
+    useGetUser(userId);
+
   // for the setting button and image select button to close when clicked outside
   useEffect(() => {
     const handleOutsideClick = (e) => {
@@ -133,6 +135,7 @@ const AccountPage = () => {
             cloudImageUrl,
             currentUser?.bio
           );
+          userRefetch();
           console.log(response);
         });
       } catch (error) {
@@ -163,6 +166,7 @@ const AccountPage = () => {
       console.log(response);
 
       setLoading(false);
+      userRefetch();
       handleClose();
     } catch (error) {
       setLoading(false);
@@ -181,8 +185,9 @@ const AccountPage = () => {
     const dbAndFirebaseResponse = await updateProfile(
       user?.displayName,
       "",
-      currentUser?.bio
+      userData?.bio
     );
+    userRefetch();
 
     console.log(dbAndFirebaseResponse);
   };
@@ -210,6 +215,12 @@ const AccountPage = () => {
   //     handleClose();
   //   }
   // };
+
+  if (userError) {
+    return (
+      <ErrorElement error={userError} refetch={userRefetch}></ErrorElement>
+    );
+  }
 
   if (getUserLoading || !user || !userData) {
     return (

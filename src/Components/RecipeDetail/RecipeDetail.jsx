@@ -44,12 +44,16 @@ const RecipeDetail = () => {
     error,
     refetch: recipeDetailRefetch,
   } = useQuery(["recipeDetail", id], async () => {
-    const result = await axios.get(
-      `${import.meta.env.VITE_BASEURL}/singleRecipe/${id}`
-    );
-    return result.data;
+    try {
+      const result = await axios.get(
+        `${import.meta.env.VITE_BASEURL}/singleRecipe/${id}`
+      );
+      return result.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   });
-  console.log(recipeDetail);
+
   // is liked and is saved
   const {
     isLoading: isLikedAndSavedLoading,
@@ -168,7 +172,7 @@ const RecipeDetail = () => {
   };
 
   if (error) {
-    return <ErrorElement refetch={recipeDetailRefetch} />;
+    return <ErrorElement error={error} refetch={recipeDetailRefetch} />;
   }
 
   return isLoading ? (
@@ -192,7 +196,7 @@ const RecipeDetail = () => {
           adminEmail={currentUser?.email}
           setOpen={setSnackbarOpen}
           setMessage={setMessage}
-          recipeDetailRefetch={recipeDetailRefetch}
+          refetch={recipeDetailRefetch}
         />
       )}
 
