@@ -5,9 +5,10 @@ import TableComponent from "../TableComponent";
 import TableSkeleton from "../../../Components/Skeletons/TableSkeleton";
 import UserActions from "./UserActions";
 import SimpleSnackbar from "../../../Components/Snackbar/SimpleSnackbar";
+import ErrorElement from "../../../Components/ErrorElement";
 
 const ManageUsers = () => {
-  const { userData, userFetchLoading } = useDashboardContext();
+  const { userData, userFetchLoading, userFetchError } = useDashboardContext();
   const [rowId, setRowId] = useState(null);
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -59,6 +60,10 @@ const ManageUsers = () => {
     ],
     [rowId]
   );
+
+  if (userFetchError) {
+    return <ErrorElement error={userFetchError} />;
+  }
 
   if (userFetchLoading) {
     return <TableSkeleton />;

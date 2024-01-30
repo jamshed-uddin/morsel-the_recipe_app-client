@@ -1,0 +1,5 @@
+#category-container::-webkit-scrollbar {
+  /* width of the entire scrollbar */
+  display: none;
+  width: 10px;
+}

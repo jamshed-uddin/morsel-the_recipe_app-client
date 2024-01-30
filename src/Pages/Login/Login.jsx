@@ -34,15 +34,6 @@ const Login = () => {
   const googleLoginHandler = () => {
     signInWithGoogle()
       .then((result) => {
-        console.log("google", result);
-
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        // const credential = GoogleAuthProvider.credentialFromResult(result);
-        // console.log("credential", credential);
-        // const token = credential.accessToken;
-        // console.log("token", token);
-        // The signed-in user info.
-
         if (result.user) {
           navigate(from, { replace: true });
           const body = {
@@ -171,6 +162,7 @@ const Login = () => {
               </div>
               <div>
                 <button
+                  disabled={loading}
                   type="submit"
                   className={`text-white font-semibold bg-colorOne  rounded-lg px-3 py-1 mt-1 ${
                     loading && "disabled"

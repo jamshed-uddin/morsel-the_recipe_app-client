@@ -13,14 +13,19 @@ const DashboardDataProvider = ({ children }) => {
     data: userData,
     error: userFetchError,
   } = useQuery(["users", usersRefetch], async () => {
-    const result = await axiosSecure.get(`users`);
-    return result.data;
+    try {
+      const result = await axiosSecure.get(`/users`);
+      return result.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   });
 
   const dashboardData = {
     userFetchLoading,
     userData,
     setUsersRefetch,
+    userFetchError,
   };
 
   return (

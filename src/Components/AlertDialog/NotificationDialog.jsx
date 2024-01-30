@@ -93,7 +93,7 @@ const NotificationDialog = ({ handleClose }) => {
             ))
         ) : (
           <div className="py-4">
-            <h1>Welcome to Notification.</h1>
+            <h1>Welcome to Morsel.</h1>
             <p className="text-xl">
               You have no recent activity.Try{" "}
               <b>

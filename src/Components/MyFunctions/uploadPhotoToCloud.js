@@ -10,7 +10,10 @@ const uploadPhotoToCloud = async (file) => {
       `https://api.cloudinary.com/v1_1/${
         import.meta.env.VITE_CLOUD_NAME
       }/image/upload`,
-      imageData
+      imageData,
+      {
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+      }
     );
     return response;
   } catch (error) {

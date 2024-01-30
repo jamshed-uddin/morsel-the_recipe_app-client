@@ -2,12 +2,10 @@ import { useEffect, useState } from "react";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import DriveFileRenameOutlineOutlinedIcon from "@mui/icons-material/DriveFileRenameOutlineOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
-import Checkbox from "@mui/material/Checkbox";
 import AddBtn from "../../Components/AddBtn/AddBtn";
 import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
-import { Avatar, CircularProgress, Dialog } from "@mui/material";
+import { Avatar, CircularProgress } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -15,28 +13,31 @@ import useSingleUser from "../../hooks/useSingleUser";
 import { useQuery } from "react-query";
 import MyItems from "./MyItems";
 import AccountPageSkeleton from "../../Components/Skeletons/AccountPageSkeleton";
-import MyButton from "../../Components/Button/MyButton";
+
 import deletePhotoFromCloud from "../../Components/MyFunctions/deletePhotoFromCloud";
 import uploadPhotoToCloud from "../../Components/MyFunctions/uploadPhotoToCloud";
 import useUpdateProfile from "../../hooks/useUpdateProfile";
 import useGetUser from "../../hooks/useGetUser";
 import ErrorElement from "../../Components/ErrorElement";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import EditProfileDialog from "./EditProfileDialog";
 
 const AccountPage = () => {
+  const { userId } = useParams();
   const [activeTab, setActiveTab] = useState("myRecipes");
   const [showSettings, setShowSettings] = useState(false);
   const [showImgTooltip, setShowImgTooltip] = useState(false);
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+
   const [photoUploadLoading, setPhotoUploadLoading] = useState(false);
-  const [modalContent, setModalContent] = useState("");
-  const { user, userLogout, updateUserNamePhoto, deleteUserHandler } =
-    useAuthContext();
+
+  const { user, userLogout } = useAuthContext();
   const { currentUser } = useSingleUser();
   const { updateProfile } = useUpdateProfile();
-  const [profilePhotoURL, setProfilePhotoURL] = useState(user && user.photoURL);
-  const { userId } = useParams();
-  console.log(typeof userId);
+  const [profilePhotoURL, setProfilePhotoURL] = useState(
+    currentUser && currentUser.photoURL
+  );
+  const axiosSecure = useAxiosSecure();
 
   const navigate = useNavigate();
 
@@ -77,10 +78,8 @@ const AccountPage = () => {
     ["myItems", activeTab, userData],
     async () => {
       if (activeTab === "savedItems") {
-        const result = await axios.get(
-          `${import.meta.env.VITE_BASEURL}/${activeTab}?userId=${
-            userData?._id
-          }&itemType=All`
+        const result = await axiosSecure.get(
+          `${import.meta.env.VITE_BASEURL}/${activeTab}?userId=${userData?._id}`
         );
 
         return result.data;
@@ -130,47 +129,17 @@ const AccountPage = () => {
           setPhotoUploadLoading(false);
           setProfilePhotoURL(cloudImageUrl);
 
-          const response = await updateProfile(
-            user?.displayName,
-            cloudImageUrl,
-            currentUser?.bio
-          );
+          const response = await updateProfile({
+            name: "",
+            photoURL: cloudImageUrl,
+            bio: "",
+          });
           userRefetch();
           console.log(response);
         });
       } catch (error) {
         setPhotoUploadLoading(false);
       }
-    }
-  };
-
-  // profile info updating function for both firebase and DB
-  const handleUpdateProfile = async (e) => {
-    e.preventDefault();
-
-    const updatedProfile = {
-      name: e.target.name.value,
-      bio: e.target.bio.value,
-    };
-    // console.log(updatedProfile);
-
-    try {
-      setLoading(true);
-
-      const response = await updateProfile(
-        updatedProfile.name,
-        user?.photoURL,
-        updatedProfile.bio
-      );
-
-      console.log(response);
-
-      setLoading(false);
-      userRefetch();
-      handleClose();
-    } catch (error) {
-      setLoading(false);
-      return null;
     }
   };
 
@@ -182,14 +151,14 @@ const AccountPage = () => {
     );
     console.log(response);
 
-    const dbAndFirebaseResponse = await updateProfile(
-      user?.displayName,
-      "",
-      userData?.bio
-    );
+    const dbResponse = await updateProfile({
+      name: "",
+      photoURL: "",
+      bio: "",
+    });
     userRefetch();
 
-    console.log(dbAndFirebaseResponse);
+    console.log(dbResponse);
   };
 
   // delete account handler
@@ -222,7 +191,7 @@ const AccountPage = () => {
     );
   }
 
-  if (getUserLoading || !user || !userData) {
+  if (getUserLoading || !userData) {
     return (
       <div className="my-container mt-24">
         <AccountPageSkeleton />
@@ -334,23 +303,12 @@ const AccountPage = () => {
             >
               <button
                 onClick={() => {
-                  // based on this setModalContent modal content will display
-                  setModalContent("editProfile");
                   handleClickOpen();
                 }}
                 className="cursor-pointer"
               >
                 <DriveFileRenameOutlineOutlinedIcon /> Edit profile
               </button>
-              {/* <button
-                onClick={() => {
-                  setModalContent("account");
-                  handleClickOpen();
-                }}
-                className="cursor-pointer"
-              >
-                <PersonOutlineOutlinedIcon /> Account
-              </button> */}
 
               <button onClick={handleLogout} className="cursor-pointer">
                 <LogoutOutlinedIcon /> Sign out
@@ -360,7 +318,7 @@ const AccountPage = () => {
         </div>
 
         {/* recipe/blog/saved section  --- conditionally rendering this tab part becaues this account component also used in admin dashboard for admin profile */}
-        {currentUser?.role !== "admin" && user && currentUser && (
+        {currentUser?.role !== "admin" && (
           <div className=" mt-14 px-2">
             {/* tab buttons  */}
             <div className="flex items-end gap-10 text-2xl font-semibold border-b-[1px] border-slate-300 ">
@@ -415,120 +373,11 @@ const AccountPage = () => {
         currentUser?.email === userData?.email && <AddBtn />}
 
       {/* dialogue from setting button for updating/account/ sign out */}
-      <Dialog fullWidth open={open} onClose={handleClose}>
-        <div className="h-[70vh] md:h-[90vh] pt-10 bg-bgColor text-colorTwo">
-          {/* update profile info  */}
-          {modalContent === "editProfile" && (
-            <div className="w-[90%] mx-auto space-y-4">
-              <div>
-                <h1 className="text-4xl font-semibold">Edit profile</h1>
-              </div>
-              {/* update form div */}
-              <div className="space-y-2">
-                <form onSubmit={handleUpdateProfile} className="space-y-2">
-                  <div>
-                    <label className="text-xl font-semibold" htmlFor="name">
-                      Name
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      defaultValue={currentUser?.name}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-xl font-semibold" htmlFor="bio">
-                      Bio
-                    </label>
-                    <textarea
-                      id="bio"
-                      name="bio"
-                      defaultValue={currentUser?.bio}
-                    ></textarea>
-                  </div>
-                  <div>
-                    <MyButton loading={loading} type={"submit"}>
-                      Save
-                    </MyButton>
-
-                    <MyButton
-                      type={"button"}
-                      variant={"outlined"}
-                      clickFunction={handleClose}
-                    >
-                      Cancel
-                    </MyButton>
-                  </div>
-                </form>
-              </div>
-            </div>
-          )}
-
-          {/* account deleting info */}
-          {/* {modalContent === "account" && (
-            <div className=" w-[90%] mx-auto">
-              <div className="">
-                <h1 className=" text-4xl ">Delete account</h1>
-
-                {currentUser?.role === "admin" ? (
-                  <div className="mt-4 ml-1">
-                    <div className="text-colorOne">
-                      <h1 className="text-2xl ">This will also remove</h1>
-                      <div className="text-lg leading-6">
-                        <h4>- Personal information</h4>
-                        <h4>- Control over management</h4>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mt-4 ml-1">
-                    <div className="text-colorOne">
-                      <h1 className="text-2xl ">This will also remove</h1>
-                      <div className="text-lg leading-6">
-                        <h4>- Personal information</h4>
-                        <h4>- Recipes</h4>
-                        <h4>- Blogs </h4>
-                        <h4>- Saved items</h4>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className=" mt-8 ">
-                <div className="flex gap-3 items-center  mb-3">
-                  <Checkbox
-                    sx={{
-                      p: 0,
-                      color: "inherit",
-                      "&.Mui-checked": {
-                        color: "inherit",
-                      },
-                    }}
-                    checked={checked}
-                    onChange={handleCheckBoxChange}
-                    inputProps={{ "aria-label": "controlled" }}
-                  />
-                  <p className="text-lg">I am aware</p>
-                </div>
-                <div className="">
-                  <MyButton
-                    loading={deleteLoading}
-                    disabledForOthers={!checked}
-                  >
-                    Delete
-                  </MyButton>
-                  <MyButton variant={"outlined"} clickFunction={handleClose}>
-                    Cancel
-                  </MyButton>
-                </div>
-              </div>
-            </div>
-          )} */}
-        </div>
-      </Dialog>
+      <EditProfileDialog
+        open={open}
+        handleClose={handleClose}
+        userRefetch={userRefetch}
+      />
     </div>
   );
 };

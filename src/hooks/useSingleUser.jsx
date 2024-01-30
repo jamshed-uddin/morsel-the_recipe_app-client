@@ -1,9 +1,11 @@
 import useAuthContext from "./useAuthContext";
 import { useQuery } from "react-query";
-import axios from "axios";
+
+import useAxiosSecure from "./useAxiosSecure";
 
 const useSingleUser = () => {
   const { user } = useAuthContext();
+  const axiosSecure = useAxiosSecure();
 
   const {
     isLoading: currentUserLoading,
@@ -13,9 +15,7 @@ const useSingleUser = () => {
   } = useQuery(
     ["singleUser", user],
     async () => {
-      const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}/singleUser/${user?.email}`
-      );
+      const result = await axiosSecure.get(`/singleUser/${user?.email}`);
 
       return result.data;
     },

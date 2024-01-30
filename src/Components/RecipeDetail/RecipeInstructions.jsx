@@ -14,13 +14,13 @@ const instructions = ({ instructions }) => {
             {instruction.header ? (
               <span className="text-xl font-bold ">{instruction.header}</span>
             ) : (
-              <p>
+              <div>
                 <h3 className="font-semibold">
                   {instruction && `Step ${++instructionStep}`}
                 </h3>
 
                 <p className="pb-2"> {instruction && instruction}</p>
-              </p>
+              </div>
             )}
           </div>
         );

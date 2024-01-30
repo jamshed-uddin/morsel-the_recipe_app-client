@@ -85,9 +85,11 @@ const Navbar = () => {
                 </Link>
               </div>
             )}
-            <div className={`link`}>
-              <Link to={"/"}>Home</Link>
-            </div>
+            {pathname !== "/" && (
+              <div className={`link`}>
+                <Link to={"/"}>Home</Link>
+              </div>
+            )}
             <div className={`link`}>
               <Link to={"/recipes"}>Recipes</Link>
             </div>
@@ -115,7 +117,7 @@ const Navbar = () => {
                 >
                   <div className="flex items-center  rounded-3xl cursor-pointer">
                     <Avatar
-                      src={user?.photoURL}
+                      src={currentUser?.photoURL}
                       sx={{ width: "35px", height: "35px" }}
                     ></Avatar>
 

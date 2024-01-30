@@ -1,27 +1,20 @@
 import useAuthContext from "./useAuthContext";
 import axios from "axios";
+import useAxiosSecure from "./useAxiosSecure";
 
 const useUpdateProfile = () => {
-  const { user, updateUserNamePhoto } = useAuthContext();
+  const axiosSecure = useAxiosSecure();
+  const { user } = useAuthContext();
 
-  const updateProfile = async (name, photoURL, bio) => {
+  const updateProfile = async (updatedUserInfo) => {
+    // const { name, photoURL, bio } = updatedUserInfo;
     try {
-      const fireResponse = await updateUserNamePhoto(name, photoURL).then(
-        () => {
-          return "firebase profile info updated";
-        }
+      const dbResponse = await axiosSecure.put(
+        `/updateUser/${user?.email}`,
+        updatedUserInfo
       );
 
-      const dbResponse = await axios.put(
-        `${import.meta.env.VITE_BASEURL}/updateUser/${user?.email}`,
-        {
-          name,
-          bio,
-          photoURL,
-        }
-      );
-
-      return { fireResponse, dbResponse };
+      return dbResponse;
     } catch (error) {
       return error;
     }

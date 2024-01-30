@@ -11,7 +11,6 @@ const LandingPage = () => {
       <div className="my-container">
         <Trending />
         <Recipes />
-
         <CreateARecipe />
         <Blogs />
       </div>

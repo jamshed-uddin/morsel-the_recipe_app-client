@@ -86,12 +86,11 @@ const AuthProvider = ({ children }) => {
           })
           .then((res) => {
             localStorage.setItem("access-token", res.data.token);
-            setLoading(false);
           });
       } else {
         localStorage.removeItem("access-token");
-        setLoading(false);
       }
+      setLoading(false);
     });
 
     return () => {

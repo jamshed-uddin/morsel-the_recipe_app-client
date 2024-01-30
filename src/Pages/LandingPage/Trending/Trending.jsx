@@ -9,6 +9,11 @@ const Trending = () => {
   if (trendingQuickVoicesLoading) {
     return (
       <div className="mt-12">
+        <div className={`overflow-hidden  mb-2`}>
+          <div>
+            <Title> Trending this week</Title>
+          </div>
+        </div>
         <div className=" md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
           {[1, 2, 3].map((item, index) => (
             <CardSkeleton key={index} />
