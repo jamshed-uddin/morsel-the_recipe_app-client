@@ -31,7 +31,7 @@ import ScrollTop from "./ScrollTop.jsx";
 import ErrorPage from "./Pages/ErrorPage.jsx";
 import LandingPage from "./Pages/LandingPage/LandingPage.jsx";
 import SearchPage from "./Pages/SearchPage/SearchPage.jsx";
-import RecipeCategory from "./Pages/RecipeCategory.jsx";
+import RecipeCategory from "./Pages/RecipeCategory/RecipeCategory.jsx";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([

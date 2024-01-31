@@ -3,11 +3,11 @@ import Card from "../../Components/Card/Card";
 const ItemsComp = ({ items, itemsType }) => {
   return (
     <>
-      {items?.map((item, index) => (
+      {items?.map((item) => (
         <Card
           itemType={itemsType === "blogs" ? "blog" : "recipe"}
           item={item}
-          key={index}
+          key={item._id}
         ></Card>
       ))}
     </>
