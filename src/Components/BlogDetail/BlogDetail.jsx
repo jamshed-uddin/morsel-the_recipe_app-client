@@ -25,6 +25,7 @@ import AlertDialog from "../AlertDialog/AlertDialog";
 import StatusChanger from "../StatusChanger/StatusChanger";
 import StatusAndFeedback from "../statusAndFeedback/statusAndFeedback";
 import ReactHelmet from "../ReactHelmet/ReactHelmet";
+import toast from "react-hot-toast";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -77,6 +78,9 @@ const BlogDetail = () => {
 
   // saving on savedItems collection
   const handleBlogSave = async () => {
+    if (!user) {
+      return toast.error("You are not signed in");
+    }
     setIsSaved((prevState) => !prevState);
 
     const body = {
@@ -98,8 +102,7 @@ const BlogDetail = () => {
           setOptionsLoading(false);
           reloadIslikedAndIsSaved();
           //  setOpen and message for snackbar alert for save/unsave
-          setOpen((prev) => !prev);
-          setMessage("Blog unsaved");
+          toast("Blog unsaved");
         })
         .catch(() => {
           setOptionsLoading(false);
@@ -117,8 +120,8 @@ const BlogDetail = () => {
       .then(() => {
         setOptionsLoading(false);
         reloadIslikedAndIsSaved();
-        setOpen((prev) => !prev);
-        setMessage("Blog saved");
+
+        toast("Blog saved");
       })
       .catch(() => {
         setOptionsLoading(false);

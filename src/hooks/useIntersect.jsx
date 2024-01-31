@@ -3,8 +3,6 @@ import { useEffect, useRef } from "react";
 const useIntersect = (callback) => {
   const loadMoreRef = useRef(null);
 
-  console.log(loadMoreRef);
-
   useEffect(() => {
     const itemToIntersect = loadMoreRef.current;
 

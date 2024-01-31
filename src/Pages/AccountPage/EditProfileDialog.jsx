@@ -7,7 +7,7 @@ import useGetUser from "../../hooks/useGetUser";
 
 const EditProfileDialog = ({ open, handleClose }) => {
   const { currentUser } = useSingleUser();
-  const { userData, userRefetch } = useGetUser(currentUser._id);
+  const { userData, userRefetch } = useGetUser(currentUser?._id);
   const [loading, setLoading] = useState(false);
   const { updateProfile } = useUpdateProfile();
   const [bioLimitExceded, setBioLimitExceded] = useState(false);

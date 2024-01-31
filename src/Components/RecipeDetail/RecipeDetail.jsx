@@ -24,13 +24,13 @@ import StatusChanger from "../StatusChanger/StatusChanger";
 import ReactHelmet from "../ReactHelmet/ReactHelmet";
 import StatusAndFeedback from "../statusAndFeedback/statusAndFeedback";
 import RecipeInstructions from "./RecipeInstructions";
+import toast from "react-hot-toast";
 
 const RecipeDetail = () => {
   const { id } = useParams();
   const { user } = useAuthContext();
   const { currentUser } = useSingleUser();
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [message, setMessage] = useState("");
+
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [dialogFor, setDialogFor] = useState("delete");
   const [optionsLoading, setOptionsLoading] = useState(false);
@@ -80,6 +80,10 @@ const RecipeDetail = () => {
 
   // saving in savedItems collection
   const handleRecipeSave = async () => {
+    if (!user) {
+      return toast.error("You are not signed in!");
+    }
+
     setIsSaved((prevState) => !prevState);
 
     const body = {
@@ -101,8 +105,7 @@ const RecipeDetail = () => {
           setOptionsLoading(false);
           reloadIslikedAndIsSaved();
           //  setOpen and message for snackbar alert for save/unsave
-          setSnackbarOpen((prev) => !prev);
-          setMessage("Recipe unsaved");
+          toast("Recipe unsaved");
         })
         .catch(() => {
           setOptionsLoading(false);
@@ -120,8 +123,7 @@ const RecipeDetail = () => {
       .then(() => {
         setOptionsLoading(false);
         reloadIslikedAndIsSaved();
-        setSnackbarOpen((prev) => !prev);
-        setMessage("Recipe saved");
+        toast("Recipe saved");
       })
       .catch(() => {
         setOptionsLoading(false);
@@ -263,7 +265,7 @@ const RecipeDetail = () => {
           </div>
           {/* recipe & creator info */}
           <div className="md:w-[42vw] md:mt-1   text-center print:text-left bg-bgColor -mt-4 relative z-20 rounded-3xl ">
-            {/* edit  delete share button (creator only action) */}
+            {/* edit  delete  button (creator only action) */}
             <div className="print:hidden flex gap-5 items-center justify-end  pt-2 mr-4 md:mr-0 lg:mb-4">
               {user?.email === recipeDetail?.creatorInfo?.email && (
                 <>
@@ -342,7 +344,7 @@ const RecipeDetail = () => {
             <div className="mt-3">
               <p className="text-xl">{recipeDetail?.description}</p>
             </div>
-            {/* save, print button */}
+            {/* save, print, share button */}
             <div className="print:hidden mt-8">
               <div className=" flex items-center justify-center gap-8  text-lg">
                 {isLikedAndSavedLoading ? (
@@ -479,11 +481,6 @@ const RecipeDetail = () => {
         </div>
       </div>
 
-      <SimpleSnackbar
-        open={snackbarOpen}
-        setOpen={setSnackbarOpen}
-        message={message}
-      />
       <AlertDialog
         shareURL={"http://www.google.com"}
         dialogFor={dialogFor}

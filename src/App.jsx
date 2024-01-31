@@ -3,6 +3,7 @@ import "./App.css";
 import Navbar from "./Components/Navbar/Navbar";
 
 import Footer from "./Components/Footer/Footer";
+import { Toaster } from "react-hot-toast";
 
 // import { useState } from "react";
 
@@ -21,6 +22,7 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen ">
+      <Toaster />
       {!hideNav && (
         <div>
           <Navbar />

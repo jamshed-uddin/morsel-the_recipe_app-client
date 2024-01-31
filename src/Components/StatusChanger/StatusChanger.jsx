@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
+import toast from "react-hot-toast";
 
 const StatusChanger = ({
   status,
@@ -14,9 +15,7 @@ const StatusChanger = ({
   adminEmail,
   actionFrom,
   actionFor,
-  snackbarHandler,
-  setOpen,
-  setMessage,
+
   refetch,
   //info about props at the end of the code
 }) => {
@@ -61,13 +60,15 @@ const StatusChanger = ({
       // snackbar and refetch for table
       if (actionFrom === "table") {
         refetch();
-        snackbarHandler("Status changed");
+        toast("Status changed");
+
         return;
       }
 
       // snackbar props for detail page snackbar
-      setOpen((prev) => !prev);
-      setMessage("Status changed");
+
+      toast("Status changed");
+
       refetch();
     } catch (error) {
       setLoading(false);
@@ -77,13 +78,14 @@ const StatusChanger = ({
       // snackbar and refetch for table
       if (actionFrom === "table") {
         refetch();
-        snackbarHandler(error?.response?.data?.error);
+        toast.error(error?.response?.data?.error);
+
         return;
       }
 
       // snackbar props for detail page snackbar
-      setOpen((prev) => !prev);
-      setMessage(error?.response?.data?.error);
+
+      toast.error(error?.response?.data?.error);
       refetch();
     }
   };
@@ -235,9 +237,7 @@ props
   * adminEmail - currentUser id which has to be a admin email
   * actionFrom -  (table/ detailPage) as it's used in 2 different  types of page 
   * actionFor - blog/recipe - as they have different api for updating
-  * snackbarHandler - snackbar for showing updating message
- * setOpen - setOpen to show snackbar only for detailPage
- * setMessage - message for snackbar( only for detail page) 
+  
  * refetch -- useQuery refetch to refetch data after a change in status
 
 */

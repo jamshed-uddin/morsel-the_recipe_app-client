@@ -19,12 +19,11 @@ import {
   WhatsappShareButton,
 } from "react-share";
 import { useState } from "react";
-import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 import MyButton from "../Button/MyButton";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 import NotificationDialog from "./NotificationDialog";
+import toast from "react-hot-toast";
 
 const AlertDialog = ({
   open,
@@ -35,8 +34,6 @@ const AlertDialog = ({
   itemId,
   userEmail,
 }) => {
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -47,8 +44,7 @@ const AlertDialog = ({
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(shareURL);
-      setSnackbarOpen(true);
-      setSnackbarMessage("Linked copied to clipboard");
+      toast("Linked copied to clipboard");
     } catch (err) {
       return null;
     }
@@ -66,8 +62,7 @@ const AlertDialog = ({
       setDeleteLoading(false);
       navigate(-1);
     } catch (error) {
-      setSnackbarOpen(true);
-      setSnackbarMessage("Something went wrong");
+      toast.error("Something went wrong");
       setDeleteLoading(false);
     }
   };
@@ -178,11 +173,6 @@ const AlertDialog = ({
                 </div>
               </div>
             </DialogContent>
-            <SimpleSnackbar
-              open={snackbarOpen}
-              setOpen={setSnackbarOpen}
-              message={snackbarMessage}
-            />
           </div>
         )}
 

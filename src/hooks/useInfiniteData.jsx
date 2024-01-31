@@ -1,13 +1,15 @@
 import axios from "axios";
 import { useInfiniteQuery } from "react-query";
 
-const useInfiniteData = (endPoint) => {
-  const queryKey = [endPoint];
+const useInfiniteData = (endPoint, category = "") => {
+  const queryKey = [endPoint, category];
 
   const fetchData = async ({ pageParam = 1 }) => {
     try {
       const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}${endPoint}?page=${pageParam}`
+        `${
+          import.meta.env.VITE_BASEURL
+        }${endPoint}?page=${pageParam}&category=${category}`
       );
 
       return result?.data;
