@@ -7,9 +7,9 @@ import Title from "../../Components/Title";
 import useIntersect from "../../hooks/useIntersect";
 import { CircularProgress } from "@mui/material";
 import ErrorElement from "../../Components/ErrorElement";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+
 import "./RecipesPage.css";
+import AllCategories from "./AllCategories";
 
 const RecipesPage = () => {
   const {
@@ -22,20 +22,6 @@ const RecipesPage = () => {
     error,
     refetch,
   } = useInfiniteData("/allRecipes/approved");
-  const [categories] = useState([
-    "bread",
-    "soup",
-    "healthy",
-    "breakfast",
-    "cake",
-    "chicken",
-    "salad",
-    "salmon",
-    "keto",
-    "quick",
-    "easy",
-    "other",
-  ]);
 
   const fetchNextRecipePageHandler = (isIntersecting) => {
     if (isIntersecting && hasNextPage) {
@@ -50,25 +36,10 @@ const RecipesPage = () => {
   }
 
   return (
-    <div className="my-container mb-10 relative ">
-      <div className="mb-5">
-        <div className=" mb-5">
-          <Title>Recipe categories</Title>
-        </div>
-        <div id="category-container" className="overflow-x-auto pb-7 md:py-0">
-          <div className="w-max flex flex-nowrap gap-x-6  md:gap-y-6  ">
-            {categories.map((category, index) => (
-              <Link key={index} to={`/recipes/category/${category}`}>
-                <div className="w-28 h-28 rounded-xl border flex items-end justify-center">
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
+    <div className="my-container mb-10 lg:pt-3 relative ">
+      <AllCategories />
 
-      <div className="mb-5">
+      <div className="mb-2 lg:mb-5">
         <Title>Explore recipes</Title>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 ">
