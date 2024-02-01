@@ -9,7 +9,6 @@ const useIntersect = (callback) => {
     const handleIntersection = (entries) => {
       entries.forEach((entry) => {
         callback(entry.isIntersecting);
-        console.log("load more observing");
       });
     };
 

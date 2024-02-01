@@ -26,7 +26,7 @@ const Card = ({ itemType, item, placedIn }) => {
           }  relative overflow-hidden`}
         >
           <img
-            className={`w-full h-full object-cover  object-center ${
+            className={`w-full h-full object-cover  object-center pointer-events-none select-none ${
               itemType?.toLowerCase() === "blog" ? "" : "rounded-2xl"
             } `}
             draggable="false"
