@@ -1,10 +1,10 @@
 import axios from "axios";
-import React, { useState } from "react";
+import { useState } from "react";
 import useSingleUser from "./useSingleUser";
 import { useQuery } from "react-query";
 import toast from "react-hot-toast";
 
-const useSaveAndReact = ({ itemType, itemId, itemFectched }) => {
+const useSaveAndReact = (itemType, itemId, itemFectched, itemRefetch) => {
   const { currentUser } = useSingleUser();
   const [isSaved, setIsSaved] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -54,6 +54,7 @@ const useSaveAndReact = ({ itemType, itemId, itemFectched }) => {
         .then(() => {
           setOptionsLoading(false);
           reloadIslikedAndIsSaved();
+
           //  setOpen and message for snackbar alert for save/unsave
           toast(`${itemType === "blog" ? "Blog unsaved" : "Recipe unsaved"}`);
         })
@@ -93,11 +94,11 @@ const useSaveAndReact = ({ itemType, itemId, itemFectched }) => {
         .patch(`${import.meta.env.VITE_BASEURL}/changeReaction/${itemId}`, body)
         .then(() => {
           reloadIslikedAndIsSaved();
-          //   blogDetailRefetch();
+          itemRefetch();
         })
         .catch(() => {
           reloadIslikedAndIsSaved();
-          //   blogDetailRefetch();
+          itemRefetch();
         });
       return;
     }
@@ -112,19 +113,18 @@ const useSaveAndReact = ({ itemType, itemId, itemFectched }) => {
       .patch(`${import.meta.env.VITE_BASEURL}/changeReaction/${itemId}`, body)
       .then(() => {
         reloadIslikedAndIsSaved();
-        // blogDetailRefetch();
+        itemRefetch();
       })
       .catch(() => {
         reloadIslikedAndIsSaved();
-        // blogDetailRefetch();
+        itemRefetch();
       });
   };
 
   return {
     isLiked,
-    setIsLiked,
     isSaved,
-    setIsSaved,
+    isLikedAndSavedLoading,
     handleItemSave,
     handleReaction,
     optionsLoading,

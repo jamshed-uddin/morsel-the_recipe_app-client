@@ -12,7 +12,6 @@ const EditProfileDialog = ({ open, handleClose }) => {
   const { updateProfile } = useUpdateProfile();
   const [bioLimitExceded, setBioLimitExceded] = useState(false);
 
-  console.log(userData);
   // profile info updating function for both firebase and DB
   const handleUpdateProfile = async (e) => {
     e.preventDefault();

@@ -18,13 +18,12 @@ import DetailSkeleton from "../../Components/Skeletons/DetailSkeleton";
 import { Tooltip } from "@mui/material";
 import useAuthContext from "../../hooks/useAuthContext";
 import useSingleUser from "../../hooks/useSingleUser";
-import SimpleSnackbar from "../Snackbar/SimpleSnackbar";
 import AlertDialog from "../AlertDialog/AlertDialog";
 import StatusChanger from "../StatusChanger/StatusChanger";
 import ReactHelmet from "../ReactHelmet/ReactHelmet";
 import StatusAndFeedback from "../statusAndFeedback/statusAndFeedback";
 import RecipeInstructions from "./RecipeInstructions";
-import toast from "react-hot-toast";
+import useSaveAndReact from "../../hooks/useSaveAndReact";
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -33,9 +32,6 @@ const RecipeDetail = () => {
 
   const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
   const [dialogFor, setDialogFor] = useState("delete");
-  const [optionsLoading, setOptionsLoading] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
   const [recipeImageIndex, setRecipeImageIndex] = useState(0);
 
   const {
@@ -54,123 +50,25 @@ const RecipeDetail = () => {
     }
   });
 
-  // is liked and is saved
   const {
-    isLoading: isLikedAndSavedLoading,
-    data: isLikedAndSaved,
-    error: errorMessage,
-    refetch: reloadIslikedAndIsSaved,
-  } = useQuery(
-    ["isSavedAndLiked"],
-    async () => {
-      const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}/isLikedAndSaved?userEmail=${
-          currentUser?.email
-        }&itemId=${recipeDetail?._id}&itemType=recipe`
-      );
-      setIsLiked(result?.data?.isLiked);
-      setIsSaved(result?.data?.isSaved);
-      return result;
-    },
-    {
-      enabled: !!currentUser && !!recipeDetail,
-    }
-    // query enables when currentUser is available
+    isLiked,
+    isSaved,
+    isLikedAndSavedLoading,
+    handleItemSave,
+    handleReaction,
+    optionsLoading,
+  } = useSaveAndReact(
+    "recipe",
+    recipeDetail?._id,
+    !!recipeDetail,
+    recipeDetailRefetch
   );
 
-  // saving in savedItems collection
-  const handleRecipeSave = async () => {
-    if (!user) {
-      return toast.error("You are not signed in!");
-    }
-
-    setIsSaved((prevState) => !prevState);
-
-    const body = {
-      userId: currentUser?._id,
-      userEmail: currentUser?.email,
-      itemType: "Recipe", //need the first letter in capital because it's given as refPath in DB schema.
-    };
-    // if item already saved call delete action
-    if (isSaved) {
-      setOptionsLoading(true);
-
-      await axios
-        .delete(
-          `${import.meta.env.VITE_BASEURL}/deleteSavedItem?itemId=${
-            recipeDetail?._id
-          }&userEmail=${currentUser?.email}`
-        )
-        .then(() => {
-          setOptionsLoading(false);
-          reloadIslikedAndIsSaved();
-          //  setOpen and message for snackbar alert for save/unsave
-          toast("Recipe unsaved");
-        })
-        .catch(() => {
-          setOptionsLoading(false);
-          reloadIslikedAndIsSaved();
-        });
-      return;
-    }
-    setOptionsLoading(true);
-
-    await axios
-      .post(
-        `${import.meta.env.VITE_BASEURL}/saveNewItem/${recipeDetail?._id}`,
-        body
-      )
-      .then(() => {
-        setOptionsLoading(false);
-        reloadIslikedAndIsSaved();
-        toast("Recipe saved");
-      })
-      .catch(() => {
-        setOptionsLoading(false);
-        reloadIslikedAndIsSaved();
-      });
+  const handleRecipeSave = () => {
+    handleItemSave();
   };
-
-  const handleReaction = async () => {
-    setIsLiked((prevState) => !prevState);
-    // if item already liked calls dislike action
-    if (isLiked) {
-      const body = {
-        userId: currentUser?._id,
-        action: "dislike",
-        actionFrom: "recipe",
-      };
-      await axios
-        .patch(
-          `${import.meta.env.VITE_BASEURL}/changeReaction/${recipeDetail?._id}`,
-          body
-        )
-        .then(() => {
-          recipeDetailRefetch();
-        })
-        .catch(() => {
-          recipeDetailRefetch();
-        });
-      return;
-    }
-
-    // if item not liked yet
-    const body = {
-      userId: currentUser?._id,
-      action: "like",
-      actionFrom: "recipe",
-    };
-    await axios
-      .patch(
-        `${import.meta.env.VITE_BASEURL}/changeReaction/${recipeDetail?._id}`,
-        body
-      )
-      .then(() => {
-        recipeDetailRefetch();
-      })
-      .catch(() => {
-        recipeDetailRefetch();
-      });
+  const handleRecipeReaction = () => {
+    handleReaction();
   };
 
   if (error) {
@@ -196,8 +94,6 @@ const RecipeDetail = () => {
           actionFor="recipe"
           actionFrom="detailPage"
           adminEmail={currentUser?.email}
-          setOpen={setSnackbarOpen}
-          setMessage={setMessage}
           refetch={recipeDetailRefetch}
         />
       )}
@@ -323,7 +219,7 @@ const RecipeDetail = () => {
                 <p className="flex-grow">
                   <button
                     disabled={optionsLoading}
-                    onClick={handleReaction}
+                    onClick={handleRecipeReaction}
                     className="cursor-pointer "
                   >
                     {isLiked ? (

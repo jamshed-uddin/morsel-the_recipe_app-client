@@ -26,6 +26,7 @@ import StatusChanger from "../StatusChanger/StatusChanger";
 import StatusAndFeedback from "../statusAndFeedback/statusAndFeedback";
 import ReactHelmet from "../ReactHelmet/ReactHelmet";
 import toast from "react-hot-toast";
+import useSaveAndReact from "../../hooks/useSaveAndReact";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -35,9 +36,6 @@ const BlogDetail = () => {
   const [message, setMessage] = useState("");
   const [dialogFor, setDialogFor] = useState("delete");
   const { currentUser } = useSingleUser();
-  const [optionsLoading, setOptionsLoading] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
 
   const {
     isLoading,
@@ -57,119 +55,19 @@ const BlogDetail = () => {
   });
 
   const {
-    isLoading: isLikedAndSavedLoading,
-    data: isLikedAndSaved,
-    error: errorMessage,
-    refetch: reloadIslikedAndIsSaved,
-  } = useQuery(
-    "isSavedAndLiked",
-    async () => {
-      const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}/isLikedAndSaved?userEmail=${
-          currentUser?.email
-        }&itemId=${blogDetail?._id}&itemType=blog`
-      );
-      setIsLiked(result?.data?.isLiked);
-      setIsSaved(result?.data?.isSaved);
-      return result;
-    },
-    { enabled: !!currentUser && !!blogDetail } // query enables when currentUser is available
-  );
+    isLiked,
+    isSaved,
+    isLikedAndSavedLoading,
+    handleItemSave,
+    handleReaction,
+    optionsLoading,
+  } = useSaveAndReact("blog", blogDetail?._id, !!blogDetail, blogDetailRefetch);
 
-  // saving on savedItems collection
-  const handleBlogSave = async () => {
-    if (!user) {
-      return toast.error("You are not signed in");
-    }
-    setIsSaved((prevState) => !prevState);
-
-    const body = {
-      userId: currentUser?._id,
-      userEmail: currentUser?.email,
-      itemType: "Blog", //need the first letter in capital because it's given as refPath in DB schema.
-    };
-    // if item already saved call delete action
-    if (isSaved) {
-      setOptionsLoading(true);
-
-      await axios
-        .delete(
-          `${import.meta.env.VITE_BASEURL}/deleteSavedItem?itemId=${
-            blogDetail?._id
-          }&userEmail=${currentUser?.email}`
-        )
-        .then(() => {
-          setOptionsLoading(false);
-          reloadIslikedAndIsSaved();
-          //  setOpen and message for snackbar alert for save/unsave
-          toast("Blog unsaved");
-        })
-        .catch(() => {
-          setOptionsLoading(false);
-          reloadIslikedAndIsSaved();
-        });
-      return;
-    }
-    setOptionsLoading(true);
-
-    await axios
-      .post(
-        `${import.meta.env.VITE_BASEURL}/saveNewItem/${blogDetail?._id}`,
-        body
-      )
-      .then(() => {
-        setOptionsLoading(false);
-        reloadIslikedAndIsSaved();
-
-        toast("Blog saved");
-      })
-      .catch(() => {
-        setOptionsLoading(false);
-        reloadIslikedAndIsSaved();
-      });
+  const handleBlogSave = () => {
+    handleItemSave();
   };
-
-  const handleReaction = async () => {
-    setIsLiked((prevState) => !prevState);
-
-    // if item already liked calls dislike action
-    if (isLiked) {
-      const body = {
-        userId: currentUser?._id,
-        action: "dislike",
-        actionFrom: "blog",
-      };
-      await axios
-        .patch(
-          `${import.meta.env.VITE_BASEURL}/changeReaction/${blogDetail?._id}`,
-          body
-        )
-        .then(() => {
-          blogDetailRefetch();
-        })
-        .catch(() => {
-          blogDetailRefetch();
-        });
-      return;
-    }
-
-    // if item not liked yet
-    const body = {
-      userId: currentUser?._id,
-      action: "like",
-      actionFrom: "blog",
-    };
-    await axios
-      .patch(
-        `${import.meta.env.VITE_BASEURL}/changeReaction/${blogDetail?._id}`,
-        body
-      )
-      .then(() => {
-        blogDetailRefetch();
-      })
-      .catch(() => {
-        blogDetailRefetch();
-      });
+  const handleBlogReaction = () => {
+    handleReaction();
   };
 
   if (error) {
@@ -255,7 +153,7 @@ const BlogDetail = () => {
                 <p className="flex-grow">
                   <button
                     disabled={optionsLoading}
-                    onClick={handleReaction}
+                    onClick={handleBlogReaction}
                     className="cursor-pointer "
                   >
                     {isLiked ? (
