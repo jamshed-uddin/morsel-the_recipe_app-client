@@ -32,6 +32,7 @@ import ErrorPage from "./Pages/ErrorPage.jsx";
 import LandingPage from "./Pages/LandingPage/LandingPage.jsx";
 import SearchPage from "./Pages/SearchPage/SearchPage.jsx";
 import RecipeCategory from "./Pages/RecipeCategory/RecipeCategory.jsx";
+import CategoryPage from "./Pages/RecipeCategory/CategoryPage.jsx";
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
       {
         path: "recipes/category/:category",
         element: <RecipeCategory></RecipeCategory>,
+      },
+      {
+        path: "recipes/category",
+        element: <CategoryPage></CategoryPage>,
       },
       {
         path: "account/:userId",

@@ -32,7 +32,7 @@ const RecipeCategory = () => {
       <div>
         <h1 className="text-xl font-light">
           <Link to={"/recipes"}>{pathname.split("/").at(1)}</Link> /{" "}
-          <Link to={"/recipes"}>{pathname.split("/").at(2)}</Link> /{" "}
+          <Link to={"/recipes/category"}>{pathname.split("/").at(2)}</Link> /{" "}
           <Link to={`/recipes/category/${category}`}>
             {" "}
             {pathname.split("/").at(3)}
