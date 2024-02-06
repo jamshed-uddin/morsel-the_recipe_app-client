@@ -14,7 +14,7 @@ const Recipes = () => {
           <Title>Cook something quick</Title>
         </div>
         <div className=" md:grid md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5 space-y-3 md:space-y-0">
-          {[1, 2, 3, 4, 5].map((item, index) => (
+          {[1, 2, 3].map((item, index) => (
             <CardSkeleton key={index} />
           ))}
         </div>

@@ -2,13 +2,14 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import ClearOutlinedIcon from "@mui/icons-material/ClearOutlined";
 import React from "react";
 
-const searchInputContent = ({ searchQuery, setSearchQuery }, ref) => {
+const searchInputContent = ({ searchParams, setSearchParams }, ref) => {
   const searchInputChangeHandler = (e) => {
     const searchbarValue = e.target.value;
     // console.log(searchbarValue);
-    setSearchQuery(searchbarValue);
+
+    setSearchParams({ q: searchbarValue }, { replace: true });
     if (!searchbarValue) {
-      console.log("searching");
+      setSearchParams({}, { replace: true });
     }
   };
 
@@ -22,7 +23,7 @@ const searchInputContent = ({ searchQuery, setSearchQuery }, ref) => {
   // };
 
   const clearSearchbarHandler = () => {
-    setSearchQuery("");
+    setSearchParams({}, { replace: true });
   };
 
   return (
@@ -33,11 +34,11 @@ const searchInputContent = ({ searchQuery, setSearchQuery }, ref) => {
           type="text"
           placeholder={`Search with name
           `}
-          value={searchQuery}
+          value={searchParams.get("q") || ""}
           onChange={searchInputChangeHandler}
           // onKeyDown={searchByEnterHandler}
         />
-        {searchQuery ? (
+        {searchParams.get("q") ? (
           <p
             onClick={clearSearchbarHandler}
             className="cursor-pointer   bg-bgColor pr-1 pl-1 absolute top-1 right-1 "

@@ -64,9 +64,11 @@ const AllCategories = ({ placedIn }) => {
           className="overflow-auto "
         >
           <div
-            className={` flex ${
-              placedIn === "categoryPage" ? "flex-wrap" : "w-max flex-nowrap"
-            } gap-x-6  md:gap-y-6  `}
+            className={`  ${
+              placedIn === "categoryPage"
+                ? "grid grid-cols-3 md:grid-cols-5 lg:grid-cols-7"
+                : "flex w-max flex-nowrap"
+            } md:gap-x-6 gap-x-4 gap-y-4  md:gap-y-6  `}
           >
             {categoriesLoading
               ? [1, 2, 3, 4, 5, 6, 7].map((_, index) => (

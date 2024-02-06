@@ -24,8 +24,6 @@ const RecipeCategory = () => {
     );
   }
 
-  console.log(categoryAndRecipe);
-
   return (
     <div className="my-container text-colorTwo tracking-tight">
       {/* breadcrumbs */}

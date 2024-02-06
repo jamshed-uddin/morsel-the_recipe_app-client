@@ -7,6 +7,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import toast from "react-hot-toast";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const StatusChanger = ({
   status,
@@ -22,6 +23,7 @@ const StatusChanger = ({
   const [updatedStatus, setUpdatedStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const axiosSecure = useAxiosSecure();
 
   const handleChange = (event) => {
     setUpdatedStatus(event.target.value);
@@ -40,8 +42,8 @@ const StatusChanger = ({
   const handleStatusChange = async () => {
     setLoading(true);
     try {
-      await axios.patch(
-        `${import.meta.env.VITE_BASEURL}/${
+      await axiosSecure.patch(
+        `/${
           actionFor === "blog" ? "updateBlogStatus" : "updateRecipeStatus"
         }/${adminEmail}`,
         {

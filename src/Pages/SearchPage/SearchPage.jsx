@@ -6,21 +6,24 @@ import { useQuery } from "react-query";
 import axios from "axios";
 import { CircularProgress } from "@mui/material";
 import SearchResult from "./SearchResult";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const SearchPage = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const searchBarRef = useRef(null);
-  console.log(searchBarRef);
+  // console.log(searchQuery);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  console.log(searchParams.get("q"));
 
   useEffect(() => {
     const searchBar = searchBarRef.current;
-
     searchBar.focus();
   }, []);
 
-  const debouncedValue = useDebounce(searchQuery, 600);
+  const debouncedValue = useDebounce(searchParams.get("q") || "", 700);
+
+  console.log(debouncedValue);
   const {
     isLoading: searchResultLoading,
     data: searchResult,
@@ -46,8 +49,8 @@ const SearchPage = () => {
           </span>
           <SearchBar
             ref={searchBarRef}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
+            searchParams={searchParams}
+            setSearchParams={setSearchParams}
           />
         </div>
       </div>

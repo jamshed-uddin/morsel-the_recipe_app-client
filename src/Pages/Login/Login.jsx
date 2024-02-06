@@ -34,6 +34,7 @@ const Login = () => {
   const googleLoginHandler = () => {
     signInWithGoogle()
       .then((result) => {
+        setLoading((prev) => !prev);
         if (result.user) {
           navigate(from, { replace: true });
           const body = {
@@ -48,7 +49,9 @@ const Login = () => {
             .then(() => {});
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        setLoading((prev) => !prev);
+      });
   };
 
   const handleLoginData = (e) => {

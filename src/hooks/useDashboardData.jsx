@@ -1,14 +1,14 @@
 import axios from "axios";
 import { useQuery } from "react-query";
+import useAxiosSecure from "./useAxiosSecure";
 
 const useDashboardData = (endPoint) => {
+  const axiosSecure = useAxiosSecure();
   const queryKey = [endPoint];
 
   const fetchData = async () => {
     try {
-      const result = await axios.get(
-        `${import.meta.env.VITE_BASEURL}${endPoint}`
-      );
+      const result = await axiosSecure.get(`${endPoint}`);
 
       return result.data;
     } catch (error) {
