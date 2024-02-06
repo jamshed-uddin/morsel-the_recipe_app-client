@@ -81,10 +81,10 @@ const Footer = () => {
         <div className="flex flex-grow md:justify-evenly gap-20 md:gap-0 my-4 md:mt-0 md:text-center">
           <div className="w-1/2 ">
             <p>
-              <Link>Recipes</Link>
+              <Link to={"/recipes"}>Recipes</Link>
             </p>
             <p>
-              <Link>Blogs</Link>
+              <Link to={"/blogs"}>Blogs</Link>
             </p>
             <p>Trending</p>
           </div>

@@ -1,7 +1,5 @@
-import React from "react";
 import CardSkeleton from "../../Components/Skeletons/CardSkeleton";
 import ItemsComp from "../BlogsPage/ItemsComp";
-import Card from "../../Components/Card/Card";
 import useInfiniteData from "../../hooks/useInfiniteData";
 import useIntersect from "../../hooks/useIntersect";
 import ErrorElement from "../../Components/ErrorElement";
@@ -18,8 +16,6 @@ const RecipesOfCategory = ({ recipes, recipesLoading, category }) => {
     error,
     refetch,
   } = useInfiniteData("/allRecipes/approved", category);
-
-  console.log(recipesData);
 
   const fetchNextRecipePageHandler = (isIntersecting) => {
     if (isIntersecting && hasNextPage) {
@@ -43,7 +39,7 @@ const RecipesOfCategory = ({ recipes, recipesLoading, category }) => {
   return (
     <div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 ">
-        {recipesLoading
+        {recipesLoading || recipesDataLoading
           ? [1, 2, 3].map((item, index) => <CardSkeleton key={index} />)
           : recipesData?.pages?.map((recipe, index) => (
               <ItemsComp itemsType={"recipes"} key={index} items={recipe} />

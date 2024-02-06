@@ -4,7 +4,7 @@ const ReactHelmet = ({ title, descriptionContent }) => {
   return (
     <Helmet>
       <title>{title}</title>
-      <meta name="description" content={descriptionContent}></meta>
+      <meta name="description" content={descriptionContent || ""}></meta>
     </Helmet>
   );
 };

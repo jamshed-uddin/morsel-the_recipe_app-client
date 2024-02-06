@@ -7,6 +7,8 @@ import axios from "axios";
 import { CircularProgress } from "@mui/material";
 import SearchResult from "./SearchResult";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
+import ReactHelmet from "../../Components/ReactHelmet/ReactHelmet";
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -41,6 +43,7 @@ const SearchPage = () => {
 
   return (
     <div className="my-container text-colorTwo">
+      <ReactHelmet title={"Search - Morsel"} />
       {/* search bar */}
       <div className="md:w-1/2 mx-auto">
         <div className="flex items-center gap-2">

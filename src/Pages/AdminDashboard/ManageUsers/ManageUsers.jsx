@@ -6,6 +6,7 @@ import TableSkeleton from "../../../Components/Skeletons/TableSkeleton";
 import UserActions from "./UserActions";
 import SimpleSnackbar from "../../../Components/Snackbar/SimpleSnackbar";
 import ErrorElement from "../../../Components/ErrorElement";
+import ReactHelmet from "../../../Components/ReactHelmet/ReactHelmet";
 
 const ManageUsers = () => {
   const { userData, userFetchLoading, userFetchError } = useDashboardContext();
@@ -71,6 +72,7 @@ const ManageUsers = () => {
 
   return (
     <div className="">
+      <ReactHelmet title={`Manage user | Dashboard - Morsel`} />
       <div>
         <TableComponent
           setRowId={setRowId}

@@ -1,4 +1,5 @@
 import ErrorElement from "../../../Components/ErrorElement";
+import ReactHelmet from "../../../Components/ReactHelmet/ReactHelmet";
 import useDashboardContext from "../../../hooks/useDashboardContext";
 import useDashboardData from "../../../hooks/useDashboardData";
 import NewUsers from "./NewUsers";
@@ -45,6 +46,7 @@ const Overview = () => {
 
   return (
     <div className="min-h-screen">
+      <ReactHelmet title={`Overview - Morsel`} />
       {/* numbers of user, recipes ,blogs created */}
 
       <Totals overviewStates={overviewStates} />

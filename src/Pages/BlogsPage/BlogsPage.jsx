@@ -7,6 +7,7 @@ import Title from "../../Components/Title";
 import useIntersect from "../../hooks/useIntersect";
 import { CircularProgress } from "@mui/material";
 import ErrorElement from "../../Components/ErrorElement";
+import ReactHelmet from "../../Components/ReactHelmet/ReactHelmet";
 
 const BlogsPage = () => {
   const {
@@ -34,6 +35,7 @@ const BlogsPage = () => {
 
   return (
     <div className="my-container mb-10 relative">
+      <ReactHelmet title={"Blogs - Morsel"} />
       <div className="sticky top-0 left-0 right-0 z-40 pt-2 bg-bgColor">
         <Title>Blogs</Title>
       </div>

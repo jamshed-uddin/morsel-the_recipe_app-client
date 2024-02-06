@@ -10,6 +10,7 @@ import ErrorElement from "../../Components/ErrorElement";
 
 import "./RecipesPage.css";
 import AllCategories from "./AllCategories";
+import ReactHelmet from "../../Components/ReactHelmet/ReactHelmet";
 
 const RecipesPage = () => {
   const {
@@ -37,6 +38,13 @@ const RecipesPage = () => {
 
   return (
     <div className="my-container mb-10 lg:pt-3 relative ">
+      <ReactHelmet
+        title={"Recipes - Morsel"}
+        descriptionContent={
+          "Explore wide range of recipes in different categories."
+        }
+      />
+
       <AllCategories />
 
       <div className="mb-2 lg:mb-5">

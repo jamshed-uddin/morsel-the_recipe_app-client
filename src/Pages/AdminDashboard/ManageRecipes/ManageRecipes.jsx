@@ -8,6 +8,7 @@ import StatusChanger from "../../../Components/StatusChanger/StatusChanger";
 import useSingleUser from "../../../hooks/useSingleUser";
 import useDashboardData from "../../../hooks/useDashboardData";
 import ErrorElement from "../../../Components/ErrorElement";
+import ReactHelmet from "../../../Components/ReactHelmet/ReactHelmet";
 
 const ManageRecipes = () => {
   const {
@@ -79,6 +80,7 @@ const ManageRecipes = () => {
 
   return (
     <div className="">
+      <ReactHelmet title={`Manage recipes | Dashboard - Morsel`} />
       <div>
         <TableComponent columns={columns} data={recipesData || []} />
       </div>

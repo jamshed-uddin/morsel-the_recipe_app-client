@@ -6,6 +6,7 @@ import StatusChanger from "../../../Components/StatusChanger/StatusChanger";
 import useSingleUser from "../../../hooks/useSingleUser";
 import useDashboardData from "../../../hooks/useDashboardData";
 import ErrorElement from "../../../Components/ErrorElement";
+import ReactHelmet from "../../../Components/ReactHelmet/ReactHelmet";
 
 const ManageBlogs = () => {
   const {
@@ -72,6 +73,8 @@ const ManageBlogs = () => {
 
   return (
     <div className="">
+      <ReactHelmet title={`Manage blogs | Dashboard - Morsel`} />
+
       <div>
         <TableComponent columns={columns} data={blogsData || []} />
       </div>

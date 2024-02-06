@@ -8,9 +8,9 @@ const CreateARecipe = () => {
   const { currentUser } = useSingleUser();
   return (
     <div className="text-colorOne my-6 h-[28rem] rounded-2xl    lg:h-[calc(100vh-5rem)] w-full overflow-hidden md:flex items-center gap-8 relative">
-      <div className="md:w-1/2 h-full rounded-2xl overflow-hidden">
+      <div className="w-full md:w-1/2 h-full rounded-2xl overflow-hidden">
         <img
-          className="object-cover rounded-2xl "
+          className="object-cover rounded-2xl h-full w-full"
           src={image}
           alt="Image of a person preparing for cooking"
         />

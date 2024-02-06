@@ -82,7 +82,7 @@ const RecipeDetail = () => {
   ) : (
     <div className="my-container lg:px-20 print:text-justify text-colorTwo print:bg-bgColor tracking-tight">
       <ReactHelmet
-        title={`${recipeDetail?.recipeName}_Morsel`}
+        title={`${recipeDetail?.recipeName} - Morsel`}
         descriptionContent={recipeDetail?.description}
       ></ReactHelmet>
       {/* status changer for admin only */}

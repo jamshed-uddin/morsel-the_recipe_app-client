@@ -4,6 +4,7 @@ import useGetCategory from "../../hooks/useGetCategory";
 import CategoryInfo from "./CategoryInfo";
 import RecipesOfCategory from "./RecipesOfCategory";
 import ErrorElement from "../../Components/ErrorElement";
+import ReactHelmet from "../../Components/ReactHelmet/ReactHelmet";
 
 const RecipeCategory = () => {
   const { pathname } = useLocation();
@@ -26,6 +27,10 @@ const RecipeCategory = () => {
 
   return (
     <div className="my-container text-colorTwo tracking-tight">
+      <ReactHelmet
+        title={`Category | ${category} - Morsel`}
+        descriptionContent={categoryAndRecipe?.category?.description}
+      />
       {/* breadcrumbs */}
       <div>
         <h1 className="text-xl font-light">
@@ -43,6 +48,8 @@ const RecipeCategory = () => {
         categoryData={categoryAndRecipe?.category}
         loading={categoryAndRecipeLoading}
       />
+
+      {/* recipes of the category */}
       <div className="mt-8">
         <RecipesOfCategory
           recipes={categoryAndRecipe?.recipeOfCategory}

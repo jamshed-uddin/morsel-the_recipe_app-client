@@ -21,6 +21,7 @@ import useGetUser from "../../hooks/useGetUser";
 import ErrorElement from "../../Components/ErrorElement";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import EditProfileDialog from "./EditProfileDialog";
+import ReactHelmet from "../../Components/ReactHelmet/ReactHelmet";
 
 const AccountPage = () => {
   const { userId } = useParams();
@@ -205,6 +206,10 @@ const AccountPage = () => {
           "my-container mt-6 lg:mt-0"
       `}
     >
+      <ReactHelmet
+        title={`${currentUser?.name} - Morsel`}
+        descriptionContent={currentUser?.bio}
+      />
       <div
         className={
           " lg:w-11/12 h-full  mx-auto lg:px-10 md:pt-20 pt-5 text-colorTwo"

@@ -14,6 +14,7 @@ import useSingleUser from "../../hooks/useSingleUser";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import MyButton from "../../Components/Button/MyButton";
+import ReactHelmet from "../../Components/ReactHelmet/ReactHelmet";
 
 const initialState = {
   recipeName: "",
@@ -345,6 +346,7 @@ const AddRecipe = () => {
       });
     }
   };
+
   const removeTagHandler = (index, tag) => {
     dispatch({ type: "REMOVE_FIELD", name: "tags", index });
 
@@ -569,14 +571,13 @@ const AddRecipe = () => {
           setLoading(false);
         });
     }
-
-    // console.log(formState);
   };
 
   // styles for input label
   const labelStyle = `block text-colorTwo text-2xl font-semibold `;
   return (
     <div className=" my-container text-colorTwo">
+      <ReactHelmet title={"Create recipe - Morsel"} />
       <div className="lg:w-4/5 md:w-11/12 mx-auto md:shadow md:rounded-xl h-full  pb-10 lg:px-5 relative">
         <div className="bg-bgColor py-2  z-20 flex justify-between items-center uppercase sticky top-0 left-0 right-0 shadow-sm ">
           <h1 className="md:text-3xl text-2xl font-bold text-colorOne">
