@@ -1,7 +1,7 @@
 import { PieChart } from "@mui/x-charts";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const PieChartComp = ({ stateData }) => {
+const Pie = ({ stateData }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -17,7 +17,6 @@ const PieChartComp = ({ stateData }) => {
           value: stateData[key],
           label: `${capitalizeFirstLetter(key)}: ${stateData[key]}`,
         };
-        // console.log(obj);
         prepData.push(obj);
       }
 
@@ -46,5 +45,7 @@ const PieChartComp = ({ stateData }) => {
     </div>
   );
 };
+
+const PieChartComp = React.memo(Pie);
 
 export default PieChartComp;

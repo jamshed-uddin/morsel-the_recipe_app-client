@@ -20,10 +20,10 @@ import {
 } from "react-share";
 import { useState } from "react";
 import MyButton from "../Button/MyButton";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import NotificationDialog from "./NotificationDialog";
 import toast from "react-hot-toast";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const AlertDialog = ({
   open,
@@ -34,6 +34,7 @@ const AlertDialog = ({
   itemId,
   userEmail,
 }) => {
+  const axiosSecure = useAxiosSecure();
   const [deleteLoading, setDeleteLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -53,14 +54,15 @@ const AlertDialog = ({
   const handleItemDelete = async () => {
     try {
       setDeleteLoading(true);
-      await axios.delete(
-        `${import.meta.env.VITE_BASEURL}/${
+      await axiosSecure.delete(
+        `/${
           itemType === "recipe" ? "deleteRecipe" : "deleteBlog"
         }?userEmail=${userEmail}&itemId=${itemId}`
       );
 
       setDeleteLoading(false);
-      navigate(-1);
+      navigate(`${itemType === "recipe" ? "/recipes" : "/blogs"}`);
+      toast(`${itemType === "recipe" ? "Recipe" : "Blog"} deleted.`);
     } catch (error) {
       toast.error("Something went wrong");
       setDeleteLoading(false);

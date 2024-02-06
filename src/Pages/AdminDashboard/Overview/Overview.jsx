@@ -1,13 +1,26 @@
+import { useQuery } from "react-query";
 import ErrorElement from "../../../Components/ErrorElement";
 import ReactHelmet from "../../../Components/ReactHelmet/ReactHelmet";
-import useDashboardContext from "../../../hooks/useDashboardContext";
 import useDashboardData from "../../../hooks/useDashboardData";
 import NewUsers from "./NewUsers";
 import PostedChart from "./PostedChart";
 import Totals from "./Totals";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const Overview = () => {
-  const { userData } = useDashboardContext();
+  const axiosSecure = useAxiosSecure();
+  const {
+    isLoading: userFetchLoading,
+    data: userData,
+    error: userFetchError,
+  } = useQuery(["users"], async () => {
+    try {
+      const result = await axiosSecure.get(`/users`);
+      return result.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  });
 
   const {
     data: recipesData,
@@ -25,11 +38,16 @@ const Overview = () => {
     error: overviewStatesError,
   } = useDashboardData("/overviewStates");
 
-  if (recipesError || blogsError || overviewStatesError) {
+  if (recipesError || blogsError || overviewStatesError || userFetchError) {
     <ErrorElement />;
   }
 
-  if (overviewStateLoading || blogsLoading || recipesLoading) {
+  if (
+    overviewStateLoading ||
+    blogsLoading ||
+    recipesLoading ||
+    userFetchLoading
+  ) {
     return (
       <div className="md:flex items-center gap-2 my-2 ">
         {[1, 2, 3].map((_, index) => (
@@ -46,7 +64,7 @@ const Overview = () => {
 
   return (
     <div className="min-h-screen">
-      <ReactHelmet title={`Overview - Morsel`} />
+      <ReactHelmet title={`Overview | Dashboard - Morsel`} />
       {/* numbers of user, recipes ,blogs created */}
 
       <Totals overviewStates={overviewStates} />
@@ -54,7 +72,7 @@ const Overview = () => {
       <hr />
       {/* chart and new users*/}
       <div className="lg:flex gap-2 mt-4">
-        {/* chart */}
+        {/* chart with blog and recipe creation stat */}
         <div className="lg:w-[70%] shadow-md rounded-lg p-2">
           <PostedChart recipes={recipesData} blogs={blogsData} />
         </div>

@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 
-const TableComponent = ({ setRowId, columns, data }) => {
+const TableComponent = ({ columns, data }) => {
   return (
     <Box sx={{ height: "80vh", width: "100%" }}>
       <DataGrid
@@ -16,7 +16,6 @@ const TableComponent = ({ setRowId, columns, data }) => {
           },
         }}
         pageSizeOptions={[10, 20, 30, 40]}
-        onCellEditStop={(params) => setRowId(params.row._id)}
       ></DataGrid>
     </Box>
   );

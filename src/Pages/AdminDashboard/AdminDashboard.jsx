@@ -18,7 +18,6 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import Toolbar from "@mui/material/Toolbar";
 
 import { useEffect, useState } from "react";
-import DashboardDataProvider from "../../providers/DashboardDataProvider";
 import { HomeOutlined } from "@mui/icons-material";
 import useSingleUser from "../../hooks/useSingleUser";
 
@@ -198,9 +197,8 @@ const AdminDashboard = (props) => {
           }}
         >
           <Toolbar />
-          <DashboardDataProvider>
-            <Outlet />
-          </DashboardDataProvider>
+
+          <Outlet />
         </Box>
       </Box>
     </div>

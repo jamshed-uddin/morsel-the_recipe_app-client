@@ -15,6 +15,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import MyButton from "../../Components/Button/MyButton";
 import ReactHelmet from "../../Components/ReactHelmet/ReactHelmet";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const initialState = {
   recipeName: "",
@@ -170,6 +171,7 @@ const AddRecipe = () => {
     "easy",
     "other",
   ]);
+  const axiosSecure = useAxiosSecure();
   const { currentUser } = useSingleUser();
   const [errorsObj, setErrorsObj] = useState({
     recipeName: "",
@@ -545,8 +547,8 @@ const AddRecipe = () => {
     setLoading(true);
 
     if (!editMode) {
-      await axios
-        .post(`${import.meta.env.VITE_BASEURL}/createRecipe`, formState)
+      await axiosSecure
+        .post(`/createRecipe`, formState)
         .then((result) => {
           setLoading(false);
           navigate(`/recipe/detail/${result.data.id}`);
@@ -556,11 +558,8 @@ const AddRecipe = () => {
           setLoading(false);
         });
     } else {
-      await axios
-        .put(
-          `${import.meta.env.VITE_BASEURL}/updateRecipe/${currentUser?.email}`,
-          formState
-        )
+      await axiosSecure
+        .put(`/updateRecipe/${currentUser?.email}`, formState)
         .then((result) => {
           console.log("updatedRecipe", result);
           setLoading(false);

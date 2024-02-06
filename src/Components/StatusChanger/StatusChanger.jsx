@@ -1,8 +1,6 @@
 import { CircularProgress, FormControl, MenuItem, Select } from "@mui/material";
-import axios from "axios";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -16,7 +14,6 @@ const StatusChanger = ({
   adminEmail,
   actionFrom,
   actionFor,
-
   refetch,
   //info about props at the end of the code
 }) => {
@@ -62,14 +59,12 @@ const StatusChanger = ({
       // snackbar and refetch for table
       if (actionFrom === "table") {
         refetch();
-        toast("Status changed");
+        toast.success("Status changed");
 
         return;
       }
 
-      // snackbar props for detail page snackbar
-
-      toast("Status changed");
+      toast.success("Status changed");
 
       refetch();
     } catch (error) {
@@ -84,8 +79,6 @@ const StatusChanger = ({
 
         return;
       }
-
-      // snackbar props for detail page snackbar
 
       toast.error(error?.response?.data?.error);
       refetch();
@@ -138,7 +131,7 @@ const StatusChanger = ({
             <div className="relative">
               <button
                 onClick={handleStatusChange}
-                disabled={loading || updatedStatus === status}
+                disabled={loading || updatedStatus === status || !updatedStatus}
                 className={`bg-colorOne text-white px-5 py-1 text-lg rounded-lg ${
                   (loading || updatedStatus === status || !updatedStatus) &&
                   "opacity-70"
@@ -148,7 +141,7 @@ const StatusChanger = ({
               </button>
               <div className="absolute right-6 top-1">
                 {loading && (
-                  <CircularProgress size={30} sx={{ color: "#4B5365" }} />
+                  <CircularProgress size={30} sx={{ color: "white" }} />
                 )}
               </div>
             </div>

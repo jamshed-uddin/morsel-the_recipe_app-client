@@ -9,6 +9,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAuthContext from "../../hooks/useAuthContext";
 import MyButton from "../../Components/Button/MyButton";
+import toast from "react-hot-toast";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -26,6 +28,7 @@ const BlogPublishModal = ({
   const [tagInputValue, setTagInputValue] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const { user } = useAuthContext();
+  const axiosSecure = useAxiosSecure();
 
   const navigate = useNavigate();
 
@@ -71,7 +74,7 @@ const BlogPublishModal = ({
 
     setLoading(true);
     if (!editMode) {
-      await axios
+      await axiosSecure
         .post(`${import.meta.env.VITE_BASEURL}/createBlog`, state)
         .then((result) => {
           setLoading(false);
@@ -80,9 +83,10 @@ const BlogPublishModal = ({
         })
         .catch(() => {
           setLoading(false);
+          toast.error("Something went wrong!");
         });
     } else {
-      await axios
+      await axiosSecure
         .put(
           `${import.meta.env.VITE_BASEURL}/updateBlog/${currentUser?.email}`,
           state
@@ -94,6 +98,7 @@ const BlogPublishModal = ({
         })
         .catch(() => {
           setLoading(false);
+          toast.error("Something went wrong!");
         });
     }
   };

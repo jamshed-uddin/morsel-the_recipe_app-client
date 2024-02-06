@@ -1,24 +1,31 @@
 import { Avatar } from "@mui/material";
-import { useMemo, useState } from "react";
-import useDashboardContext from "../../../hooks/useDashboardContext";
+import { useMemo } from "react";
+
 import TableComponent from "../TableComponent";
 import TableSkeleton from "../../../Components/Skeletons/TableSkeleton";
 import UserActions from "./UserActions";
-import SimpleSnackbar from "../../../Components/Snackbar/SimpleSnackbar";
+
 import ErrorElement from "../../../Components/ErrorElement";
 import ReactHelmet from "../../../Components/ReactHelmet/ReactHelmet";
+import { Toaster } from "react-hot-toast";
+import { useQuery } from "react-query";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
 
 const ManageUsers = () => {
-  const { userData, userFetchLoading, userFetchError } = useDashboardContext();
-  const [rowId, setRowId] = useState(null);
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-
-  const snackbarHandler = (message) => {
-    setSnackbarMessage(message);
-    setSnackbarOpen(true);
-  };
+  const axiosSecure = useAxiosSecure();
+  const {
+    isLoading: userFetchLoading,
+    data: userData,
+    error: userFetchError,
+    refetch: usersRefetch,
+  } = useQuery(["users"], async () => {
+    try {
+      const result = await axiosSecure.get(`/users`);
+      return result.data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  });
 
   const columns = useMemo(
     () => [
@@ -39,27 +46,18 @@ const ManageUsers = () => {
         editable: false,
         filterable: false,
       },
-      {
-        field: "role",
-        headerName: "Role(Editable)",
-        width: "130",
-        type: "singleSelect",
-        valueOptions: ["creator", "admin"],
-        editable: true,
-      },
+
       {
         field: "actions",
         headerName: "Change role",
-        width: "200",
+        width: "300",
         type: "actions",
         renderCell: (params) => (
-          <UserActions
-            {...{ params, rowId, setRowId, snackbarHandler }}
-          ></UserActions>
+          <UserActions {...{ params, usersRefetch }}></UserActions>
         ),
       },
     ],
-    [rowId]
+    []
   );
 
   if (userFetchError) {
@@ -73,18 +71,10 @@ const ManageUsers = () => {
   return (
     <div className="">
       <ReactHelmet title={`Manage user | Dashboard - Morsel`} />
+      <Toaster />
       <div>
-        <TableComponent
-          setRowId={setRowId}
-          columns={columns}
-          data={userData || []}
-        />
+        <TableComponent columns={columns} data={userData || []} />
       </div>
-      <SimpleSnackbar
-        open={snackbarOpen}
-        setOpen={setSnackbarOpen}
-        message={snackbarMessage}
-      />
     </div>
   );
 };
