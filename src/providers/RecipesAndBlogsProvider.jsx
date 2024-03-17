@@ -7,6 +7,7 @@ export const RecipesAndBlogsDataContext = createContext(null);
 const RecipesAndBlogsProvider = ({ children }) => {
   const { user } = useAuthContext();
   const [unreadAvailable, setUnreadAvailable] = useState();
+  const [bannerInView, setBannerInView] = useState(false);
 
   // notifications
   const {
@@ -52,6 +53,8 @@ const RecipesAndBlogsProvider = ({ children }) => {
     unreadAvailable,
     setUnreadAvailable,
     notificationRefetch,
+    bannerInView,
+    setBannerInView,
   };
 
   return (

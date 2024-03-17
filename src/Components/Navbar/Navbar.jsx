@@ -19,9 +19,16 @@ const Navbar = () => {
   const { user } = useAuthContext();
   const { currentUser } = useSingleUser();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { unreadAvailable, setUnreadAvailable, notifications } =
-    useRecipesBlogsData();
+  const {
+    unreadAvailable,
+    setUnreadAvailable,
+    notifications,
+    bannerInView,
+    setBannerInView,
+  } = useRecipesBlogsData();
+
   const { pathname } = useLocation();
+  console.log("nav", bannerInView);
 
   useEffect(() => {
     if (showNav) {
@@ -62,24 +69,39 @@ const Navbar = () => {
     }
   };
 
+  const hamburgerMenuStyle = `${
+    bannerInView && !showNav ? "bg-white" : "bg-colorOne"
+  }`;
+  console.log(showNav);
+
   return (
     <div
-      className={`print:hidden px-3 lg:px-24 fixed top-0 right-0 left-0 z-50 h-14 flex items-center transition-all duration-500 bg-bgColor select-none 
+      className={`print:hidden px-3 lg:px-24 fixed top-0 right-0 left-0 z-50 h-14 flex items-center transition-all duration-500 select-none  ${
+        bannerInView ? "bg-transparent" : "bg-bgColor"
+      }
     ${scrollingDown ? "-translate-y-16" : "-translate-0"}`}
     >
       {/* desktop nav */}
-      <div className="flex justify-between items-center  w-full ">
+      <div
+        className={`flex justify-between items-center  w-full  ${
+          bannerInView ? "text-white" : "text-colorOne"
+        }`}
+      >
         <div>
-          <h2 className="text-[2.6rem] leading-4 font-bold text-colorOne relative z-50">
+          <h2 className="text-[2.6rem] leading-4 font-bold  relative z-50">
             <Link to={"/"}>Morsel</Link>
           </h2>
         </div>
         <div className="hidden lg:block">
-          <div className="link-container flex items-center gap-10 text-colorOne font-medium text-xl  ">
+          <div className="link-container flex items-center gap-10  font-medium text-xl  ">
             {pathname !== "/search" && (
               <div>
                 <Link to={"/search"}>
-                  <p className="border-[1.5px] border-colorOne pl-14 pr-1 rounded-2xl">
+                  <p
+                    className={`border-[1.5px]  pl-14 pr-1 rounded-2xl  ${
+                      bannerInView ? "border-white" : "border-colorOne"
+                    }`}
+                  >
                     <SearchOutlinedIcon sx={{ fontSize: 25 }} />
                   </p>
                 </Link>
@@ -135,22 +157,29 @@ const Navbar = () => {
       </div>
 
       {/* mobile nav */}
-      <div className=" block lg:hidden ">
+      <div
+        className={`block lg:hidden ${
+          bannerInView ? "text-white" : "text-colorOne"
+        }`}
+      >
         {/* nav icon and it's transition classes */}
 
-        {/* notification icon */}
-
-        <div className="relative w-fit right-14 bottom-1 text-colorOne cursor-pointer">
+        <div className="relative w-fit right-14 bottom-1  cursor-pointer">
           <div className="flex items-center gap-3">
             {pathname !== "/search" && (
               <div>
                 <Link to={"/search"}>
-                  <p className="border-[1.5px] border-colorOne pl-14 pr-1 rounded-2xl">
+                  <p
+                    className={`border-[1.5px]  pl-14 pr-1 rounded-2xl ${
+                      bannerInView ? "border-white" : "border-colorOne"
+                    }`}
+                  >
                     <SearchOutlinedIcon sx={{ fontSize: 28 }} />
                   </p>
                 </Link>
               </div>
             )}
+            {/* notification icon */}
             {user && currentUser?.role !== "admin" ? (
               <NotificationIcon
                 clickFunction={openNotifications}
@@ -160,22 +189,23 @@ const Navbar = () => {
           </div>
         </div>
 
+        {/* hamburger menu */}
         <div
           onClick={() => setShowNav(!showNav)}
           className={`  space-y-2  h-fit  flex flex-col   cursor-pointer z-50 select-none  absolute  right-3 top-4 pl-3 pb-2 `}
         >
           <div
-            className={`mr-auto h-[2px]  bg-colorOne transition-all duration-700  ${
+            className={`mr-auto h-[2px]   transition-all duration-700 ${hamburgerMenuStyle}   ${
               showNav ? "w-10 origin-top-left rotate-45" : "w-5"
             }`}
           ></div>
           <div
-            className={`w-10 h-[2px]  bg-colorOne transition-all duration-500  ${
+            className={`w-10 h-[2px]  ${hamburgerMenuStyle} transition-all duration-500  ${
               showNav && "opacity-0"
             }`}
           ></div>
           <div
-            className={` h-[2px]  bg-colorOne ml-auto transition-all duration-700  ${
+            className={` h-[2px]  ${hamburgerMenuStyle} ml-auto transition-all duration-700  ${
               showNav
                 ? "w-10 origin-bottom-left -rotate-45 translate-y-2"
                 : "w-5"
